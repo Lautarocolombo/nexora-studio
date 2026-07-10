@@ -115,6 +115,10 @@
             <div class="portfolio-title">${p.title}</div>
             <p class="portfolio-desc">${p.desc}</p>
             <div class="portfolio-tags">${p.tags.map(t => `<span class="portfolio-tag">${t}</span>`).join('')}</div>
+            ${p.results && p.results.length ? `
+            <div class="portfolio-results">
+              ${p.results.map(r => `<div class="portfolio-result"><span class="portfolio-result-value">${r.value}</span><span class="portfolio-result-label">${r.label}</span></div>`).join('')}
+            </div>` : ''}
           </div>
         </article>`).join('');
     });

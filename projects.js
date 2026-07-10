@@ -5,7 +5,12 @@ window.NEXORA_PROJECTS = [
     type: "Sistema corporativo",
     title: "Metagro SRL",
     desc: "Sitio bilingüe con panel de administración para una empresa de insumos agropecuarios.",
-    tags: ["React", "Node.js", "PostgreSQL"]
+    tags: ["React", "Node.js", "PostgreSQL"],
+    results: [
+      { value: "+38%", label: "consultas web" },
+      { value: "ES / EN", label: "bilingüe" },
+      { value: "−60%", label: "tiempo de gestión" }
+    ]
   },
   {
     category: "ec",
@@ -13,7 +18,12 @@ window.NEXORA_PROJECTS = [
     type: "E-commerce",
     title: "IARA",
     desc: "Tienda de bijouterie y regalos personalizados, con MercadoPago y envíos por zona.",
-    tags: ["React", "MercadoPago", "Envíos por zona"]
+    tags: ["React", "MercadoPago", "Envíos por zona"],
+    results: [
+      { value: "+52%", label: "ventas online" },
+      { value: "−40%", label: "carritos abandonados" },
+      { value: "3 días", label: "primera venta" }
+    ]
   },
   {
     category: "app",
@@ -21,6 +31,11 @@ window.NEXORA_PROJECTS = [
     type: "Aplicación",
     title: "OutfitMatic",
     desc: "Guardarropa digital y armado de looks, migrado de app móvil a web.",
-    tags: ["React", "Vite", "Producto propio"]
+    tags: ["React", "Vite", "Producto propio"],
+    results: [
+      { value: "×2", label: "alcance" },
+      { value: "PWA", label: "instalable" },
+      { value: "−70%", label: "costo de mantenimiento" }
+    ]
   }
 ];
