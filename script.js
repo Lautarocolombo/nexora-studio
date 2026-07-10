@@ -120,6 +120,49 @@
     });
   };
 
+  // ─── BACK TO TOP ──────────────────────────────
+  const initBackToTop = () => {
+    const btn = document.createElement('button');
+    btn.className = 'back-to-top';
+    btn.setAttribute('aria-label', 'Volver arriba');
+    btn.textContent = '↑';
+    document.body.appendChild(btn);
+
+    const onScroll = () => btn.classList.toggle('visible', window.scrollY > 500);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    onScroll();
+  };
+
+  // ─── COOKIE CONSENT ───────────────────────────
+  const initCookieConsent = () => {
+    const KEY = 'nexora_cookie_consent';
+    let consented = null;
+    try { consented = localStorage.getItem(KEY); } catch (_) {}
+    if (consented) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-label', 'Aviso de cookies');
+    banner.innerHTML = `
+      <p>Usamos cookies para mejorar tu experiencia y medir el tráfico. Al continuar aceptás nuestra <a href="privacidad.html">Política de Privacidad</a>.</p>
+      <div class="cookie-banner__actions">
+        <button class="btn btn-ghost" data-cookie="reject">Rechazar</button>
+        <button class="btn btn-primary" data-cookie="accept">Aceptar</button>
+      </div>`;
+    document.body.appendChild(banner);
+    requestAnimationFrame(() => banner.classList.add('visible'));
+
+    banner.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-cookie]');
+      if (!t) return;
+      try { localStorage.setItem(KEY, t.dataset.cookie); } catch (_) {}
+      banner.classList.remove('visible');
+      setTimeout(() => banner.remove(), 400);
+    });
+  };
+
   // ─── INIT ────────────────────────────────────────────────
   const init = () => {
     initNavbar();
@@ -128,6 +171,8 @@
     initReveal();
     initFaq();
     initPortfolioFilter();
+    initBackToTop();
+    initCookieConsent();
   };
 
   if (document.readyState === 'loading') {
