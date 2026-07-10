@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <meta name="description" content="Portfolio de Nexora Studio: proyectos web, tiendas online, apps y sistemas desarrollados para PyMEs y emprendedores." />
+  <meta name="keywords" content="portfolio web, proyectos de diseño, landing pages, tiendas online, apps web, Nexora Studio, Gualeguay">
+  <meta name="author" content="Nexora Studio">
+  <title>Portfolio | Nexora Studio</title>
+  <link rel="canonical" href="https://portafolio.vercel.app/portfolio.html" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0b0f19">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Nexora Studio">
+  <meta property="og:title" content="Portfolio | Nexora Studio">
+  <meta property="og:description" content="Portfolio de Nexora Studio: proyectos web, tiendas online, apps y sistemas desarrollados para PyMEs y emprendedores.">
+  <meta property="og:url" content="https://portafolio.vercel.app/portfolio.html">
+  <meta property="og:image" content="https://portafolio.vercel.app/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Portfolio | Nexora Studio">
+  <meta name="twitter:description" content="Proyectos web, tiendas online, apps y sistemas con impacto medible.">
+  <meta name="twitter:image" content="https://portafolio.vercel.app/og-image.png">
+  <link rel="stylesheet" href="style.min.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Nexora Studio",
+    "url": "https://portafolio.vercel.app/",
+    "image": "https://portafolio.vercel.app/og-image.png",
+    "logo": "https://portafolio.vercel.app/favicon.svg",
+    "description": "Diseño y desarrollo web a medida para PyMEs y emprendedores del interior de Argentina.",
+    "email": "contacto@nexorastudio.com",
+    "telephone": "+5493444517496",
+    "priceRange": "$$",
+    "areaServed": "AR",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Gualeguay",
+      "addressRegion": "Entre Ríos",
+      "addressCountry": "AR"
+    },
+    "openingHours": "Mo-Fr 09:00-19:00",
+    "sameAs": ["https://wa.me/5493444517496"]
+  }
+  </script>
+</head>
+<body>
+  <a href="#inicio" class="skip-link">Saltar al contenido</a>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-icon">N</span>
+        <span>NEXORA <span class="gradient-text">STUDIO</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="servicios.html" class="nav-link">Servicios</a>
+        <a href="portfolio.html" class="nav-link active" aria-current="page">Portfolio</a>
+        <a href="contacto.html" class="nav-link">Contacto</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú móvil"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+   <nav class="mobile-nav" id="mobileNav">
+     <button class="mobile-nav-close" id="mobileNavClose" aria-label="Cerrar menú móvil">✕</button>
+     <a href="index.html" class="mobile-link">Inicio</a>
+     <a href="servicios.html" class="mobile-link">Servicios</a>
+     <a href="portfolio.html" class="mobile-link active" aria-current="page">Portfolio</a>
+     <a href="contacto.html" class="mobile-link btn btn-primary">Contacto</a>
+   </nav>
+
+  <main>
+    <section class="hero hero--short">
+      <div class="container">
+        <div class="hero-content hero-content--narrow-md">
+          <span class="eyebrow">Portfolio</span>
+          <h1>Proyectos digitales con identidad propia y resultados medibles.</h1>
+          <p class="hero-sub">Cada desarrollo combina diseño, arquitectura limpia y estrategia para generar impacto real en tu negocio.</p>
+          <div class="hero-actions">
+            <a href="contacto.html" class="btn btn-primary">Pedir presupuesto</a>
+            <a href="servicios.html" class="btn btn-outline">Ver servicios</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-intro">
+      <div class="container">
+        <div class="section-label">Casos de estudio</div>
+        <h2 class="section-title">Trabajos reales con impacto medible.</h2>
+        <p class="section-desc section-desc--wide">Cada proyecto combina estética, usabilidad y estrategia para generar resultados concretos en conversión, posicionamiento y experiencia.</p>
+      </div>
+    </section>
+
+    <section class="portfolio">
+      <div class="container">
+        <div class="portfolio-filter">
+          <button class="filter-btn active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="si">Sistemas</button>
+          <button class="filter-btn" data-filter="ec">E-commerce</button>
+          <button class="filter-btn" data-filter="app">Apps</button>
+        </div>
+
+        <div class="portfolio-grid" data-projects data-link="contacto.html" data-label="Solicitar similar"></div>
+      </div>
+    </section>
+
+    <section class="testimonials">
+      <div class="container testimonials-header reveal"><div class="section-label">Clientes</div><h2 class="section-title">Comentarios reales de proyectos entregados</h2></div>
+      <div class="testimonials-track">
+        <div class="testimonial-card"><div class="testimonial-stars"><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span></div><p class="testimonial-text">"Nexora Studio entendió nuestro negocio y entregó un sitio que superó expectativas. Vendimos más desde el lanzamiento."</p><div class="testimonial-author"><div class="testimonial-avatar testimonial-avatar--gradient">M</div><div><div class="testimonial-name">María R.</div><div class="testimonial-role">Comercio minorista</div></div></div></div>
+        <div class="testimonial-card"><div class="testimonial-stars"><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span></div><p class="testimonial-text">"La tienda online quedó impecable y fácil de administrar. Soporte rápido y propuestas que sumaron valor real."</p><div class="testimonial-author"><div class="testimonial-avatar testimonial-avatar--cyan">J</div><div><div class="testimonial-name">Juan P.</div><div class="testimonial-role">Emprendedor</div></div></div></div>
+        <div class="testimonial-card"><div class="testimonial-stars"><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span></div><p class="testimonial-text">"Pasamos de una app móvil a web sin perder identidad. Profesionales, organizados y muy puntuales."</p><div class="testimonial-author"><div class="testimonial-avatar testimonial-avatar--gradient">L</div><div><div class="testimonial-name">Lucía G.</div><div class="testimonial-role">Producto propio</div></div></div></div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div><span>¿Querés un sitio con estilo propio?</span><h2 class="section-title">Hablemos de tu próximo proyecto creativo.</h2></div>
+      <a href="contacto.html" class="btn btn-primary">Pedir presupuesto</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><div class="footer-logo"><div class="footer-logo-icon">N</div><span>NEXORA <span class="gradient-text">STUDIO</span></span></div><p class="footer-tagline">Transformamos ideas en soluciones digitales para PyMEs y emprendedores del interior de Argentina.</p><div class="social-links"><a href="#" class="social-link" title="Instagram">📸</a><a href="#" class="social-link" title="LinkedIn">💼</a><a href="https://wa.me/5493444517496" class="social-link" target="_blank" rel="noopener" title="WhatsApp">💬</a></div></div>
+      <div class="footer-col"><div class="footer-col-title">Proyectos</div><ul><li><a href="portfolio.html">Landing Pages</a></li><li><a href="portfolio.html">eCommerce</a></li><li><a href="portfolio.html">Apps</a></li><li><a href="portfolio.html">Sistemas</a></li></ul></div>
+      <div class="footer-col"><div class="footer-col-title">Contacto</div><ul><li><a href="contacto.html">Cotizar proyecto</a></li><li><a href="contacto.html">WhatsApp</a></li><li><a href="contacto.html">Email</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><div><div class="footer-copy">© 2026 Nexora Studio. Todos los derechos reservados.</div><div class="footer-copy-meta">Portfolios digitales, diseño, desarrollo y branding.</div></div><div class="footer-legal"><a href="privacidad.html">Política de Privacidad</a><a href="terminos.html">Términos de Servicio</a></div></div>
+  </footer>
+
+  <script src="projects.min.js"></script>
+  <script src="script.min.js"></script>
+  <a href="https://wa.me/5493444517496" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">💬</a>
+  <!-- Vercel Web Analytics -->
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.min.js"></script>
+</body>
+</html>
