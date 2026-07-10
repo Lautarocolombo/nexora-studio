@@ -1,0 +1,16 @@
+📌 ¿Qué contiene cada carpeta?
+00 - Dashboard
+
+Es el centro de control de la empresa.
+
+Aquí estará:
+
+Objetivos del año.
+Objetivos del mes.
+Objetivos de la semana.
+Tareas.
+Roadmap.
+Indicadores.
+Estado del negocio.
+
+Siempre será el primer documento que abras.

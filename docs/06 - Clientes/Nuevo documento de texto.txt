@@ -1,0 +1,25 @@
+06 - Clientes
+
+Una carpeta por cliente.
+
+Ejemplo:
+
+Clientes
+
+Metagro
+
+Artesanía Gualeguay
+
+Juan Pérez
+
+Empresa X
+
+Dentro de cada carpeta:
+
+Presupuesto.
+Contrato.
+Facturas.
+Reuniones.
+Archivos.
+Accesos (sin guardar contraseñas en texto plano).
+Estado del proyecto.

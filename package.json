@@ -10,12 +10,15 @@
     "build:js": "terser src/js/script.js -o js/script.min.js -c -m && terser src/js/projects.js -o js/projects.min.js -c -m",
     "dev": "node scripts/watch.mjs & live-server --port=5500 --entry-file=index.html",
     "start": "live-server --port=5500 --entry-file=index.html",
-    "test": "node scripts/validate.mjs"
+    "test": "node scripts/validate.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "clean-css-cli": "^5.6.3",
     "live-server": "^1.2.2",
     "terser": "^5.49.0"
