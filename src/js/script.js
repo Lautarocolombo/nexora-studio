@@ -1,6 +1,20 @@
 (() => {
   'use strict';
 
+  const initSentry = () => {
+    const dsn = typeof window !== 'undefined' ? window.NEXORA_SENTRY_DSN : undefined;
+    if (!dsn) return;
+    try {
+      const script = document.createElement('script');
+      script.src = 'https://browser.sentry-cdn.com/7.114.0/bundle.min.js';
+      script.crossOrigin = 'anonymous';
+      script.setAttribute('data-sentry-dsn', dsn);
+      document.head.appendChild(script);
+    } catch (_) {}
+  };
+
+  initSentry();
+
   // Helpers
   const $ = (sel, ctx = document) => ctx.querySelector(sel);
   const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
@@ -68,6 +82,30 @@
         $$('.faq-item.open').forEach(i => i.classList.remove('open'));
         if (!isOpen) item.classList.add('open');
       });
+    });
+  };
+
+  // ─── CONTACT FORM + HONEYPOT ─────────────────────────────
+  const initContactForm = () => {
+    const form = $('#contactForm');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if ($('#contactCompany')?.value.trim()) return;
+
+      const name = $('#contactName')?.value?.trim() || '';
+      const service = $('#contactService')?.value || '';
+      const message = $('#contactMessage')?.value?.trim() || '';
+
+      if (!name || !message) {
+        alert('Por favor completá tu nombre y mensaje.');
+        return;
+      }
+
+      const text = encodeURIComponent(`Hola Nexora Studio, soy ${name}. Quiero consultar por: ${service}. ${message}`);
+      window.open(`https://wa.me/5493444517496?text=${text}`, '_blank');
     });
   };
 
@@ -223,6 +261,7 @@
     initReveal();
     initFaq();
     initPortfolioFilter();
+    initContactForm();
     initBackToTop();
     initCookieConsent();
     initTheme();

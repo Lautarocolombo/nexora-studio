@@ -123,11 +123,43 @@
         </div>
 
         <div class="contact-form-wrap reveal">
-          <div class="contact-form" style="text-align:center;">
+          <div class="contact-form">
             <div class="form-title">Chateemos por WhatsApp</div>
-            <p class="form-subtitle">Es la forma más rápida de arrancar. Hacé clic y escribinos tu consulta directa.</p>
-            <a href="https://wa.me/5493444517496?text=Hola%20Nexora%20Studio%2C%20quiero%20consultar%20por%20un%20proyecto%20web" target="_blank" rel="noopener" class="btn btn-primary form-submit">💬 Abrir WhatsApp</a>
-            <p style="margin-top:16px;color:var(--text-muted);font-size:0.85rem;">O escribinos a <a href="mailto:contacto@nexorastudio.com" style="color:var(--cyan);">contacto@nexorastudio.com</a></p>
+            <p class="form-subtitle">Es la forma más rápida de arrancar. Completá el formulario y te derivamos directo a WhatsApp con tu consulta lista.</p>
+            <form id="contactForm" class="contact-form-fields" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="contactName">Nombre</label>
+                  <input id="contactName" type="text" name="name" placeholder="Tu nombre" required />
+                </div>
+                <div class="form-group">
+                  <label for="contactEmail">Email</label>
+                  <input id="contactEmail" type="email" name="email" placeholder="tunombre@empresa.com" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="contactService">Servicio</label>
+                <select id="contactService" name="service" required>
+                  <option value="" disabled selected>Elegí un servicio</option>
+                  <option value="landing">Landing Page</option>
+                  <option value="sitio">Sitio Corporativo</option>
+                  <option value="tienda">Tienda Online</option>
+                  <option value="app">App o Sistema</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="contactMessage">Mensaje</label>
+                <textarea id="contactMessage" name="message" placeholder="Contanos tu idea, objetivos y plazos..." required></textarea>
+              </div>
+              <div class="form-group honeypot-wrap" aria-hidden="true">
+                <label for="contactCompany">Empresa</label>
+                <input id="contactCompany" type="text" name="company" tabindex="-1" autocomplete="off" />
+              </div>
+              <button type="submit" class="btn btn-primary form-submit">💬 Abrir WhatsApp</button>
+              <p class="form-note">Al enviar se abrirá WhatsApp con tu mensaje preescrito. No compartimos tus datos con terceros.</p>
+            </form>
+            <p class="form-alt">O escribinos directo a <a href="mailto:contacto@nexorastudio.com">contacto@nexorastudio.com</a></p>
           </div>
         </div>
       </div>

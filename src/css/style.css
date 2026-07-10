@@ -1812,10 +1812,36 @@ ul, ol { list-style: none; }
    margin-bottom: 8px;
  }
 
- .form-error .error-text {
-   color: var(--text-secondary);
-   margin-bottom: 20px;
- }
+  .form-error .error-text {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+  }
+
+  .honeypot-wrap {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .form-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .form-alt {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .form-alt a {
+    color: var(--cyan);
+    text-decoration: underline;
+  }
 
  /* ─── FOOTER ────────────────────────────────────────────── */
 .footer {
