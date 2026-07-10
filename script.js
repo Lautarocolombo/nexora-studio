@@ -96,12 +96,15 @@
   const initProjects = () => {
     const grids = $$('[data-projects]');
     if (!grids.length || !Array.isArray(window.NEXORA_PROJECTS)) return;
+    const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
 
     grids.forEach(grid => {
       const link = grid.dataset.link || 'portfolio.html';
-      const label = grid.dataset.label || 'Ver proyecto';
+      const label = grid.dataset.label || (lang === 'en' ? 'View project' : 'Ver proyecto');
 
-      grid.innerHTML = window.NEXORA_PROJECTS.map(p => `
+      grid.innerHTML = window.NEXORA_PROJECTS.map(p => {
+        const d = p[lang] || p.es;
+        return `
         <article class="portfolio-card reveal" data-category="${p.category}">
           <div class="portfolio-preview">
             <div class="portfolio-preview-bg ${p.previewClass}">
@@ -111,16 +114,17 @@
             <div class="portfolio-overlay"><a href="${link}" class="btn btn-primary">${label}</a></div>
           </div>
           <div class="portfolio-info">
-            <div class="portfolio-type">${p.type}</div>
+            <div class="portfolio-type">${d.type}</div>
             <div class="portfolio-title">${p.title}</div>
-            <p class="portfolio-desc">${p.desc}</p>
-            <div class="portfolio-tags">${p.tags.map(t => `<span class="portfolio-tag">${t}</span>`).join('')}</div>
-            ${p.results && p.results.length ? `
+            <p class="portfolio-desc">${d.desc}</p>
+            <div class="portfolio-tags">${d.tags.map(t => `<span class="portfolio-tag">${t}</span>`).join('')}</div>
+            ${d.results && d.results.length ? `
             <div class="portfolio-results">
-              ${p.results.map(r => `<div class="portfolio-result"><span class="portfolio-result-value">${r.value}</span><span class="portfolio-result-label">${r.label}</span></div>`).join('')}
+              ${d.results.map(r => `<div class="portfolio-result"><span class="portfolio-result-value">${r.value}</span><span class="portfolio-result-label">${r.label}</span></div>`).join('')}
             </div>` : ''}
           </div>
-        </article>`).join('');
+        </article>`;
+      }).join('');
     });
   };
 
@@ -145,15 +149,22 @@
     try { consented = localStorage.getItem(KEY); } catch (_) {}
     if (consented) return;
 
+    const isEn = document.documentElement.lang === 'en';
+    const text = isEn
+      ? 'We use cookies to improve your experience and measure traffic. By continuing you accept our <a href="privacidad.html">Privacy Policy</a>.'
+      : 'Usamos cookies para mejorar tu experiencia y medir el tráfico. Al continuar aceptás nuestra <a href="privacidad.html">Política de Privacidad</a>.';
+    const accept = isEn ? 'Accept' : 'Aceptar';
+    const reject = isEn ? 'Reject' : 'Rechazar';
+
     const banner = document.createElement('div');
     banner.className = 'cookie-banner';
     banner.setAttribute('role', 'dialog');
-    banner.setAttribute('aria-label', 'Aviso de cookies');
+    banner.setAttribute('aria-label', isEn ? 'Cookie notice' : 'Aviso de cookies');
     banner.innerHTML = `
-      <p>Usamos cookies para mejorar tu experiencia y medir el tráfico. Al continuar aceptás nuestra <a href="privacidad.html">Política de Privacidad</a>.</p>
+      <p>${text}</p>
       <div class="cookie-banner__actions">
-        <button class="btn btn-ghost" data-cookie="reject">Rechazar</button>
-        <button class="btn btn-primary" data-cookie="accept">Aceptar</button>
+        <button class="btn btn-ghost" data-cookie="reject">${reject}</button>
+        <button class="btn btn-primary" data-cookie="accept">${accept}</button>
       </div>`;
     document.body.appendChild(banner);
     requestAnimationFrame(() => banner.classList.add('visible'));
@@ -165,6 +176,20 @@
       banner.classList.remove('visible');
       setTimeout(() => banner.remove(), 400);
     });
+  };
+
+  // ─── LANGUAGE SWITCH ──────────────────────────
+  const initLangSwitch = () => {
+    const nav = document.querySelector('.nav-inner');
+    const hamburger = document.getElementById('hamburger');
+    if (!nav) return;
+    const isEn = location.pathname.includes('/en/');
+    const link = document.createElement('a');
+    link.className = 'lang-switch';
+    link.href = isEn ? '../index.html' : 'en/index.html';
+    link.textContent = isEn ? 'ES' : 'EN';
+    link.setAttribute('aria-label', isEn ? 'Ver en español' : 'View in English');
+    nav.insertBefore(link, hamburger);
   };
 
   // ─── THEME TOGGLE ──────────────────────────────
@@ -201,6 +226,7 @@
     initBackToTop();
     initCookieConsent();
     initTheme();
+    initLangSwitch();
   };
 
   if (document.readyState === 'loading') {
