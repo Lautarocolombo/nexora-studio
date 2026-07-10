@@ -7,6 +7,7 @@ Design & development studio for SMEs and entrepreneurs in Argentina. Built with 
 - HTML5 + SEO / Open Graph / Structured Data
 - CSS custom properties + responsive design
 - Vanilla JS with modular architecture
+- Sentry-ready error monitoring (optional via env)
 - Source maps disabled in production build for privacy
 
 ## Folder structure
@@ -22,6 +23,8 @@ js/projects.min.js    # Production data
 scripts/
   validate.mjs        # HTML validation
   watch.mjs           # Dev watcher
+tests/                 # Playwright E2E tests
+.github/workflows/    # CI pipeline
 ```
 
 ## Setup
@@ -52,9 +55,21 @@ npm run build
 
 ## Deploy
 
-- Link repo to Vercel
-- Keep `vercel.json` redirects for legacy asset paths
-- Update `package.json` `buildCommand` if needed
+- Production: https://nexora-studio-ruddy.vercel.app
+- Vercel project: `portafolio`
+- Automatic deploy from `master` branch
+- `vercel.json` includes legacy redirects + security headers + caching
+
+## Environment variables
+
+| Variable | Service | Required | Description |
+|----------|---------|----------|-------------|
+| `NEXORA_SENTRY_DSN` | Sentry | optional | Browser DSN for error monitoring |
+
+## Observability
+
+- Sentry initialized conditionally when `NEXORA_SENTRY_DSN` is present.
+- To enable: add `NEXORA_SENTRY_DSN` in Vercel > Project Settings > Environment Variables and redeploy.
 
 ## Validation
 
@@ -63,3 +78,9 @@ npm test
 ```
 
 Checks HTML links, IDs, accessibility basics, and minified assets freshness.
+
+```powershell
+npx playwright test
+```
+
+Runs E2E tests for home, contact, and portfolio flows.
