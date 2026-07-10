@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://portafolio.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/" />
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://portafolio.vercel.app/nosotros.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/nosotros.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/nosotros.html" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://portafolio.vercel.app/servicios.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/servicios.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/servicios.html" />
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://portafolio.vercel.app/portfolio.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://portafolio.vercel.app/nosotros.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/portfolio.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/portfolio.html" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://portafolio.vercel.app/contacto.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/contacto.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/contacto.html" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://portafolio.vercel.app/privacidad.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/privacidad.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/privacidad.html" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://portafolio.vercel.app/terminos.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/terminos.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/terminos.html" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
