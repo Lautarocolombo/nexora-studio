@@ -167,6 +167,29 @@
     });
   };
 
+  // ─── THEME TOGGLE ──────────────────────────────
+  const initTheme = () => {
+    const btn = document.createElement('button');
+    btn.className = 'theme-toggle';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Cambiar tema claro/oscuro');
+    const sync = () => {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      btn.textContent = light ? '☀️' : '🌙';
+      btn.title = light ? 'Cambiar a oscuro' : 'Cambiar a claro';
+    };
+    const nav = document.querySelector('.nav-inner');
+    const hamburger = document.getElementById('hamburger');
+    if (nav) { nav.insertBefore(btn, hamburger); sync(); }
+    btn.addEventListener('click', () => {
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const next = light ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('nexora_theme', next); } catch (_) {}
+      sync();
+    });
+  };
+
   // ─── INIT ────────────────────────────────────────────────
   const init = () => {
     initNavbar();
@@ -177,6 +200,7 @@
     initPortfolioFilter();
     initBackToTop();
     initCookieConsent();
+    initTheme();
   };
 
   if (document.readyState === 'loading') {
