@@ -2,12 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [master, main]
   pull_request:
-    branches: [master]
+    branches: [master, main]
 
 jobs:
-  build-and-test:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -26,5 +26,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Validate
+      - name: Validate HTML & assets
         run: npm test
+
+      - name: Check Sentry integration placeholder
+        run: |
+          if ! grep -q 'initSentry' src/js/script.js; then
+            echo '::error::Sentry initialization not found in src/js/script.js'
+            exit 1
+          fi
