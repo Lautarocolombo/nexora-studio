@@ -1,5 +1,10 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": ".",
-  "framework": null
+  "framework": null,
+  "redirects": [
+    { "source": "/style.min.css", "destination": "/css/style.min.css", "permanent": true },
+    { "source": "/script.min.js", "destination": "/js/script.min.js", "permanent": true },
+    { "source": "/projects.min.js", "destination": "/js/projects.min.js", "permanent": true }
+  ]
 }

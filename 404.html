@@ -8,6 +8,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <meta name="description" content="Página no encontrada — Nexora Studio" />
   <title>Página no encontrada — Nexora Studio</title>
+  <link rel="canonical" href="https://portafolio.vercel.app/404.html" />
+  <link rel="alternate" hreflang="es" href="https://portafolio.vercel.app/404.html" />
+  <link rel="alternate" hreflang="x-default" href="https://portafolio.vercel.app/404.html" />
+  <link rel="alternate" hreflang="en" href="https://portafolio.vercel.app/en/404.html" />
+  <meta property="og:locale" content="es_AR" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#0b0f19">
   <link rel="manifest" href="manifest.webmanifest">
@@ -21,10 +26,64 @@
   <meta name="twitter:title" content="Página no encontrada — Nexora Studio">
   <meta name="twitter:description" content="La página que buscás no existe o fue movida.">
   <meta name="twitter:image" content="https://portafolio.vercel.app/og-image.png">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/css/style.min.css" />
+  <script>
+    (function () { try { var t = localStorage.getItem('nexora_theme'); if (!t) { t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } document.documentElement.setAttribute('data-theme', t); } catch (e) {} })();
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Nexora Studio",
+    "inLanguage": "es-AR",
+    "url": "https://portafolio.vercel.app/",
+    "image": "https://portafolio.vercel.app/og-image.png",
+    "logo": "https://portafolio.vercel.app/favicon.svg",
+    "description": "Diseño y desarrollo web a medida para PyMEs y emprendedores del interior de Argentina.",
+    "email": "contacto@nexorastudio.com",
+    "telephone": "+5493444517496",
+    "priceRange": "$$",
+    "areaServed": "AR",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Gualeguay",
+      "addressRegion": "Entre Ríos",
+      "addressCountry": "AR"
+    },
+    "openingHours": "Mo-Fr 09:00-19:00",
+    "sameAs": ["https://wa.me/5493444517496"]
+  }
+  </script>
 </head>
 <body>
-  <main>
+  <a href="#inicio" class="skip-link">Saltar al contenido</a>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-icon">N</span>
+        <span>NEXORA <span class="gradient-text">STUDIO</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Inicio</a>
+        <a href="nosotros.html" class="nav-link">Nosotros</a>
+        <a href="servicios.html" class="nav-link">Servicios</a>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="contacto.html" class="nav-link">Contacto</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú móvil"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileNavClose" aria-label="Cerrar menú móvil">✕</button>
+    <a href="index.html" class="mobile-link">Inicio</a>
+    <a href="nosotros.html" class="mobile-link">Nosotros</a>
+    <a href="servicios.html" class="mobile-link">Servicios</a>
+    <a href="portfolio.html" class="mobile-link">Portfolio</a>
+    <a href="contacto.html" class="mobile-link btn btn-primary">Contacto</a>
+  </nav>
+
+  <main id="inicio">
     <section class="hero">
       <div class="container">
         <div class="hero-content">
@@ -39,12 +98,22 @@
       </div>
     </section>
   </main>
-  <script src="script.js"></script>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><div class="footer-logo"><div class="footer-logo-icon">N</div><span>NEXORA <span class="gradient-text">STUDIO</span></span></div><p class="footer-tagline">Transformamos ideas en soluciones digitales para PyMEs y emprendedores del interior de Argentina.</p><div class="social-links"><a href="#" class="social-link" title="Instagram">📸</a><a href="#" class="social-link" title="LinkedIn">💼</a><a href="https://wa.me/5493444517496" class="social-link" target="_blank" rel="noopener" title="WhatsApp">💬</a></div></div>
+      <div class="footer-col"><div class="footer-col-title">Servicios</div><ul><li><a href="servicios.html">Landing Pages</a></li><li><a href="servicios.html">Sitios Corporativos</a></li><li><a href="servicios.html">Tiendas Online</a></li><li><a href="servicios.html">Apps y Sistemas</a></li></ul></div>
+      <div class="footer-col"><div class="footer-col-title">Empresa</div><ul><li><a href="index.html">Inicio</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="contacto.html">Contacto</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><div><div class="footer-copy">© 2026 Nexora Studio. Todos los derechos reservados.</div><div class="footer-copy-meta">Monotributo · CUIT · Propiedad intelectual cedida · Ley 25.326</div></div><div class="footer-legal"><a href="privacidad.html">Política de Privacidad</a><a href="terminos.html">Términos de Servicio</a></div></div>
+  </footer>
+
+  <script src="/js/script.min.js"></script>
   <a href="https://wa.me/5493444517496" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">💬</a>
   <!-- Vercel Web Analytics -->
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/insights/script.min.js"></script>
 </body>
 </html>

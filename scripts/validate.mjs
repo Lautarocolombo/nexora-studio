@@ -10,6 +10,34 @@ const isLocal = (ref) => {
   return !SKIP_PREFIXES.some((p) => ref.startsWith(p)) && !ref.startsWith('/');
 };
 
+const mins = [
+  { src: 'src/css/style.css',   dist: 'css/style.min.css' },
+  { src: 'src/js/script.js',    dist: 'js/script.min.js' },
+  { src: 'src/js/projects.js',  dist: 'js/projects.min.js' }
+];
+
+let errors = 0;
+const fail = (file, msg) => { errors++; console.error(`✗ ${file}: ${msg}`); };
+const rel = (f) => f.replace(ROOT + '\\', '');
+
+for (const m of mins) {
+  const src = join(ROOT, m.src);
+  const dist = join(ROOT, m.dist);
+  if (!existsSync(src)) {
+    fail(m.src, 'fuente no existe en src/');
+    continue;
+  }
+  const srcStat = statSync(src);
+  if (!existsSync(dist)) {
+    fail(m.dist, 'minificado ausente, corré npm run build');
+    continue;
+  }
+  const distStat = statSync(dist);
+  if (distStat.mtimeMs < srcStat.mtimeMs) {
+    console.warn(`! ${m.dist}: minificado desactualizado respecto a ${m.src}`);
+  }
+}
+
 const htmlFiles = [];
 const walk = (dir) => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -19,10 +47,6 @@ const walk = (dir) => {
   }
 };
 walk(ROOT);
-
-let errors = 0;
-const fail = (file, msg) => { errors++; console.error(`✗ ${file}: ${msg}`); };
-const rel = (f) => f.replace(ROOT + '\\', '');
 
 for (const file of htmlFiles) {
   const html = readFileSync(file, 'utf8');
@@ -53,4 +77,4 @@ if (errors) {
   console.error(`\nValidación fallida: ${errors} problema(s).`);
   process.exit(1);
 }
-console.log('\nValidación OK: integridad de enlaces, ids y accesibilidad básica.');
+console.log('\nValidación OK: integridad de enlaces, ids, fuentes y artefactos minificados.');
