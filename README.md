@@ -64,12 +64,14 @@ npm run build
 
 | Variable | Service | Required | Description |
 |----------|---------|----------|-------------|
+| `NEXORA_ANALYTICS_ID` | Google Analytics | optional | GA4 measurement ID (example: `G-XXXXXXXXXX`) |
 | `NEXORA_SENTRY_DSN` | Sentry | optional | Browser DSN for error monitoring |
 
 ## Observability
 
+- Analytics loaded conditionally when `NEXORA_ANALYTICS_ID` is present.
 - Sentry initialized conditionally when `NEXORA_SENTRY_DSN` is present.
-- To enable: add `NEXORA_SENTRY_DSN` in Vercel > Project Settings > Environment Variables and redeploy.
+- To enable: add the env var in Vercel > Project Settings > Environment Variables and redeploy.
 
 ## Validation
 

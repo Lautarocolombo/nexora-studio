@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "cleancss -o css/style.min.css src/css/style.css",
-    "build:js": "terser src/js/script.js -o js/script.min.js -c -m && terser src/js/projects.js -o js/projects.min.js -c -m",
+    "build:js": "terser src/js/script.js -o js/script.min.js -c -m && terser src/js/projects.js -o js/projects.min.js -c -m && terser src/js/analytics.js -o js/analytics.min.js -c -m",
     "dev": "node scripts/watch.mjs & live-server --port=5500 --entry-file=index.html",
     "start": "live-server --port=5500 --entry-file=index.html",
     "test": "node scripts/validate.mjs",
