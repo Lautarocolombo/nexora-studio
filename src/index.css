@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Literata", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-slate-denim: #455565;
+  --color-slate-denim-dark: #394858;
+  --color-soft-ochre: #d4ac0d;
+  --color-ochre-light: #fed33e;
+  --color-linen-bg: #fbf9f7;
+  --color-cotton-white: #ffffff;
+  --color-charcoal-wool: #1b1c1b;
+  --color-charcoal-muted: #43474c;
+  --color-border-subtle: #c4c6cc;
+  --color-chip-bg: #edf2f7;
+}
+
+/* Fabric grain texture overlay */
+.fabric-grain {
+  position: relative;
+}
+.fabric-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 5;
+}
+
+.shadow-fabric {
+  box-shadow: 0 4px 12px rgba(46, 64, 83, 0.04);
+}
+
+.shadow-fabric-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.shadow-fabric-hover:hover {
+  box-shadow: 0 10px 28px rgba(46, 64, 83, 0.09);
+  border-color: #455565;
+}
+
+/* Custom scrollbar hiding for clean pills */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
