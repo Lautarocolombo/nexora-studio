@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Trash2, Edit3, Heart, DollarSign, Calendar, Tag, ShieldAlert, Sparkles, Check } from 'lucide-react';
+import { X, Plus, Trash2, Edit3, Heart, Calendar, Tag, ShieldAlert, Sparkles, Check } from 'lucide-react';
 import { GarmentItem, Language } from '../types';
 
 interface GarmentDetailModalProps {
@@ -32,10 +32,6 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
   const care = language === 'es' && garment.careInstructionsEs ? garment.careInstructionsEs : garment.careInstructions;
   const notes = language === 'es' && garment.notesEs ? garment.notesEs : garment.notes;
 
-  const costPerWear = garment.price
-    ? (garment.price / Math.max(1, garment.wornCount)).toFixed(2)
-    : null;
-
   const handleSaveNotes = () => {
     onUpdateNotes(garment.id, notesText);
     setIsEditingNotes(false);
@@ -43,7 +39,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
 
   const t = {
     wornTimes: language === 'es' ? 'Veces Usado' : 'Times Worn',
-    costPerWear: language === 'es' ? 'Costo por Uso' : 'Cost per Wear',
+    season: language === 'es' ? 'Temporada' : 'Season',
     material: language === 'es' ? 'Composición / Material' : 'Material & Fabric',
     care: language === 'es' ? 'Instrucciones de Cuidado' : 'Care Instructions',
     notes: language === 'es' ? 'Notas' : 'Notes',
@@ -51,9 +47,9 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
     delete: language === 'es' ? 'Eliminar' : 'Remove',
     edit: language === 'es' ? 'Editar' : 'Edit',
     save: language === 'es' ? 'Guardar' : 'Save',
-    brand: language === 'es' ? 'Marca' : 'Brand',
-    season: language === 'es' ? 'Temporada' : 'Season',
-    lastWorn: language === 'es' ? 'Último Uso' : 'Last Worn'
+    lastWorn: language === 'es' ? 'Último Uso' : 'Last Worn',
+    seasonLabel: language === 'es' ? 'Temporada ideal' : 'Best season',
+    styleNote: language === 'es' ? 'Nota de estilo' : 'Style note'
   };
 
   return (
@@ -88,12 +84,12 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
         <div className="md:w-1/2 p-6 flex flex-col justify-between overflow-y-auto max-h-[90vh] md:max-h-none">
           <div className="flex flex-col gap-5">
             <div className="flex justify-between items-start">
-              <div>
-                <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">
-                  {garment.brand || 'Nexora'}
-                </span>
-                <h2 className="font-display text-2xl font-bold text-[#F7F3EC] mt-0.5">{name}</h2>
-              </div>
+            <div>
+              <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">
+                {garment.categoryTag}
+              </span>
+              <h2 className="font-display text-2xl font-bold text-[#F7F3EC] mt-0.5">{name}</h2>
+            </div>
               <button
                 onClick={onClose}
                 className="p-1 text-[#A89B8C] hover:text-[#F7F3EC] rounded-lg hover:bg-[#161210] transition-colors"
@@ -108,17 +104,11 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
                 <span className="font-display text-xl font-bold text-[#F7F3EC]">{garment.wornCount}</span>
               </div>
               <div className="flex flex-col border-l border-[#2A2622] pl-3">
-                <span className="font-mono text-[11px] text-[#A89B8C] uppercase">{t.costPerWear}</span>
+                <span className="font-mono text-[11px] text-[#A89B8C] uppercase">{t.seasonLabel}</span>
                 <span className="font-display text-xl font-bold text-[#C76B3F]">
-                  {costPerWear ? `$${costPerWear}` : 'N/A'}
+                  {garment.season === 'all-year' ? (language === 'es' ? 'Todo el año' : 'All year') : garment.season === 'spring-summer' ? (language === 'es' ? 'Primavera/Ver' : 'Spring/Summer') : (language === 'es' ? 'Otoño/Inv' : 'Autumn/Winter')}
                 </span>
               </div>
-              {garment.price && (
-                <div className="col-span-2 border-t border-[#2A2622] pt-2 flex justify-between items-center font-mono text-xs text-[#A89B8C]">
-                  <span>{language === 'es' ? 'Precio:' : 'Price:'}</span>
-                  <span className="font-bold text-[#F7F3EC]">${garment.price}</span>
-                </div>
-              )}
             </div>
 
             {garment.material && (

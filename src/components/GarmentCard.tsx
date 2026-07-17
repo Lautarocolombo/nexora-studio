@@ -96,31 +96,29 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
         )}
       </div>
 
-      <div className="p-4 flex flex-col gap-1 flex-1 justify-between bg-[#1B1814] z-20">
-        <div className="flex items-start justify-between gap-1">
-          <h3 className="font-sans text-base font-medium text-[#F7F3EC] truncate" title={name}>
-            {name}
-          </h3>
-          {garment.colorSwatch && (
-            <span
-              className="w-3.5 h-3.5 rounded-full border border-[#2A2622] flex-shrink-0 mt-1 shadow-sm"
-              style={{ backgroundColor: garment.colorSwatch }}
-              title="Color swatch"
-            />
-          )}
-        </div>
+        <div className="p-4 flex flex-col gap-1 flex-1 justify-between bg-[#1B1814] z-20">
+          <div className="flex items-start justify-between gap-1">
+            <h3 className="font-sans text-base font-medium text-[#F7F3EC] truncate" title={name}>
+              {name}
+            </h3>
+            {garment.colorSwatch && (
+              <span
+                className="w-3.5 h-3.5 rounded-full border border-[#2A2622] flex-shrink-0 mt-1 shadow-sm"
+                style={{ backgroundColor: garment.colorSwatch }}
+                title="Color swatch"
+              />
+            )}
+          </div>
 
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#2A2622]">
-          <p className="font-mono text-xs text-[#A89B8C] font-medium">
-            {wornText}
-          </p>
-          {garment.price && (
-            <span className="font-mono text-[11px] text-[#C76B3F]">
-              ${(garment.price / Math.max(1, garment.wornCount)).toFixed(0)}/use
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#2A2622]">
+            <p className="font-mono text-xs text-[#A89B8C] font-medium">
+              {wornText}
+            </p>
+            <span className="font-mono text-[11px] text-[#A89B8C]">
+              {garment.season === 'all-year' ? (language === 'es' ? 'Todo el año' : 'All year') : garment.season === 'spring-summer' ? (language === 'es' ? 'Primavera/Ver' : 'Spring/Summer') : (language === 'es' ? 'Otoño/Inv' : 'Autumn/Winter')}
             </span>
-          )}
+          </div>
         </div>
-      </div>
     </article>
   );
 };

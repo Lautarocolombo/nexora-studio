@@ -39,17 +39,17 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   };
 
   const t = {
-    title: language === 'es' ? 'Perfil del Atelier & Objetivos Conscientes' : 'Atelier Profile & Mindful Goals',
-    subtitle: language === 'es' ? 'Configura tus metas del Proyecto 333, respaldos y preferencias.' : 'Configure your Project 333 targets, backups, and preferences.',
-    profileCard: language === 'es' ? 'Curador del Guardarropa' : 'Wardrobe Curator',
+    title: language === 'es' ? 'Perfil & Metas de Estilo' : 'Profile & Style Goals',
+    subtitle: language === 'es' ? 'Definí tus objetivos de uso, respaldá tus datos y elegí el idioma.' : 'Define your wear goals, back up your data, and choose your language.',
+    profileCard: language === 'es' ? 'Curador del Armario' : 'Wardrobe Curator',
     role: language === 'es' ? 'Esteta Consciente (Miembro desde 2026)' : 'Mindful Aesthete (Member since 2026)',
-    capsuleTitle: language === 'es' ? 'Meta de Cápsula Minimalista (Proyecto 333)' : 'Minimalist Capsule Target (Project 333)',
-    capsuleDesc: language === 'es' ? 'El reto de vestir con 33 prendas o menos durante 3 meses.' : 'The challenge to dress with 33 items or fewer for 3 months.',
+    capsuleTitle: language === 'es' ? 'Meta de Uso Mensual' : 'Monthly Wear Goal',
+    capsuleDesc: language === 'es' ? 'Objetivo de usos registrados por mes para mantener tu armario en rotación.' : 'Target monthly wears to keep your wardrobe in active rotation.',
     currentProgress: language === 'es' ? 'Progreso Actual:' : 'Current Progress:',
-    itemsOf: language === 'es' ? 'piezas de' : 'items of',
+    itemsOf: language === 'es' ? 'usos de' : 'wears of',
     languageSection: language === 'es' ? 'Idioma de la Interfaz / Language' : 'Interface Language',
     backupSection: language === 'es' ? 'Respaldo de Datos & Exportación' : 'Data Backup & Export',
-    exportBtn: language === 'es' ? 'Exportar Guardarropa (JSON)' : 'Export Wardrobe (JSON)',
+    exportBtn: language === 'es' ? 'Exportar Armario (JSON)' : 'Export Wardrobe (JSON)',
     resetBtn: language === 'es' ? 'Restablecer Datos de Demostración' : 'Reset Demo Wardrobe',
     saveBtn: language === 'es' ? 'Guardar Preferencias' : 'Save Preferences',
     savedMsg: language === 'es' ? '¡Preferencias actualizadas!' : 'Preferences saved!'
@@ -69,7 +69,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center gap-2">
             <h3 className="font-display text-2xl font-bold text-[#F7F3EC]">Lautaro C.</h3>
-            <span className="font-mono text-[11px] bg-[#161210] text-[#C76B3F] px-2.5 py-0.5 rounded font-semibold border border-[#2A2622]">PRO ATELIER</span>
+            <span className="font-mono text-[11px] bg-[#161210] text-[#C76B3F] px-2.5 py-0.5 rounded font-semibold border border-[#2A2622]">
+              STYLE CURATOR
+            </span>
           </div>
           <p className="font-mono text-xs text-[#A89B8C] mt-1">{t.role}</p>
           <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
@@ -96,21 +98,21 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <div className="pt-2">
             <div className="flex justify-between items-center mb-1">
               <span className="font-mono text-xs font-semibold text-[#A89B8C]">{t.currentProgress}</span>
-              <span className="font-mono text-xs font-bold text-[#F7F3EC]">{garments.length} {t.itemsOf} {capsuleGoal}</span>
+              <span className="font-mono text-xs font-bold text-[#F7F3EC]">{garments.reduce((a, g) => a + g.wornCount, 0)} {t.itemsOf} {capsuleGoal}</span>
             </div>
             <div className="w-full bg-[#161210] rounded-full h-3 overflow-hidden border border-[#2A2622]">
-              <div className="h-full transition-all duration-500 bg-[#C76B3F]" style={{ width: `${Math.min(100, (garments.length / Math.max(1, parseInt(capsuleGoal))) * 100)}%` }} />
+              <div className="h-full transition-all duration-500 bg-[#C76B3F]" style={{ width: `${Math.min(100, (garments.reduce((a, g) => a + g.wornCount, 0) / Math.max(1, parseInt(capsuleGoal))) * 100)}%` }} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#2A2622]">
             <div>
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1">{language === 'es' ? 'Límite de Prendas por Cápsula' : 'Capsule Garment Limit'}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1">{language === 'es' ? 'Meta de Usos Mensuales' : 'Monthly Wear Target'}</label>
               <select value={capsuleGoal} onChange={(e) => setCapsuleGoal(e.target.value)} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none">
-                <option value="25">25 {language === 'es' ? 'prendas' : 'items'} (Ultra Minimal)</option>
-                <option value="33">33 {language === 'es' ? 'prendas' : 'items'} (Project 333 Classic)</option>
-                <option value="50">50 {language === 'es' ? 'prendas' : 'items'} (Balanced Capsule)</option>
-                <option value="100">100 {language === 'es' ? 'prendas' : 'items'} (Full Wardrobe)</option>
+                <option value="20">20 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
+                <option value="33">33 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
+                <option value="50">50 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
+                <option value="80">80 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
               </select>
             </div>
           </div>

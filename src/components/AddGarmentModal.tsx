@@ -28,9 +28,7 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
   const [nameEs, setNameEs] = useState('');
   const [category, setCategory] = useState<Exclude<GarmentCategory, 'all'>>('tops');
   const [imageUrl, setImageUrl] = useState(SAMPLE_IMAGES[0].url);
-  const [price, setPrice] = useState<string>('120');
   const [material, setMaterial] = useState('');
-  const [brand, setBrand] = useState('');
   const [season, setSeason] = useState<SeasonTag>('all-year');
   const [wornCount, setWornCount] = useState<string>('0');
   const [notes, setNotes] = useState('');
@@ -59,9 +57,7 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
       category,
       categoryTag: getTagForCategory(category),
       imageUrl: imageUrl.trim() || SAMPLE_IMAGES[0].url,
-      price: price ? parseFloat(price) : undefined,
       material: material.trim() || undefined,
-      brand: brand.trim() || undefined,
       season,
       wornCount: parseInt(wornCount, 10) || 0,
       notes: notes.trim() || undefined,
@@ -74,20 +70,18 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
   };
 
   const t = {
-    title: language === 'es' ? 'Añadir Nueva Prenda al Guardarropa' : 'Add New Garment to Wardrobe',
-    subtitle: language === 'es' ? 'Registra los detalles y materiales de tu nueva inversión consciente.' : 'Log the details and fabric of your mindful investment.',
+    title: language === 'es' ? 'Añadir Prenda a tu Armario' : 'Add Garment to Your Wardrobe',
+    subtitle: language === 'es' ? 'Registrá la prenda para armar conjuntos y llevar un historial de usos.' : 'Register the garment to build outfits and track wears.',
     name: language === 'es' ? 'Nombre de la Prenda (Inglés/Principal)' : 'Garment Name',
     nameEs: language === 'es' ? 'Nombre en Español' : 'Spanish Name (Optional)',
     category: language === 'es' ? 'Categoría' : 'Category',
     season: language === 'es' ? 'Temporada' : 'Season',
     image: language === 'es' ? 'URL de Fotografía o Muestra de Estilo' : 'Photo URL or Style Sample',
-    price: language === 'es' ? 'Precio de Inversión ($)' : 'Investment Price ($)',
     wears: language === 'es' ? 'Usos Iniciales Registrados' : 'Initial Worn Count',
     material: language === 'es' ? 'Composición / Material (ej. 100% Lino Orgánico)' : 'Material (e.g. 100% Organic Linen)',
-    brand: language === 'es' ? 'Atelier / Marca' : 'Atelier / Brand',
-    notes: language === 'es' ? 'Notas de Sastrería' : 'Tailor & Mindful Notes',
+    notes: language === 'es' ? 'Notas de Estilo / Sastrería' : 'Style & Tailor Notes',
     cancel: language === 'es' ? 'Cancelar' : 'Cancel',
-    save: language === 'es' ? 'Guardar en Guardarropa' : 'Save to Wardrobe'
+    save: language === 'es' ? 'Guardar en Armario' : 'Save to Wardrobe'
   };
 
   if (!isOpen) return null;
@@ -205,23 +199,12 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
             </div>
           </div>
 
-          {/* Price, Wears, Brand */}
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.price}</label>
-              <input 
-                type="number" 
-                min="0"
-                step="any"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
-              />
-            </div>
+          {/* Wears & Material */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.wears}</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 min="0"
                 value={wornCount}
                 onChange={(e) => setWornCount(e.target.value)}
@@ -229,12 +212,12 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.brand}</label>
-              <input 
-                type="text" 
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                placeholder="Atelier Artisan"
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.material}</label>
+              <input
+                type="text"
+                value={material}
+                onChange={(e) => setMaterial(e.target.value)}
+                placeholder="100% Lino / Algodón"
                 className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>

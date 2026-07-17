@@ -11,7 +11,6 @@ export interface GarmentItem {
   imageUrl: string;
   wornCount: number;
   lastWorn?: string; // YYYY-MM-DD
-  price?: number; // Cost in USD/EUR
   material?: string;
   careInstructions?: string;
   careInstructionsEs?: string;

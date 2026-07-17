@@ -20,7 +20,6 @@ const SPECS: Spec[] = [
 
 const SEASONS: GarmentItem['season'][] = ['all-year', 'spring-summer', 'autumn-winter'];
 const SWATCHES = ['#C76B3F', '#1C1A17', '#3D4F3B', '#F7F3EC', '#b36138', '#2b2b2b', '#6b5b4f', '#a89b8c'];
-const BRANDS = ['Atelier Norte', 'Loom & Co', 'Casa Lina', 'Taller Sur', 'Maison Oeste', 'Estudio Lino'];
 
 const files = [
   '04429f40-0b66-42a3-a2ec-673770eb545b', '06c91424-2724-4736-928b-520e5efcca05',
@@ -52,11 +51,9 @@ const INITIAL_GARMENTS: GarmentItem[] = files.map((id, i) => {
     imageUrl: img(id),
     wornCount: Math.floor(Math.random() * 40) + 2,
     lastWorn: `2026-0${1 + (i % 6)}-${10 + (i % 18)}`,
-    price: 80 + ((i * 37) % 420),
     material: 'Mezcla premium / Composición seleccionada',
     careInstructions: 'Seguir etiqueta del fabricante. Lavar en frío.',
     careInstructionsEs: 'Seguir etiqueta del fabricante. Lavar en frío.',
-    brand: BRANDS[i % BRANDS.length],
     season,
     notes: 'Pieza de la colección editorial Nexora.',
     notesEs: 'Pieza de la colección editorial Nexora.',

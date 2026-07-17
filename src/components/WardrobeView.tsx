@@ -23,7 +23,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<GarmentCategory | 'favorites'>('all');
   const [selectedSeason, setSelectedSeason] = useState<SeasonTag | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'most-worn' | 'least-worn' | 'price-desc' | 'name'>('most-worn');
+  const [sortBy, setSortBy] = useState<'most-worn' | 'least-worn' | 'recent' | 'name'>('most-worn');
 
   const t = {
     title: language === 'es' ? 'Tu Guardarropa' : 'Your Wardrobe',
@@ -39,7 +39,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
     sortLabel: language === 'es' ? 'Ordenar por:' : 'Sort by:',
     mostWorn: language === 'es' ? 'Más Usados' : 'Most Worn',
     leastWorn: language === 'es' ? 'Menos Usados' : 'Least Worn',
-    priceDesc: language === 'es' ? 'Mayor Inversión' : 'Highest Price',
+    recent: language === 'es' ? 'Usados Recientemente' : 'Recently Worn',
     nameAsc: language === 'es' ? 'Alfabético' : 'Alphabetical',
     seasonAll: language === 'es' ? 'Todas las Temporadas' : 'All Seasons',
     seasonSS: language === 'es' ? 'Primavera / Verano' : 'Spring / Summer',
@@ -94,7 +94,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
     }).sort((a, b) => {
       if (sortBy === 'most-worn') return b.wornCount - a.wornCount;
       if (sortBy === 'least-worn') return a.wornCount - b.wornCount;
-      if (sortBy === 'price-desc') return (b.price || 0) - (a.price || 0);
+      if (sortBy === 'recent') return (b.lastWorn || '').localeCompare(a.lastWorn || '');
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       return 0;
     });
@@ -139,7 +139,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             >
               <option value="most-worn">{t.mostWorn}</option>
               <option value="least-worn">{t.leastWorn}</option>
-              <option value="price-desc">{t.priceDesc}</option>
+              <option value="recent">{t.recent}</option>
               <option value="name">{t.nameAsc}</option>
             </select>
           </div>

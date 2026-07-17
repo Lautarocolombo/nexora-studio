@@ -9,32 +9,32 @@ interface HelpViewProps {
 export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
   const t = {
     title: language === 'es' ? 'Filosofía & Guía de Cuidado Textil' : 'Philosophy & Fabric Care Guide',
-    subtitle: language === 'es' ? 'Aprende sobre el Guardarropa Consciente, cálculo de costo por uso y mantenimiento textil.' : 'Learn about The Mindful Wardrobe, cost per wear calculation, and textile maintenance.',
+    subtitle: language === 'es' ? 'Aprendé a armar conjuntos, calcular uso y cuidar tus prendas.' : 'Learn to build outfits, calculate wear, and care for your garments.',
     philosophyTitle: language === 'es' ? '¿Qué es el Guardarropa Consciente?' : 'What is The Mindful Wardrobe?',
     philosophyP1: language === 'es'
-      ? 'OutfitMatic se aleja de la estética fría y vertiginosa de la moda rápida hacia una experiencia táctil, organizada y funcional. Nos enfocamos en curar menos prendas de mayor calidad que ames y uses durante años.'
-      : 'OutfitMatic moves away from cold, fast-fashion trends toward a tactile, organized, and functional experience. We focus on curating fewer, higher-quality garments that you love and wear for years.',
-    cpwTitle: language === 'es' ? 'El Cálculo de Costo por Uso (Cost Per Wear)' : 'The Cost Per Wear Formula (CPW)',
+      ? 'Nexora Studio se aleja de la moda rápida y vertiginosa hacia una experiencia organizada y funcional. El objetivo es combinar las prendas que ya tenés, registrando sus usos para descubrir tu estilo personal y reducir el descarte.'
+      : 'Nexora Studio moves away from fast, disposable fashion toward an organized, functional experience. The goal is to combine pieces you already own, tracking wears to discover your personal style and reduce waste.',
+    cpwTitle: language === 'es' ? 'El Índice de Uso por Prenda' : 'Wear Index Per Garment',
     cpwDesc: language === 'es'
-      ? 'El costo real de una prenda no es su etiqueta en la tienda, sino su precio dividido entre la cantidad de veces que la vistes. Un abrigo de $450 usado 90 veces cuesta solo $5.00 por uso—una inversión mucho más rentable e inteligente.'
-      : 'The true cost of a garment is not its retail tag, but its price divided by the number of times worn. A $450 coat worn 90 times costs only $5.00 per wear—a much smarter, more sustainable investment.',
-    careTitle: language === 'es' ? 'Guía Sastrería de Mantenimiento por Fibra' : 'Tailor Fabric Maintenance Guide',
+      ? 'Cada vez que te ponés una prenda, sumás un uso. Las piezas más usadas son las verdaderas estrellas de tu armario. Las poco usadas te invitan a probar combinaciones nuevas.'
+      : 'Every time you wear a garment, you log a wear. The most worn pieces are your wardrobe stars. The least worn invite you to try new combinations.',
+    careTitle: language === 'es' ? 'Guía de Cuidado Textil' : 'Fabric Care Guide',
     fabrics: [
       {
         name: language === 'es' ? 'Lino Orgánico (Linen)' : 'Organic Linen',
-        care: language === 'es' ? 'Lavar a mano o ciclo delicado en agua fría. Secar colgado a la sombra para proteger las fibras naturales. No usar secadora.' : 'Hand wash or delicate cycle in cold water. Line dry in shade to protect natural fibers. Never tumble dry.'
+        care: language === 'es' ? 'Lavar a mano o ciclo delicado en agua fría. Secar colgado a la sombra. No usar secadora.' : 'Hand wash or delicate cycle in cold water. Line dry in shade. Never tumble dry.'
       },
       {
         name: language === 'es' ? 'Vaqueros Selvedge (Raw Denim)' : 'Raw & Selvedge Denim',
-        care: language === 'es' ? 'Ventilar tras cada uso. Lavar del revés en agua fría como máximo cada 6 meses o cuando sea indispensable para desarrollar un desgaste personalizado y evitar pérdida celular de índigo.' : 'Air out after wear. Wash inside out in cold bath at most every 6 months to preserve indigo whiskers and custom fades.'
+        care: language === 'es' ? 'Ventilar tras cada uso. Lavar del revés en agua fría como máximo cada 6 meses para preservar el color.' : 'Air out after wear. Wash inside out in cold bath at most every 6 months to preserve color.'
       },
       {
         name: language === 'es' ? 'Lana Merino & Cachemira (Wool/Cashmere)' : 'Merino Wool & Cashmere',
-        care: language === 'es' ? 'Lavar a mano con champú de lana o jabón neutro. Secar siempre extendido en horizontal sobre una toalla para evitar que la prenda pierda su silueta o se estire.' : 'Hand wash with wool wash or mild baby shampoo. Always dry flat on a clean towel to prevent stretching or misshaping.'
+        care: language === 'es' ? 'Lavar a mano con champú de lana. Secar siempre extendido en horizontal sobre una toalla.' : 'Hand wash with wool wash. Always dry flat on a clean towel.'
       },
       {
         name: language === 'es' ? 'Calzado de Cuero (Italian Leather)' : 'Calfskin Leather Footwear',
-        care: language === 'es' ? 'Limpiar el polvo y suciedad con microfibra húmeda o cepillo de crin tras su uso. Hidratar con bálsamo de cuero mensualmente para prevenir grietas y mantener la flexibilidad.' : 'Wipe clean with damp microfiber or horsehair brush after wear. Condition monthly with leather balsam to prevent cracking.'
+        care: language === 'es' ? 'Limpiar con microfibra húmeda tras cada uso. Hidratar con bálsamo de cuero mensualmente.' : 'Wipe clean with damp microfiber after wear. Condition monthly with leather balsam.'
       }
     ]
   };
@@ -60,7 +60,7 @@ export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
             <BookOpen className="w-5 h-5" />
             <span>{t.cpwTitle}</span>
           </h3>
-          <span className="font-mono text-xs font-bold bg-[#1B1814] text-[#C76B3F] px-2.5 py-1 rounded border border-[#2A2622]">CPW = Price / Wears</span>
+          <span className="font-mono text-xs font-bold bg-[#1B1814] text-[#C76B3F] px-2.5 py-1 rounded border border-[#2A2622]">Usos = Estilo</span>
         </div>
         <p className="font-sans text-sm text-[#F7F3EC] leading-relaxed">{t.cpwDesc}</p>
       </section>

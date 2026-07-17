@@ -55,11 +55,8 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
 
   const assembledItems = [selectedTop, selectedBottom, selectedShoes, selectedOuterwear].filter(Boolean) as GarmentItem[];
 
-  const totalPrice = assembledItems.reduce((acc, g) => acc + (g.price || 0), 0);
   const totalWears = assembledItems.reduce((acc, g) => acc + (g.wornCount || 0), 0);
-  const avgCostPerWear = assembledItems.length > 0 && totalPrice > 0
-    ? (totalPrice / Math.max(1, totalWears / assembledItems.length)).toFixed(2)
-    : '0.00';
+  const versatilityScore = assembledItems.length > 0 ? Math.min(100, 60 + assembledItems.length * 10 + Math.floor(totalWears / Math.max(1, assembledItems.length))) : 0;
 
   const calculateHarmony = () => {
     if (assembledItems.length < 2) return 85;
@@ -101,16 +98,16 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
   };
 
   const t = {
-    title: language === 'es' ? 'Atelier & Constructor de Atuendos' : 'Atelier & Outfit Builder',
-    subtitle: language === 'es' ? 'Ensambla piezas en un lienzo consciente. Evalúa la armonía visual y el costo por uso.' : 'Assemble garments on a mindful canvas. Evaluate visual harmony and cost per wear.',
-    canvasTitle: language === 'es' ? 'Lienzo de Atuendo Actual' : 'Current Outfit Canvas',
-    drawerTitle: language === 'es' ? 'Cajón del Guardarropa' : 'Wardrobe Drawer',
+    title: language === 'es' ? 'Constructor de Conjuntos' : 'Outfit Builder',
+    subtitle: language === 'es' ? 'Combiná piezas de tu armario y medí la armonía del conjunto.' : 'Combine pieces from your wardrobe and measure outfit harmony.',
+    canvasTitle: language === 'es' ? 'Conjunto Actual' : 'Current Outfit',
+    drawerTitle: language === 'es' ? 'Tu Armario' : 'Your Wardrobe',
     randomize: language === 'es' ? 'Inspiración Aleatoria' : 'Random Inspire',
-    saveOutfit: language === 'es' ? 'Guardar Atuendo' : 'Save Outfit',
-    harmony: language === 'es' ? 'Armonía Visual' : 'Visual Harmony',
-    totalPrice: language === 'es' ? 'Inversión Total' : 'Total Investment',
-    avgCost: language === 'es' ? 'Costo/Uso Promedio' : 'Avg Cost/Wear',
-    savedTitle: language === 'es' ? 'Atuendos Guardados (' : 'Saved Outfits (',
+    saveOutfit: language === 'es' ? 'Guardar Conjunto' : 'Save Outfit',
+    harmony: language === 'es' ? 'Armonía' : 'Harmony',
+    versatility: language === 'es' ? 'Versatilidad' : 'Versatility',
+    totalPieces: language === 'es' ? 'Piezas Totales' : 'Total Pieces',
+    savedTitle: language === 'es' ? 'Conjuntos Guardados (' : 'Saved Outfits (',
     logWearAll: language === 'es' ? 'Registrar Uso para Todas las Piezas (+1)' : 'Log Wear for All Items (+1)',
     outfitNamePlaceholder: language === 'es' ? 'ej. Brunch Dominical o Reunión Elegante' : 'e.g. Sunday Brunch or Smart Client Meeting',
     occasionPlaceholder: language === 'es' ? 'ej. Trabajo, Casual, Fin de semana' : 'e.g. Work, Casual, Weekend'
@@ -224,12 +221,12 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
 
           <div className="mt-8 pt-4 border-t border-[#2A2622] grid grid-cols-2 gap-4">
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.totalPrice}</span>
-              <span className="font-display text-lg font-bold text-[#F7F3EC]">${totalPrice}</span>
+              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.totalPieces}</span>
+              <span className="font-display text-lg font-bold text-[#F7F3EC]">{assembledItems.length}</span>
             </div>
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.avgCost}</span>
-              <span className="font-display text-lg font-bold text-[#C76B3F]">${avgCostPerWear}</span>
+              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.versatility}</span>
+              <span className="font-display text-lg font-bold text-[#C76B3F]">{versatilityScore}%</span>
             </div>
           </div>
         </section>

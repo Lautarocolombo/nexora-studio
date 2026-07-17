@@ -10,7 +10,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Award, TrendingUp, DollarSign, PieChart as PieIcon, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { Award, TrendingUp, PieChart as PieIcon, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
 import { GarmentItem, Language } from '../types';
 
 interface StatsViewProps {
@@ -27,11 +27,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
   onNavigateToBuilder
 }) => {
   const totalItems = garments.length;
-  const totalValue = garments.reduce((acc, g) => acc + (g.price || 0), 0);
   const totalWears = garments.reduce((acc, g) => acc + g.wornCount, 0);
   const avgWearsPerItem = totalItems > 0 ? Math.round(totalWears / totalItems) : 0;
-  const overallCostPerWear = totalWears > 0 ? (totalValue / totalWears).toFixed(2) : '0.00';
-
   const activeItems = garments.filter(g => g.wornCount >= 10).length;
   const utilizationRate = totalItems > 0 ? Math.round((activeItems / totalItems) * 100) : 0;
 
@@ -50,25 +47,21 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
   const pieColors = ['#C76B3F', '#A89B8C', '#6B6358', '#2A2622', '#455565'];
 
-  const sortedByCostPerWear = [...garments]
-    .filter(g => g.price !== undefined && g.price > 0 && g.wornCount > 0)
-    .sort((a, b) => (a.price! / a.wornCount) - (b.price! / b.wornCount));
-
-  const topWorkhorses = sortedByCostPerWear.slice(0, 4);
+  const topWorn = [...garments].sort((a, b) => b.wornCount - a.wornCount).slice(0, 4);
   const neglectedItems = [...garments].sort((a, b) => a.wornCount - b.wornCount).slice(0, 4);
 
   const t = {
-    title: language === 'es' ? 'Analítica de Guardarropa & Sostenibilidad' : 'Wardrobe Intelligence & Sustainability',
-    subtitle: language === 'es' ? 'Audita tu verdadero costo por uso, tasa de utilización y rotación consciente.' : 'Audit your real cost per wear, utilization rate, and mindful rotation.',
-    overview: language === 'es' ? 'Métricas Clave del Atelier' : 'Atelier Key Metrics',
-    totalValue: language === 'es' ? 'Valor Total Invertido' : 'Total Wardrobe Value',
-    avgCost: language === 'es' ? 'Costo/Uso General' : 'Overall Cost/Wear',
-    totalWears: language === 'es' ? 'Total de Usos Registrados' : 'Total Logged Wears',
-    utilization: language === 'es' ? 'Tasa de Utilización Activa' : 'Active Utilization Rate',
-    workhorsesTitle: language === 'es' ? 'Inversiones Más Rentables (Costo/Uso Más Bajo)' : 'Best Return on Investment (Lowest Cost/Wear)',
-    neglectedTitle: language === 'es' ? 'Prendas Olvidadas (Sugerencias de Rotación)' : 'Sleeping Garments (Rotation Reminders)',
-    chartTitle: language === 'es' ? 'Distribución y Usos por Categoría' : 'Wears & Distribution by Category',
-    equipBtn: language === 'es' ? 'Usar en Próximo Atuendo' : 'Equip in Next Outfit',
+    title: language === 'es' ? 'Estadísticas de Estilo & Uso' : 'Style & Wear Statistics',
+    subtitle: language === 'es' ? 'Medí qué tan seguido usás cada pieza y descubrí combinaciones frecuentes.' : 'Track how often you wear each piece and discover frequent combinations.',
+    overview: language === 'es' ? 'Resumen del Armario' : 'Wardrobe Overview',
+    totalItems: language === 'es' ? 'Piezas Totales' : 'Total Pieces',
+    totalWears: language === 'es' ? 'Usos Totales' : 'Total Wears',
+    avgWears: language === 'es' ? 'Promedio de Usos' : 'Avg Wears/Piece',
+    utilization: language === 'es' ? 'Tasa de Uso Activo' : 'Active Usage Rate',
+    topWornTitle: language === 'es' ? 'Más Usadas' : 'Most Worn',
+    neglectedTitle: language === 'es' ? 'Pocos Usos' : 'Least Worn',
+    chartTitle: language === 'es' ? 'Usos por Categoría' : 'Wears by Category',
+    equipBtn: language === 'es' ? 'Usar en Próximo Conjunto' : 'Use in Next Outfit',
     wears: language === 'es' ? 'usos' : 'wears'
   };
 
@@ -82,20 +75,11 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
           <span className="font-mono text-xs text-[#A89B8C] uppercase block flex items-center gap-1.5">
-            <DollarSign className="w-3.5 h-3.5 text-[#C76B3F]" />
-            {t.totalValue}
-          </span>
-          <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">${totalValue.toLocaleString()}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{totalItems} {language === 'es' ? 'piezas catalogadas' : 'cataloged items'}</span>
-        </div>
-
-        <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
-          <span className="font-mono text-xs text-[#A89B8C] uppercase block flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5 text-[#C76B3F]" />
-            {t.avgCost}
+            {t.totalItems}
           </span>
-          <span className="font-display text-2xl md:text-3xl font-bold text-[#C76B3F] mt-2 block">${overallCostPerWear}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'meta sostenible < $15' : 'sustainability goal < $15'}</span>
+          <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">{totalItems}</span>
+          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'piezas en tu armario' : 'pieces in wardrobe'}</span>
         </div>
 
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
@@ -104,7 +88,16 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {t.totalWears}
           </span>
           <span className="font-display text-2xl md:text-3xl font-bold text-[#C76B3F] mt-2 block">{totalWears}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">~{avgWearsPerItem} {language === 'es' ? 'usos por prenda' : 'wears per item'}</span>
+          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'registros de uso' : 'wear logs'}</span>
+        </div>
+
+        <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
+          <span className="font-mono text-xs text-[#A89B8C] uppercase block flex items-center gap-1.5">
+            <TrendingUp className="w-3.5 h-3.5 text-[#C76B3F]" />
+            {t.avgWears}
+          </span>
+          <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">{avgWearsPerItem}</span>
+          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'por pieza' : 'per piece'}</span>
         </div>
 
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
@@ -112,8 +105,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-[#C76B3F]" />
             {t.utilization}
           </span>
-          <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">{utilizationRate}%</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{activeItems} / {totalItems} {language === 'es' ? 'en rotación activa' : 'active workhorses'}</span>
+          <span className="font-display text-2xl md:text-3xl font-bold text-[#C76B3F] mt-2 block">{utilizationRate}%</span>
+          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{activeItems} / {totalItems} {language === 'es' ? 'en rotación activa' : 'active pieces'}</span>
         </div>
       </section>
 
@@ -138,7 +131,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
         <div className="lg:col-span-5 fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl flex flex-col justify-between">
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-4 flex items-center gap-2">
             <PieIcon className="w-5 h-5 text-[#C76B3F]" />
-            <span>{language === 'es' ? 'Composición del Guardarropa' : 'Wardrobe Composition'}</span>
+            <span>{language === 'es' ? 'Composición del Armario' : 'Wardrobe Composition'}</span>
           </h3>
 
           <div className="h-[220px] w-full flex items-center justify-center">
@@ -167,13 +160,12 @@ export const StatsView: React.FC<StatsViewProps> = ({
         <div className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl">
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-4 flex items-center gap-2">
             <Award className="w-5 h-5 text-[#C76B3F]" />
-            <span>{t.workhorsesTitle}</span>
+            <span>{t.topWornTitle}</span>
           </h3>
 
           <div className="space-y-4">
-            {topWorkhorses.map((g, idx) => {
+            {topWorn.map((g, idx) => {
               const name = language === 'es' && g.nameEs ? g.nameEs : g.name;
-              const cpw = (g.price! / g.wornCount).toFixed(2);
               return (
                 <div key={g.id} className="flex items-center justify-between p-3 bg-[#161210] rounded-lg border border-[#2A2622]">
                   <div className="flex items-center gap-3">
@@ -184,10 +176,10 @@ export const StatsView: React.FC<StatsViewProps> = ({
                       <span className="font-mono text-xs text-[#A89B8C]">{g.wornCount} {t.wears}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-display text-lg font-bold text-[#C76B3F] block">${cpw}</span>
-                    <span className="font-mono text-[10px] text-[#A89B8C]">/ use</span>
-                  </div>
+                  <button onClick={() => { onSelectForBuilder(g); onNavigateToBuilder(); }} className="px-3 py-1.5 bg-[#C76B3F] hover:bg-[#A85A32] text-white font-mono text-xs font-semibold rounded shadow-sm flex items-center gap-1 transition-transform active:scale-95">
+                    <RefreshCw className="w-3 h-3" />
+                    <span>{t.equipBtn}</span>
+                  </button>
                 </div>
               );
             })}
@@ -209,7 +201,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                     <img src={g.imageUrl} alt={name} className="w-11 h-12 rounded object-cover border border-[#2A2622]" />
                     <div>
                       <h4 className="font-sans text-sm font-semibold text-[#F7F3EC]">{name}</h4>
-                      <span className="font-mono text-xs text-[#C76B3F] font-medium">{g.wornCount} {t.wears}</span>
+                      <span className="font-mono text-xs text-[#A89B8C] font-medium">{g.wornCount} {t.wears}</span>
                     </div>
                   </div>
                   <button onClick={() => { onSelectForBuilder(g); onNavigateToBuilder(); }} className="px-3 py-1.5 bg-[#C76B3F] hover:bg-[#A85A32] text-white font-mono text-xs font-semibold rounded shadow-sm flex items-center gap-1 transition-transform active:scale-95">
