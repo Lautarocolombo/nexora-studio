@@ -93,20 +93,20 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#1b1c1b]/40 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
       <div 
-        className="fabric-grain bg-[#ffffff] w-full max-w-2xl rounded-xl border border-[#c4c6cc] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        className="fabric-grain bg-[#1B1814] w-full max-w-2xl rounded-2xl border border-[#2A2622] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 bg-[#fbf9f7] border-b border-[#c4c6cc] flex justify-between items-center">
+        <div className="p-6 bg-[#161210] border-b border-[#2A2622] flex justify-between items-center">
           <div>
-            <h2 className="font-serif text-xl font-bold text-[#1b1c1b]">{t.title}</h2>
-            <p className="font-sans text-xs text-[#43474c] mt-0.5">{t.subtitle}</p>
+            <h2 className="font-display text-2xl font-bold text-[#F7F3EC]">{t.title}</h2>
+            <p className="font-sans text-xs text-[#A89B8C] mt-0.5">{t.subtitle}</p>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 text-[#43474c] hover:text-[#1b1c1b] rounded-lg hover:bg-[#efedec] transition-colors"
+            className="p-1.5 text-[#A89B8C] hover:text-[#F7F3EC] rounded-lg hover:bg-[#1B1814] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -117,25 +117,25 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.name} *</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.name} *</label>
               <input 
                 type="text" 
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. White Linen Shirt"
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
             {/* Name Es */}
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.nameEs}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.nameEs}</label>
               <input 
                 type="text" 
                 value={nameEs}
                 onChange={(e) => setNameEs(e.target.value)}
                 placeholder="ej. Camisa de Lino Blanco"
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
           </div>
@@ -143,11 +143,11 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
           {/* Category & Season */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.category}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.category}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as any)}
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none capitalize"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none capitalize"
               >
                 <option value="tops">Tops [TOP]</option>
                 <option value="bottoms">Bottoms [BOTTOM]</option>
@@ -160,11 +160,11 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
             </div>
 
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.season}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.season}</label>
               <select
                 value={season}
                 onChange={(e) => setSeason(e.target.value as any)}
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               >
                 <option value="all-year">{language === 'es' ? 'Todo el año' : 'All Year'}</option>
                 <option value="spring-summer">{language === 'es' ? 'Primavera / Verano' : 'Spring / Summer'}</option>
@@ -175,18 +175,18 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
 
           {/* Image Selection */}
           <div>
-            <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.image}</label>
+            <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.image}</label>
             <input 
               type="url" 
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none text-xs font-mono mb-2"
+              className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none text-xs font-mono mb-2"
             />
             
             {/* Quick Sample Swatches */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <span className="font-mono text-[10px] text-[#74777c] whitespace-nowrap">Presets:</span>
+              <span className="font-mono text-[10px] text-[#6B6358] whitespace-nowrap">Presets:</span>
               {SAMPLE_IMAGES.map((sample, idx) => (
                 <button
                   key={idx}
@@ -194,8 +194,8 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
                   onClick={() => setImageUrl(sample.url)}
                   className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs border whitespace-nowrap transition-all ${
                     imageUrl === sample.url 
-                      ? 'bg-[#455565] text-white border-[#455565]' 
-                      : 'bg-[#edf2f7] text-[#43474c] border-[#c4c6cc] hover:bg-[#efedec]'
+                      ? 'bg-[#C76B3F] text-white border-[#C76B3F]' 
+                      : 'bg-[#1B1814] text-[#A89B8C] border-[#2A2622] hover:bg-[#161210]'
                   }`}
                 >
                   <ImageIcon className="w-3 h-3" />
@@ -208,34 +208,34 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
           {/* Price, Wears, Brand */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.price}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.price}</label>
               <input 
                 type="number" 
                 min="0"
                 step="any"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.wears}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.wears}</label>
               <input 
                 type="number" 
                 min="0"
                 value={wornCount}
                 onChange={(e) => setWornCount(e.target.value)}
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.brand}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.brand}</label>
               <input 
                 type="text" 
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 placeholder="Atelier Artisan"
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
           </div>
@@ -243,47 +243,47 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
           {/* Material & Color Swatch */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div className="md:col-span-3">
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.material}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.material}</label>
               <input 
                 type="text" 
                 value={material}
                 onChange={(e) => setMaterial(e.target.value)}
                 placeholder="100% Organic Linen / 14.5oz Japanese Selvedge"
-                className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">Color Swatch</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">Color Swatch</label>
               <div className="flex items-center gap-2">
                 <input 
                   type="color" 
                   value={colorSwatch}
                   onChange={(e) => setColorSwatch(e.target.value)}
-                  className="w-10 h-9 rounded border border-[#c4c6cc] cursor-pointer bg-transparent"
+                  className="w-10 h-9 rounded border border-[#2A2622] cursor-pointer bg-transparent"
                 />
-                <span className="font-mono text-xs text-[#43474c]">{colorSwatch}</span>
+                <span className="font-mono text-xs text-[#A89B8C]">{colorSwatch}</span>
               </div>
             </div>
           </div>
 
           {/* Notes */}
           <div>
-            <label className="block font-mono text-xs text-[#43474c] uppercase mb-1 font-medium">{t.notes}</label>
+            <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.notes}</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Fit details, matching recommendations, maintenance notes..."
               rows={2}
-              className="w-full bg-[#fbf9f7] border border-[#c4c6cc] focus:border-[#d4ac0d] rounded px-3 py-2 text-[#1b1c1b] focus:outline-none"
+              className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
             />
           </div>
 
           {/* Submit buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-[#c4c6cc]">
+          <div className="flex justify-end gap-3 pt-4 border-t border-[#2A2622]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-[#c4c6cc] rounded-lg font-mono text-xs font-semibold text-[#43474c] hover:bg-[#efedec] transition-colors"
+              className="px-4 py-2 border border-[#2A2622] rounded-lg font-mono text-xs font-semibold text-[#A89B8C] hover:bg-[#1B1814] transition-colors"
             >
               {t.cancel}
             </button>

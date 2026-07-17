@@ -269,7 +269,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#fbf9f7] text-[#1b1c1b] font-sans selection:bg-[#455565] selection:text-white">
+    <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
       {/* Navigation Bars */}
       <Navbar
         activeTab={activeTab}
@@ -282,7 +282,7 @@ export default function App() {
         setLanguage={setLanguage}
       />
 
-      {/* Main Content Area - matching screenshot margin and padding */}
+      {/* Main Content Area */}
       <main className="flex-1 ml-0 md:ml-64 pt-16 pb-20 md:pt-0 md:pb-0 min-h-screen transition-all">
         <div className="max-w-7xl mx-auto px-4 md:px-10 py-8 md:py-12 animate-fadeIn">
           {activeTab === 'wardrobe' && (

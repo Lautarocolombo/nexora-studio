@@ -28,24 +28,24 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
   const t = {
     title: language === 'es' ? 'Tu Guardarropa' : 'Your Wardrobe',
     searchPlaceholder: language === 'es' ? 'Buscar en el guardarropa...' : 'Search wardrobe...',
-    all: language === 'es' ? 'All' : 'All', // Kept All as screenshot has All even with Spanish title
+    all: language === 'es' ? 'Todas' : 'All',
     tops: 'Tops',
     bottoms: 'Bottoms',
     shoes: 'Shoes',
     outerwear: 'Outerwear',
-    accessories: language === 'es' ? 'Accessories' : 'Accessories',
-    favorites: language === 'es' ? 'Favorites' : 'Favorites',
+    accessories: 'Accesorios',
+    favorites: language === 'es' ? 'Favoritas' : 'Favorites',
     itemsCount: language === 'es' ? 'prendas en catálogo' : 'items cataloged',
     sortLabel: language === 'es' ? 'Ordenar por:' : 'Sort by:',
     mostWorn: language === 'es' ? 'Más Usados' : 'Most Worn',
-    leastWorn: language === 'es' ? 'Menos Usados (Poco amor)' : 'Least Worn (Need love)',
-    priceDesc: language === 'es' ? 'Mayor Inversión ($)' : 'Highest Price ($)',
+    leastWorn: language === 'es' ? 'Menos Usados' : 'Least Worn',
+    priceDesc: language === 'es' ? 'Mayor Inversión' : 'Highest Price',
     nameAsc: language === 'es' ? 'Alfabético' : 'Alphabetical',
     seasonAll: language === 'es' ? 'Todas las Temporadas' : 'All Seasons',
     seasonSS: language === 'es' ? 'Primavera / Verano' : 'Spring / Summer',
     seasonAW: language === 'es' ? 'Otoño / Invierno' : 'Autumn / Winter',
     emptyTitle: language === 'es' ? 'No se encontraron prendas' : 'No garments found',
-    emptyDesc: language === 'es' ? 'Intenta cambiar tus filtros de búsqueda o categoría.' : 'Try adjusting your search query or category filters.',
+    emptyDesc: language === 'es' ? 'Probá cambiar los filtros o la búsqueda.' : 'Try adjusting your filters or search.',
     addNew: language === 'es' ? 'Añadir Prenda' : 'Add Garment'
   };
 
@@ -61,7 +61,6 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
   const filteredGarments = useMemo(() => {
     return garments.filter(item => {
-      // Category filter
       if (selectedCategory === 'favorites') {
         if (!item.favorite) return false;
       } else if (selectedCategory !== 'all') {
@@ -74,12 +73,10 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         }
       }
 
-      // Season filter
       if (selectedSeason !== 'all') {
         if (item.season !== selectedSeason && item.season !== 'all-year') return false;
       }
 
-      // Search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchName = item.name.toLowerCase().includes(query);
@@ -105,43 +102,40 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
 
   return (
     <div className="space-y-8">
-      {/* Page Header & Search - Matching screenshot exactly */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-3">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#1b1c1b]">{t.title}</h2>
-          <span className="font-mono text-xs text-[#43474c] bg-[#edf2f7] px-2.5 py-1 rounded border border-[#c4c6cc]">
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-[#F7F3EC] tracking-tight">{t.title}</h2>
+          <span className="font-mono text-xs text-[#A89B8C] bg-[#1B1814] px-2.5 py-1 rounded border border-[#2A2622]">
             {filteredGarments.length} {t.itemsCount}
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-          {/* Search Bar matching screenshot */}
           <div className="relative w-full md:w-auto min-w-[280px]">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#74777c]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A89B8C]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-2 bg-[#fbf9f7] border border-[#c4c6cc] rounded focus:border-[#455565] focus:outline-none font-sans text-sm text-[#1b1c1b] transition-colors placeholder:text-[#74777c]"
+              className="w-full pl-10 pr-4 py-2 bg-[#1B1814] border border-[#2A2622] rounded-lg focus:border-[#C76B3F] focus:outline-none font-sans text-sm text-[#F7F3EC] transition-colors placeholder:text-[#A89B8C]"
             />
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-[#74777c] hover:text-[#1b1c1b]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-[#A89B8C] hover:text-[#F7F3EC]"
               >
                 ✕
               </button>
             )}
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="flex items-center gap-2 bg-[#ffffff] px-3 py-1.5 rounded border border-[#c4c6cc] shadow-sm">
-            <ArrowUpDown className="w-3.5 h-3.5 text-[#455565]" />
+          <div className="flex items-center gap-2 bg-[#1B1814] px-3 py-1.5 rounded-lg border border-[#2A2622]">
+            <ArrowUpDown className="w-3.5 h-3.5 text-[#C76B3F]" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-transparent font-mono text-xs text-[#1b1c1b] focus:outline-none cursor-pointer pr-1"
+              className="bg-transparent font-mono text-xs text-[#F7F3EC] focus:outline-none cursor-pointer pr-1"
             >
               <option value="most-worn">{t.mostWorn}</option>
               <option value="least-worn">{t.leastWorn}</option>
@@ -152,7 +146,6 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         </div>
       </header>
 
-      {/* Filters Pills & Season selector - matching screenshot All, Tops, Bottoms, Shoes, Outerwear */}
       <section className="flex flex-wrap items-center justify-between gap-4 pb-2">
         <div className="flex flex-wrap gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
           {categories.map((cat) => {
@@ -161,26 +154,25 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-1.5 font-mono text-xs rounded transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-4 py-1.5 font-mono text-xs rounded-full transition-colors whitespace-nowrap flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-[#735c00] text-white border border-[#735c00] font-semibold shadow-sm'
-                    : 'bg-[#edf2f7] text-[#455565] border border-[#c4c6cc] hover:bg-[#efedec]'
+                    ? 'bg-[#C76B3F] text-[#0B0A08] border border-[#C76B3F] font-semibold shadow-sm'
+                    : 'bg-[#1B1814] text-[#A89B8C] border border-[#2A2622] hover:bg-[#161210] hover:text-[#F7F3EC]'
                 }`}
               >
-                {cat.id === 'favorites' && <Heart className={`w-3 h-3 ${isActive ? 'fill-white' : ''}`} />}
+                {cat.id === 'favorites' && <Heart className={`w-3 h-3 ${isActive ? 'fill-[#0B0A08]' : ''}`} />}
                 <span>{cat.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Season Filter Dropdown */}
-        <div className="flex items-center gap-2 text-xs font-mono text-[#43474c]">
-          <Filter className="w-3.5 h-3.5 text-[#455565]" />
+        <div className="flex items-center gap-2 text-xs font-mono text-[#A89B8C]">
+          <Filter className="w-3.5 h-3.5 text-[#C76B3F]" />
           <select
             value={selectedSeason}
             onChange={(e) => setSelectedSeason(e.target.value as any)}
-            className="bg-[#edf2f7] border border-[#c4c6cc] rounded px-2.5 py-1 text-[#455565] focus:outline-none cursor-pointer"
+            className="bg-[#1B1814] border border-[#2A2622] rounded px-2.5 py-1 text-[#F7F3EC] focus:outline-none cursor-pointer"
           >
             <option value="all">{t.seasonAll}</option>
             <option value="spring-summer">{t.seasonSS}</option>
@@ -189,7 +181,6 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
         </div>
       </section>
 
-      {/* Garment Grid - 2 cols on mobile, 3 on md, 4 on lg */}
       {filteredGarments.length > 0 ? (
         <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredGarments.map((item) => (
@@ -204,15 +195,15 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
           ))}
         </section>
       ) : (
-        <section className="fabric-grain bg-[#ffffff] border border-[#c4c6cc] rounded-xl p-12 text-center shadow-fabric my-8 max-w-lg mx-auto">
-          <div className="w-12 h-12 bg-[#edf2f7] rounded-full flex items-center justify-center mx-auto mb-4 text-[#455565]">
+        <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-2xl p-12 text-center shadow-fabric my-8 max-w-lg mx-auto">
+          <div className="w-12 h-12 bg-[#161210] rounded-full flex items-center justify-center mx-auto mb-4 text-[#C76B3F]">
             <Search className="w-6 h-6" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-[#1b1c1b] mb-1">{t.emptyTitle}</h3>
-          <p className="font-sans text-sm text-[#43474c] mb-6">{t.emptyDesc}</p>
+          <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-1">{t.emptyTitle}</h3>
+          <p className="font-sans text-sm text-[#A89B8C] mb-6">{t.emptyDesc}</p>
           <button
             onClick={onOpenAddModal}
-            className="px-5 py-2.5 bg-[#455565] hover:bg-[#394858] text-white rounded-lg font-sans text-sm font-semibold shadow-md inline-flex items-center gap-2 transition-all"
+            className="px-5 py-2.5 bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] rounded-lg font-sans text-sm font-semibold shadow-md inline-flex items-center gap-2 transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>{t.addNew}</span>

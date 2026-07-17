@@ -1,279 +1,117 @@
 import { GarmentItem, SavedOutfit, WearLogEntry } from '../types';
 
-export const INITIAL_GARMENTS: GarmentItem[] = [
-  {
-    id: 'g-1',
-    name: 'White Linen Shirt',
-    nameEs: 'Camisa de Lino Blanco',
-    category: 'tops',
-    categoryTag: '[TOP]',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDsp_1F8GHHHy5m78ZckzHctEWYXq6L6P2SIagy5rzWs92emoTYYrGAe54Wp0RQI1qqzwakovTiY00oqd1tCsRIYwYY3D9TVrPDgsu8A8VPqfvXE7aDWHdZ52qceayOUWjQ6ked2UmORcgTPvavBvSK1Q1mDCM6c96tl0d-AR6P9j-z1CUojIcPxVL7igYK2-cnu4V5bNPpk5t4GPf2md1I2NtZrpCDJSpiHhJq48edVtc_LvhnAmqW-Q',
-    wornCount: 12,
-    lastWorn: '2026-07-01',
-    price: 120,
-    material: '100% Organic Belgian Linen / Lino Orgánico',
-    careInstructions: 'Hand wash cold, line dry in shade, warm iron while damp.',
-    careInstructionsEs: 'Lavar a mano en frío, secar a la sombra, planchar tibio húmedo.',
-    brand: 'Atelier Artisan',
-    season: 'spring-summer',
-    notes: 'A breathable staple that softens beautifully with every wash.',
-    notesEs: 'Un básico transpirable que se suaviza maravillosamente con cada lavado.',
-    colorSwatch: '#FDFCFA',
-    favorite: true
-  },
-  {
-    id: 'g-2',
-    name: 'Raw Denim Jeans',
-    nameEs: 'Vaqueros Raw Denim',
-    category: 'bottoms',
-    categoryTag: '[BOTTOM]',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAviC3vsn593NJFFi0xf09FmNisB5y0vO720fp-na5bfi2JoysSHCSyRguBzEiaMLo0-0Fr3tfDqKnO5Gwc4cIJJocy1621D1HDlQfXkN9LeOx5xiwRCKn85pSLzi7yC30tcb9B1VJdKcZAuKOcEdn7zgSmdCQb6MZ4BZYMqsXceb9Bx_I5A4hDyMu0kOmgdpuqaWwOg4JZ6SR8NvfgbXOLY-Yc7k97Ew78VCq-7zH1cgimBdW7g0rOSA',
-    wornCount: 45,
-    lastWorn: '2026-07-02',
-    price: 180,
-    material: '14.5oz Japanese Selvedge Cotton',
-    careInstructions: 'Wash inside out inside a cold bath every 6 months or air dry.',
-    careInstructionsEs: 'Lavar del revés en agua fría cada 6 meses o ventilar al aire libre.',
-    brand: 'Kurabo Mills',
-    season: 'all-year',
-    notes: 'Developing custom honeycombs and whiskers around the knees.',
-    notesEs: 'Desarrollando hermosos desgastes personalizados en rodillas y bolsillos.',
-    colorSwatch: '#1E293B',
-    favorite: true
-  },
-  {
-    id: 'g-3',
-    name: 'Classic Sneakers',
-    nameEs: 'Zapatillas Clásicas de Cuero',
-    category: 'shoes',
-    categoryTag: '[SHOES]',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCT6maya_VFtfLC2ssuNebuNLgsVNpw8ft6LhznW79nVY5bDDtJtjvKK2X6RwggS3f7icaMReqkfyDSvny34Mg-B-tKicWYEXXHJS3il7xGL6QHVV_JPnei9EktXr3-TvVywAesb23GdlGbqUZLPlrZ65RHbFiejg22O2vJVlDpFNwdZ7snAGbsJ-eDEjWLjnaAgtNkYD0-iKgPQokTwSapRiRv3bENwBfUZkiY90dD6gucuhVgiE3_dw',
-    wornCount: 28,
-    lastWorn: '2026-07-01',
-    price: 160,
-    material: 'Full-grain Italian Calf Skin Leather',
-    careInstructions: 'Wipe clean with damp microfiber, condition leather monthly.',
-    careInstructionsEs: 'Limpiar con microfibra húmeda, aplicar bálsamo de cuero mensualmente.',
-    brand: 'Margom Sole Lab',
-    season: 'all-year',
-    notes: 'Versatile silhouette that anchors casual and semi-formal outfits.',
-    notesEs: 'Silueta versátil que equilibra atuendos informales y semi-formales.',
-    colorSwatch: '#FFFFFF',
-    favorite: true
-  },
-  {
-    id: 'g-4',
-    name: 'Camel Wool Coat',
-    nameEs: 'Abrigo de Lana Camel',
-    category: 'outerwear',
-    categoryTag: '[OUTERWEAR]',
-    imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp7tr4094sDTkkuD4fPUH7GTAlM9RpmcgM1mhkzciechZje7NdlTya2wCSvpjrEyZCoF-40dA3eIlQoAzRqeMSOXyN1GDTSCB2Ri34HoDd_NZ5ROfJTlWvsctbVpUXG_nq7SfmXnk-aLiaepGY1R1V6G0al9AsD2BUL1EvOzyWHg762YmatG3NbSJMz3YPr-43X6e1OIqf8Ts69qx0Zlh2HdVeMPEPVWUoDIVm36gFu1pPbV4PcISPQg',
-    wornCount: 5,
-    lastWorn: '2026-02-14',
-    price: 450,
-    material: '90% Virgin Wool / 10% Cashmere',
-    careInstructions: 'Dry clean only, brush gently with natural bristle brush after wear.',
-    careInstructionsEs: 'Solo limpieza en seco, cepillar suavemente tras su uso.',
-    brand: 'Sartorial London',
-    season: 'autumn-winter',
-    notes: 'Timeless tailored investment piece with horn buttons.',
-    notesEs: 'Una inversión de sastrería atemporal con botones de cuerno natural.',
-    colorSwatch: '#C19A6B',
-    favorite: true
-  },
-  {
-    id: 'g-5',
-    name: 'Merino Wool Turtleneck',
-    nameEs: 'Jersey Cuello Cisne Merino',
-    category: 'tops',
-    categoryTag: '[TOP]',
-    imageUrl: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 18,
-    lastWorn: '2026-03-20',
-    price: 135,
-    material: '100% Extra-Fine Australian Merino Wool',
-    careInstructions: 'Hand wash cold with wool detergent, dry flat on towel.',
-    careInstructionsEs: 'Lavar a mano en frío con jabón para lana, secar en plano.',
-    brand: 'Nordic Knitwear',
-    season: 'autumn-winter',
-    notes: 'Ultra-soft layer that retains warmth without bulk.',
-    notesEs: 'Capa ultrasuave que retiene el calor sin añadir volumen.',
-    colorSwatch: '#334155',
-    favorite: false
-  },
-  {
-    id: 'g-6',
-    name: 'Pleated Chino Trousers',
-    nameEs: 'Pantalones Chinos con Pinzas',
-    category: 'bottoms',
-    categoryTag: '[BOTTOM]',
-    imageUrl: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 22,
-    lastWorn: '2026-06-25',
-    price: 140,
-    material: '98% Cotton / 2% Elastane Twill',
-    careInstructions: 'Machine wash 30°C delicate, hang dry.',
-    careInstructionsEs: 'Lavar a máquina 30°C ciclo delicado, colgar para secar.',
-    brand: 'Milano Tailors',
-    season: 'all-year',
-    notes: 'Relaxed taper with double pleats for easy movement.',
-    notesEs: 'Corte relajado con doble pinza para máxima libertad de movimiento.',
-    colorSwatch: '#94A3B8',
-    favorite: false
-  },
-  {
-    id: 'g-7',
-    name: 'Chelsea Leather Boots',
-    nameEs: 'Botines Chelsea de Cuero',
-    category: 'shoes',
-    categoryTag: '[SHOES]',
-    imageUrl: 'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 34,
-    lastWorn: '2026-04-10',
-    price: 280,
-    material: 'Weather-resistant Waxed Calfskin / Goodyear Welt',
-    careInstructions: 'Brush dirt off after use, apply waterproof wax before winter.',
-    careInstructionsEs: 'Cepillar tras su uso, aplicar cera impermeable antes del invierno.',
-    brand: 'English Cobbler',
-    season: 'autumn-winter',
-    notes: 'Built to last decades with resolable Goodyear construction.',
-    notesEs: 'Hechas para durar décadas gracias a su suela reemplazable Goodyear.',
-    colorSwatch: '#3E2723',
-    favorite: true
-  },
-  {
-    id: 'g-8',
-    name: 'Oxford Button-Down Shirt',
-    nameEs: 'Camisa Oxford Celeste',
-    category: 'tops',
-    categoryTag: '[TOP]',
-    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 31,
-    lastWorn: '2026-06-28',
-    price: 110,
-    material: 'Heavyweight Cotton Oxford Cloth',
-    careInstructions: 'Machine wash warm, hang or tumble dry low.',
-    careInstructionsEs: 'Lavar a máquina en agua tibia, secar colgado o secadora suave.',
-    brand: 'Ivy League Heritage',
-    season: 'all-year',
-    notes: 'The quintessential smart-casual workhorse.',
-    notesEs: 'El básico por excelencia del estilo elegante-casual.',
-    colorSwatch: '#E0F2FE',
-    favorite: true
-  },
-  {
-    id: 'g-9',
-    name: 'Cashmere Knit Scarf',
-    nameEs: 'Bufanda de Cachemira',
-    category: 'accessories',
-    categoryTag: '[ACCESSORY]',
-    imageUrl: 'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 14,
-    lastWorn: '2026-02-20',
-    price: 150,
-    material: '100% Mongolian Cashmere',
-    careInstructions: 'Hand wash cold with baby shampoo, dry flat.',
-    careInstructionsEs: 'Lavar a mano en frío con champú suave, secar en plano.',
-    brand: 'Highland Weavers',
-    season: 'autumn-winter',
-    notes: 'Cloud-like texture providing instant winter insulation.',
-    notesEs: 'Textura suave como nube que brinda un aislamiento térmico inmediato.',
-    colorSwatch: '#CBD5E1',
-    favorite: false
-  },
-  {
-    id: 'g-10',
-    name: 'Tailored Linen Blazer',
-    nameEs: 'Blazer de Lino Sastrería',
-    category: 'outerwear',
-    categoryTag: '[OUTERWEAR]',
-    imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=1000&auto=format&fit=crop',
-    wornCount: 8,
-    lastWorn: '2026-06-15',
-    price: 320,
-    material: '55% Linen / 45% Silk Blend',
-    careInstructions: 'Dry clean recommended or steam refresh.',
-    careInstructionsEs: 'Limpiar en seco o refrescar con vapor de mano.',
-    brand: 'Atelier Artisan',
-    season: 'spring-summer',
-    notes: 'Unconstructed shoulders for a breezy, sophisticated drape.',
-    notesEs: 'Hombros desestructurados para una caída ligera y sofisticada.',
-    colorSwatch: '#F1F5F9',
-    favorite: false
-  }
+const img = (id: string) => `/garments/${id}.jpg`;
+
+const NAMES_TOPS = ['Camisa de Lino', 'Remera de Algodón', 'Polera Cuello Alto', 'Blusa de Seda', 'Camisa Oxford', 'Top Estructurado', 'Camisa Fluid', 'Muscle Tee'];
+const NAMES_BOTTOMS = ['Vaqueros Selvedge', 'Pantalón de Lana', 'Chino Tapered', 'Jogger Técnico', 'Pantalón Ancho', 'Jeans Negros', 'Bermuda Lino', 'Falda Lápiz'];
+const NAMES_SHOES = ['Zapatilla Minimal', 'Botín de Cuero', 'Mocasín Clásico', 'Zapato Derby', 'Sandalia Cuña', 'Sneaker Retro', 'Boot Trabajo', 'Loafer Negro'];
+const NAMES_OUTER = ['Blazer Estructurado', 'Trench Beige', 'Campera Cuero', 'Cardigan Lana', 'Chaleco Lana', 'Sobretodo Gris', 'Jean Jacket', 'Parka Verde'];
+const NAMES_ACC = ['Bufanda Cashmere', 'Cinturón Cuero', 'Gorro Lana', 'Anteojos Sol', 'Bolso Tote', 'Pañuelo Seda', 'Reloj Acero', 'Guantes Piel'];
+
+type Spec = { cat: GarmentItem['category']; tag: string; list: string[] };
+
+const SPECS: Spec[] = [
+  { cat: 'tops', tag: '[TOP]', list: NAMES_TOPS },
+  { cat: 'bottoms', tag: '[BOTTOM]', list: NAMES_BOTTOMS },
+  { cat: 'shoes', tag: '[SHOES]', list: NAMES_SHOES },
+  { cat: 'outerwear', tag: '[OUTERWEAR]', list: NAMES_OUTER },
+  { cat: 'accessories', tag: '[ACCESSORY]', list: NAMES_ACC },
 ];
 
-export const INITIAL_OUTFITS: SavedOutfit[] = [
+const SEASONS: GarmentItem['season'][] = ['all-year', 'spring-summer', 'autumn-winter'];
+const SWATCHES = ['#C76B3F', '#1C1A17', '#3D4F3B', '#F7F3EC', '#b36138', '#2b2b2b', '#6b5b4f', '#a89b8c'];
+const BRANDS = ['Atelier Norte', 'Loom & Co', 'Casa Lina', 'Taller Sur', 'Maison Oeste', 'Estudio Lino'];
+
+const files = [
+  '04429f40-0b66-42a3-a2ec-673770eb545b', '06c91424-2724-4736-928b-520e5efcca05',
+  '08cf9a82-6d42-4444-8445-cdffa9d3c2de', '0dfb4d96-d967-4ed5-ba7a-c119f6ef04e7',
+  '1977d375-b1b1-429f-99eb-7d7a2f3b67d9', '359fd4b4-7e43-4104-ae97-afacd2405fda',
+  '3bbd807e-e4c0-49df-b133-be5a073a2727', '49b9a7dd-88b1-4c2c-ad61-524411191806',
+  '55023528-b388-4f01-b88d-3965a47618d6', '56b87c5d-3ae6-49dc-a719-33adbd664e68',
+  '57ee7f79-34c7-4680-baa3-3ee3eeb18878', '711d3443-ae9a-4eda-ace4-36b2480fb0b9',
+  '7238f4b2-561a-4937-af11-d32e83c3a623', '80452279-e6f6-4509-984d-48fcdec9ee67',
+  '89abf0f6-6274-40ed-9550-1745f3bf04ee', '9bc6f1d2-9859-4b50-b318-a526978cc197',
+  'a14bd567-da64-4261-a388-78b803b7bc13', 'a4efeadb-fac0-417c-8fc8-8c6efa519185',
+  'b0761f5c-50ab-4a7c-b96f-a8b5f6155e40', 'b63dc38f-96a7-4fd5-9a23-f20d516a4706',
+  'c470e8c5-9bda-4ab0-8f9d-5cf64c249dea', 'd02dafaf-ec62-4c78-aba9-3285e5660bed',
+  'd8ba1489-f798-49f3-ac04-bb8308344855', 'de141be7-0356-403f-ac29-13851712eb28',
+  'e9b716d1-79b2-47c2-9496-82636c8348b1', 'efaf2d3e-9d47-4b17-b4eb-f6675e401596',
+  'f35d4a46-53c4-481c-8cbb-4ab8144e1e71',
+];
+
+const INITIAL_GARMENTS: GarmentItem[] = files.map((id, i) => {
+  const spec = SPECS[i % SPECS.length];
+  const name = spec.list[Math.floor(i / SPECS.length)] || `${spec.tag.replace(/[\[\]]/g, '')} ${i + 1}`;
+  const season = SEASONS[i % SEASONS.length];
+  return {
+    id: `g-${i + 1}`,
+    name,
+    nameEs: name,
+    category: spec.cat,
+    categoryTag: spec.tag,
+    imageUrl: img(id),
+    wornCount: Math.floor(Math.random() * 40) + 2,
+    lastWorn: `2026-0${1 + (i % 6)}-${10 + (i % 18)}`,
+    price: 80 + ((i * 37) % 420),
+    material: 'Mezcla premium / Composición seleccionada',
+    careInstructions: 'Seguir etiqueta del fabricante. Lavar en frío.',
+    careInstructionsEs: 'Seguir etiqueta del fabricante. Lavar en frío.',
+    brand: BRANDS[i % BRANDS.length],
+    season,
+    notes: 'Pieza de la colección editorial Nexora.',
+    notesEs: 'Pieza de la colección editorial Nexora.',
+    colorSwatch: SWATCHES[i % SWATCHES.length],
+    favorite: i % 4 === 0,
+  };
+});
+
+const byCat = (cat: GarmentItem['category']) => INITIAL_GARMENTS.filter((g) => g.category === cat);
+
+const INITIAL_OUTFITS: SavedOutfit[] = [
   {
     id: 'o-1',
-    name: 'The Mindful Sunday Brunch',
-    nameEs: 'Brunch Dominical Consciente',
-    items: [INITIAL_GARMENTS[0], INITIAL_GARMENTS[1], INITIAL_GARMENTS[2]], // White Linen Shirt, Raw Denim Jeans, Classic Sneakers
-    occasion: 'Weekend Casual / Brunch',
-    occasionEs: 'Fin de Semana / Informal',
-    wornCount: 8,
-    lastWorn: '2026-07-01',
+    name: 'Editorial Diario',
+    nameEs: 'Editorial Diario',
+    items: [byCat('tops')[0], byCat('bottoms')[0], byCat('shoes')[0]],
+    occasion: 'Everyday / Street',
+    occasionEs: 'Día a día',
+    wornCount: 9,
+    lastWorn: '2026-07-02',
     createdAt: '2026-05-10',
-    harmonyScore: 98
+    harmonyScore: 96
   },
   {
     id: 'o-2',
-    name: 'Autumn City Commute',
-    nameEs: 'Trayecto Urbano de Otoño',
-    items: [INITIAL_GARMENTS[4], INITIAL_GARMENTS[1], INITIAL_GARMENTS[6], INITIAL_GARMENTS[3]], // Turtleneck, Denim, Chelsea Boots, Camel Coat
-    occasion: 'Smart Casual / Work',
-    occasionEs: 'Elegante Casual / Trabajo',
-    wornCount: 5,
-    lastWorn: '2026-02-14',
-    createdAt: '2026-01-15',
-    harmonyScore: 95
+    name: 'Ciudad Otoñal',
+    nameEs: 'Ciudad Otoñal',
+    items: [byCat('tops')[1], byCat('bottoms')[1], byCat('shoes')[1], byCat('outerwear')[0]],
+    occasion: 'Smart Casual',
+    occasionEs: 'Casual Elegante',
+    wornCount: 6,
+    lastWorn: '2026-06-20',
+    createdAt: '2026-03-15',
+    harmonyScore: 92
   },
   {
     id: 'o-3',
-    name: 'Breezy Summer Client Meeting',
-    nameEs: 'Reunión de Clientes en Verano',
-    items: [INITIAL_GARMENTS[7], INITIAL_GARMENTS[5], INITIAL_GARMENTS[2], INITIAL_GARMENTS[9]], // Oxford Shirt, Chinos, Sneakers, Linen Blazer
-    occasion: 'Business Casual',
-    occasionEs: 'Negocios Casual',
-    wornCount: 6,
+    name: 'Look Completo',
+    nameEs: 'Look Completo',
+    items: [byCat('tops')[2], byCat('bottoms')[2], byCat('shoes')[2], byCat('accessories')[0]],
+    occasion: 'Editorial',
+    occasionEs: 'Editorial',
+    wornCount: 7,
     lastWorn: '2026-06-25',
     createdAt: '2026-04-02',
-    harmonyScore: 92
+    harmonyScore: 94
   }
 ];
 
-export const INITIAL_WEAR_LOGS: WearLogEntry[] = [
-  {
-    id: 'l-1',
-    date: '2026-07-02',
-    garmentIds: ['g-2', 'g-8', 'g-3'],
-    notes: 'Comfortable day at the studio.'
-  },
-  {
-    id: 'l-2',
-    date: '2026-07-01',
-    garmentIds: ['g-1', 'g-2', 'g-3'],
-    outfitId: 'o-1',
-    outfitName: 'The Mindful Sunday Brunch',
-    notes: 'Coffee downtown with friends.'
-  },
-  {
-    id: 'l-3',
-    date: '2026-06-28',
-    garmentIds: ['g-8', 'g-6', 'g-3'],
-    notes: 'Sunny afternoon meeting.'
-  },
-  {
-    id: 'l-4',
-    date: '2026-06-25',
-    garmentIds: ['g-8', 'g-5', 'g-3', 'g-10'],
-    outfitId: 'o-3',
-    outfitName: 'Breezy Summer Client Meeting'
-  },
-  {
-    id: 'l-5',
-    date: '2026-06-20',
-    garmentIds: ['g-1', 'g-6', 'g-3'],
-    notes: 'Evening dinner outdoor terrace.'
-  }
+const INITIAL_WEAR_LOGS: WearLogEntry[] = [
+  { id: 'l-1', date: '2026-07-02', garmentIds: [INITIAL_GARMENTS[1].id, INITIAL_GARMENTS[8].id, INITIAL_GARMENTS[15].id], notes: 'Salida de estudio.' },
+  { id: 'l-2', date: '2026-07-01', garmentIds: [INITIAL_GARMENTS[0].id, INITIAL_GARMENTS[1].id, INITIAL_GARMENTS[2].id], outfitId: 'o-1', outfitName: 'Editorial Diario', notes: 'Café con amigos.' },
+  { id: 'l-3', date: '2026-06-28', garmentIds: [INITIAL_GARMENTS[8].id, INITIAL_GARMENTS[5].id, INITIAL_GARMENTS[15].id], notes: 'Tarde de reuniones.' },
+  { id: 'l-4', date: '2026-06-25', garmentIds: [INITIAL_GARMENTS[8].id, INITIAL_GARMENTS[4].id, INITIAL_GARMENTS[15].id, INITIAL_GARMENTS[20].id], outfitId: 'o-3', outfitName: 'Look Completo' },
+  { id: 'l-5', date: '2026-06-20', garmentIds: [INITIAL_GARMENTS[0].id, INITIAL_GARMENTS[5].id, INITIAL_GARMENTS[15].id], notes: 'Cena al aire libre.' }
 ];
+
+export { INITIAL_GARMENTS, INITIAL_OUTFITS, INITIAL_WEAR_LOGS };

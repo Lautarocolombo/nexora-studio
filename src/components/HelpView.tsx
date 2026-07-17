@@ -41,60 +41,43 @@ export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
 
   return (
     <div className="space-y-10 max-w-4xl mx-auto">
-      {/* Header */}
       <header>
-        <h2 className="font-serif text-3xl font-bold text-[#1b1c1b] tracking-tight">{t.title}</h2>
-        <p className="font-sans text-sm text-[#43474c] mt-1">{t.subtitle}</p>
+        <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t.title}</h2>
+        <p className="font-sans text-sm text-[#A89B8C] mt-1">{t.subtitle}</p>
       </header>
 
-      {/* Philosophy Section */}
-      <section className="fabric-grain bg-[#ffffff] border border-[#c4c6cc] rounded-xl p-6 shadow-fabric space-y-4">
-        <h3 className="font-serif text-xl font-bold text-[#1b1c1b] flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#735c00]" />
+      <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl space-y-4">
+        <h3 className="font-display text-xl font-bold text-[#F7F3EC] flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-[#C76B3F]" />
           <span>{t.philosophyTitle}</span>
         </h3>
-        <p className="font-sans text-base text-[#43474c] leading-relaxed">
-          {t.philosophyP1}
-        </p>
+        <p className="font-sans text-base text-[#A89B8C] leading-relaxed">{t.philosophyP1}</p>
       </section>
 
-      {/* Cost per Wear Formula Box */}
-      <section className="fabric-grain bg-[#fbf9f7] border border-[#455565] rounded-xl p-6 shadow-fabric space-y-4">
+      <section className="fabric-grain bg-[#161210] border border-[#C76B3F] rounded-xl p-6 shadow-2xl space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-serif text-xl font-bold text-[#455565] flex items-center gap-2">
+          <h3 className="font-display text-xl font-bold text-[#C76B3F] flex items-center gap-2">
             <BookOpen className="w-5 h-5" />
             <span>{t.cpwTitle}</span>
           </h3>
-          <span className="font-mono text-xs font-bold bg-[#edf2f7] text-[#455565] px-2.5 py-1 rounded">
-            CPW = Price / Wears
-          </span>
+          <span className="font-mono text-xs font-bold bg-[#1B1814] text-[#C76B3F] px-2.5 py-1 rounded border border-[#2A2622]">CPW = Price / Wears</span>
         </div>
-        <p className="font-sans text-sm text-[#1b1c1b] leading-relaxed">
-          {t.cpwDesc}
-        </p>
+        <p className="font-sans text-sm text-[#F7F3EC] leading-relaxed">{t.cpwDesc}</p>
       </section>
 
-      {/* Fabric Care Guide */}
       <section className="space-y-6">
-        <h3 className="font-serif text-2xl font-bold text-[#1b1c1b] flex items-center gap-2">
-          <ShieldAlert className="w-6 h-6 text-[#735c00]" />
+        <h3 className="font-display text-2xl font-bold text-[#F7F3EC] flex items-center gap-2">
+          <ShieldAlert className="w-6 h-6 text-[#C76B3F]" />
           <span>{t.careTitle}</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {t.fabrics.map((f, idx) => (
-            <div 
-              key={idx} 
-              className="fabric-grain bg-[#ffffff] border border-[#c4c6cc] rounded-xl p-5 shadow-fabric flex flex-col justify-between"
-            >
+            <div key={idx} className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-5 shadow-2xl flex flex-col justify-between">
               <div>
-                <span className="font-mono text-[11px] text-[#455565] font-bold uppercase tracking-wider block mb-1">
-                  [FABRIC SPEC #{idx + 1}]
-                </span>
-                <h4 className="font-serif text-lg font-bold text-[#1b1c1b] mb-2">{f.name}</h4>
-                <p className="font-sans text-xs text-[#43474c] leading-relaxed pl-3 border-l-2 border-[#455565]/40 py-0.5">
-                  {f.care}
-                </p>
+                <span className="font-mono text-[11px] text-[#C76B3F] font-bold uppercase tracking-wider block mb-1">[FABRIC SPEC #{idx + 1}]</span>
+                <h4 className="font-display text-lg font-bold text-[#F7F3EC] mb-2">{f.name}</h4>
+                <p className="font-sans text-xs text-[#A89B8C] leading-relaxed pl-3 border-l-2 border-[#C76B3F]/40 py-0.5">{f.care}</p>
               </div>
             </div>
           ))}
