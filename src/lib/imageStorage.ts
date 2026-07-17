@@ -102,4 +102,3 @@ export async function deleteImageById(id: string): Promise<void> {
     db.close();
   }
 }
-
