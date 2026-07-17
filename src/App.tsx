@@ -22,10 +22,10 @@ import { GarmentDetailModal } from './components/GarmentDetailModal';
 import { AddGarmentModal } from './components/AddGarmentModal';
 
 const STORAGE_KEYS = {
-  GARMENTS: 'outfitmatic_garments_v1',
-  OUTFITS: 'outfitmatic_outfits_v1',
-  LOGS: 'outfitmatic_logs_v1',
-  LANG: 'outfitmatic_lang_v1'
+  GARMENTS: 'outfitmatic_garments_v2',
+  OUTFITS: 'outfitmatic_outfits_v2',
+  LOGS: 'outfitmatic_logs_v2',
+  LANG: 'outfitmatic_lang_v2'
 };
 
 export default function App() {
@@ -263,9 +263,7 @@ export default function App() {
     setGarments(INITIAL_GARMENTS);
     setSavedOutfits(INITIAL_OUTFITS);
     setWearLogs(INITIAL_WEAR_LOGS);
-    localStorage.removeItem(STORAGE_KEYS.GARMENTS);
-    localStorage.removeItem(STORAGE_KEYS.OUTFITS);
-    localStorage.removeItem(STORAGE_KEYS.LOGS);
+    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
   };
 
   return (
