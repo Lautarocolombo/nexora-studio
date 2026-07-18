@@ -34,7 +34,7 @@ export interface SavedOutfit {
   id: string;
   name: string;
   nameEs?: string;
-  items: GarmentItem[];
+  garmentIds: string[];
   occasion?: string;
   occasionEs?: string;
   wornCount: number;

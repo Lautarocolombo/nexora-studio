@@ -133,7 +133,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                 <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.selectOutfit}</label>
                 <select value={selectedOutfitId} onChange={e => setSelectedOutfitId(e.target.value)} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none">
                   <option value="">-- {language === 'es' ? 'Selecciona Atuendo Guardado' : 'Select Saved Outfit'} --</option>
-                  {savedOutfits.map(o => <option key={o.id} value={o.id}>{language === 'es' && o.nameEs ? o.nameEs : o.name} ({o.items.length} items)</option>)}
+                  {savedOutfits.map(o => <option key={o.id} value={o.id}>{language === 'es' && o.nameEs ? o.nameEs : o.name} ({o.garmentIds.length} items)</option>)}
                 </select>
               </div>
               <div>

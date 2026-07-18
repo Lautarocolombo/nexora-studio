@@ -47,7 +47,18 @@ export default function App() {
   const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.OUTFITS);
-      return saved ? JSON.parse(saved) : INITIAL_OUTFITS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed.map((o: any) => {
+            if (Array.isArray(o.items) && !Array.isArray(o.garmentIds)) {
+              return { ...o, garmentIds: o.items.map((i: any) => i.id) };
+            }
+            return o;
+          });
+        }
+      }
+      return INITIAL_OUTFITS;
     } catch {
       return INITIAL_OUTFITS;
     }
@@ -162,7 +173,7 @@ export default function App() {
     setGarments(prev => prev.filter(g => g.id !== garmentId));
     setSavedOutfits(prev => prev.map(o => ({
       ...o,
-      items: o.items.filter(i => i.id !== garmentId)
+      garmentIds: o.garmentIds.filter(id => id !== garmentId)
     })));
   };
 
@@ -187,6 +198,12 @@ export default function App() {
     setGarments(prev => [newGarment, ...prev]);
   };
 
+  const resolveOutfitItems = (outfit: SavedOutfit) => {
+    return outfit.garmentIds
+      .map(id => garments.find(g => g.id === id))
+      .filter((g): g is GarmentItem => !!g);
+  };
+
   const handleSaveOutfit = (outfitData: Omit<SavedOutfit, 'id' | 'createdAt'>) => {
     const newOutfit: SavedOutfit = {
       ...outfitData,
@@ -198,31 +215,27 @@ export default function App() {
 
   const handleLogOutfitWear = (outfit: SavedOutfit) => {
     const today = new Date().toISOString().split('T')[0];
-    const outfitItemIds = outfit.items.map(i => i.id);
+    const outfitItems = resolveOutfitItems(outfit);
+    const outfitItemIds = outfitItems.map(i => i.id);
 
-    // Increment outfit worn count
+    if (outfitItemIds.length === 0) return;
+
     setSavedOutfits(prev => prev.map(o => o.id === outfit.id ? { ...o, wornCount: o.wornCount + 1, lastWorn: today } : o));
 
-    // Increment worn count for each item in the outfit
     setGarments(prev => prev.map(g => {
       if (outfitItemIds.includes(g.id)) {
-        return {
-          ...g,
-          wornCount: g.wornCount + 1,
-          lastWorn: today
-        };
+        return { ...g, wornCount: g.wornCount + 1, lastWorn: today };
       }
       return g;
     }));
 
-    // Add wear log
     const newLog: WearLogEntry = {
       id: `l-${Date.now()}`,
       date: today,
       garmentIds: outfitItemIds,
       outfitId: outfit.id,
       outfitName: language === 'es' && outfit.nameEs ? outfit.nameEs : outfit.name,
-      notes: language === 'es' ? `Atuendo completo usado: ${outfit.nameEs || outfit.name}` : `Full outfit worn: ${outfit.name}`
+      notes: language === 'es' ? `Conjunto usado: ${outfit.nameEs || outfit.name}` : `Outfit worn: ${outfit.name}`
     };
     setWearLogs(prev => [newLog, ...prev]);
   };
@@ -232,18 +245,18 @@ export default function App() {
   };
 
   const handleLogCustomDate = (date: string, outfit?: SavedOutfit, garmentIds?: string[], notes?: string) => {
-    const targetIds = outfit ? outfit.items.map(i => i.id) : (garmentIds || []);
+    let targetIds: string[] = [];
+    if (outfit) {
+      targetIds = resolveOutfitItems(outfit).map(i => i.id);
+    } else if (garmentIds) {
+      targetIds = garmentIds;
+    }
     if (targetIds.length === 0 && !notes) return;
 
-    // Increment worn count for those items
     if (targetIds.length > 0) {
       setGarments(prev => prev.map(g => {
         if (targetIds.includes(g.id)) {
-          return {
-            ...g,
-            wornCount: g.wornCount + 1,
-            lastWorn: date > (g.lastWorn || '') ? date : g.lastWorn
-          };
+          return { ...g, wornCount: g.wornCount + 1, lastWorn: date > (g.lastWorn || '') ? date : g.lastWorn };
         }
         return g;
       }));

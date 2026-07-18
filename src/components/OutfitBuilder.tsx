@@ -73,7 +73,7 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
     onSaveOutfit({
       name: outfitName.trim(),
       nameEs: outfitName.trim(),
-      items: assembledItems,
+      garmentIds: assembledItems.map(i => i.id),
       occasion: occasion.trim() || 'Mindful Everyday',
       occasionEs: occasion.trim() || 'Diario Consciente',
       wornCount: 1,
@@ -312,11 +312,15 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                   </div>
 
                   <div className="grid grid-cols-4 gap-2 my-4 bg-[#161210] p-2 rounded-lg border border-[#2A2622]">
-                    {outfit.items.map((item, idx) => (
-                      <div key={idx} className="aspect-square bg-[#0E0C0A] rounded overflow-hidden border border-[#2A2622]" title={item.name}>
-                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                      </div>
-                    ))}
+                    {outfit.garmentIds.map((id, idx) => {
+                      const item = garments.find(g => g.id === id);
+                      if (!item) return null;
+                      return (
+                        <div key={idx} className="aspect-square bg-[#0E0C0A] rounded overflow-hidden border border-[#2A2622]" title={item.name}>
+                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
