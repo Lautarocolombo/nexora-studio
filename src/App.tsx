@@ -29,6 +29,11 @@ const STORAGE_KEYS = {
 };
 
 export default function App() {
+  // Migrate old localStorage v1 -> v2 on mount
+  useEffect(() => {
+    ['outfitmatic_garments_v1','outfitmatic_outfits_v1','outfitmatic_logs_v1','outfitmatic_lang_v1'].forEach(key => localStorage.removeItem(key));
+  }, []);
+
   // Load initial state from LocalStorage or fallback to INITIAL_GARMENTS
   const [garments, setGarments] = useState<GarmentItem[]>(() => {
     try {
