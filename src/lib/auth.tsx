@@ -18,8 +18,8 @@ async function deriveHash(input: string): Promise<string> {
 }
 
 // Hash precomputado del par de demo (no revela usuario/contraseña en claro).
-const DEMO_USER_HASH = 'a4f5c0d8e7b1a2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4';
-const DEMO_PASS_HASH = 'b6c7d8e9f0a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4';
+const DEMO_USER_HASH = 'ec04d46a05a6081c140ade961dbbf3cd99ac7b15b583ab28ad8c01781aa63da3';
+const DEMO_PASS_HASH = '210013255fa6d34d5cc241f636ff8697a0341c098dfc5cfa4a89cc89f6a4ee27';
 
 interface AuthContextValue {
   isAuthenticated: boolean;
