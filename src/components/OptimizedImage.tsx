@@ -23,37 +23,30 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   className = '',
   ...props
 }) => {
-  const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleError = useCallback(() => {
     if (!hasError) {
-      setImgSrc(PLACEHOLDER_SVG);
       setHasError(true);
     }
   }, [hasError]);
 
-  const webpSrc = imgSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-
   return (
-    <picture>
-      {!hasError && <source srcSet={srcSet || webpSrc} type="image/webp" />}
-      <img
-        src={imgSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        sizes={sizes}
-        srcSet={hasError ? undefined : srcSet}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding={priority ? 'sync' : 'async'}
-        fetchPriority={priority ? 'high' : 'auto'}
-        onError={handleError}
-        onLoad={() => setIsLoaded(true)}
-        className={`${className} transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        {...props}
-      />
-    </picture>
+    <img
+      src={srcSet || src}
+      alt={alt}
+      width={width}
+      height={height}
+      sizes={sizes}
+      srcSet={srcSet}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding={priority ? 'sync' : 'async'}
+      fetchPriority={priority ? 'high' : 'auto'}
+      onError={handleError}
+      onLoad={() => setIsLoaded(true)}
+      className={`${className} transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+      {...props}
+    />
   );
 };
