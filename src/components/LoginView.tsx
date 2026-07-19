@@ -1,13 +1,13 @@
 import React, { useState, FormEvent } from 'react';
-import { Language } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface LoginViewProps {
   onLogin: (user: string, pass: string) => Promise<boolean>;
-  language?: Language;
 }
 
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
+  const { t } = useTranslation('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,12 +17,16 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    const success = await onLogin(username, password);
-    if (!success) {
-      setError('Usuario o contraseña incorrectos');
+    try {
+      const success = await onLogin(username, password);
+      if (!success) {
+        setError(t('login.invalidCredentials'));
+      }
+    } catch {
+      setError(t('login.invalidCredentials'));
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -33,14 +37,14 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
             Armario<span className="text-[#C76B3F]">.</span>
           </h1>
           <p className="font-mono text-xs text-[#A89B8C] tracking-wider uppercase">
-            Iniciar sesión
+            {t('login.title')}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="username" className="block font-mono text-xs text-[#A89B8C] tracking-wider uppercase mb-2">
-              Usuario
+              {t('login.username')}
             </label>
             <input
               id="username"
@@ -48,7 +52,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full bg-[#161210] border border-[#2A2622] text-[#F7F3EC] px-4 py-3 rounded-lg font-sans text-sm outline-none transition-all placeholder:text-[#A89B8C]/50 focus:border-[#C76B3F] focus:ring-1 focus:ring-[#C76B3F]/40"
-              placeholder="Ingresa tu usuario"
+              placeholder={t('login.usernamePlaceholder')}
               autoComplete="username"
               required
             />
@@ -56,7 +60,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
 
           <div>
             <label htmlFor="password" className="block font-mono text-xs text-[#A89B8C] tracking-wider uppercase mb-2">
-              Contraseña
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -64,7 +68,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-[#161210] border border-[#2A2622] text-[#F7F3EC] px-4 py-3 rounded-lg font-sans text-sm outline-none transition-all placeholder:text-[#A89B8C]/50 focus:border-[#C76B3F] focus:ring-1 focus:ring-[#C76B3F]/40"
-              placeholder="Ingresa tu contraseña"
+              placeholder={t('login.passwordPlaceholder')}
               autoComplete="current-password"
               required
             />
@@ -84,18 +88,16 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }
             {loading ? (
               <span className="inline-block w-4 h-4 border-2 border-[#0B0A08]/30 border-t-[#0B0A08] rounded-full animate-spin" />
             ) : (
-              'Entrar'
+              t('login.submit')
             )}
           </button>
         </form>
 
         <p className="text-center mt-6 font-mono text-xs text-[#A89B8C]/60 tracking-wider">
-          {language === 'es' ? 'Entorno local' : 'Local environment'}
+          {t('login.environment')}
         </p>
         <p className="text-center mt-8 font-mono text-[11px] text-[#A89B8C]/40">
-          {language === 'es'
-            ? 'Herramienta de curaduría personal · Más de 1.200 combinaciones posibles'
-            : 'Personal curation tool · 1,200+ possible combinations'}
+          {t('login.tagline')}
         </p>
       </div>
     </main>

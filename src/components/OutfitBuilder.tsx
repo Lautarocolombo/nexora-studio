@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { Sparkles, Plus, Check, RefreshCw, Trash2, Heart, Shirt, Tag, DollarSign, Calendar, Layers } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Sparkles, RefreshCw, Layers } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { GarmentItem, SavedOutfit, Language } from '../types';
 import { GarmentCard } from './GarmentCard';
-import { useAccessibleModal } from '../hooks/useAccessibleModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { OutfitSlot } from './outfit/OutfitSlot';
+import { SaveOutfitModal } from './outfit/SaveOutfitModal';
+import { SavedOutfitCard } from './outfit/SavedOutfitCard';
 
 interface OutfitBuilderProps {
   garments: GarmentItem[];
@@ -22,6 +25,7 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
   onDeleteOutfit,
   language
 }) => {
+  const { t } = useTranslation();
   const [selectedTop, setSelectedTop] = useState<GarmentItem | undefined>(
     garments.find(g => g.category === 'tops')
   );
@@ -36,24 +40,24 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
   );
 
   const [activeDrawerTab, setActiveDrawerTab] = useState<'tops' | 'bottoms' | 'shoes' | 'outerwear'>('tops');
-  const [outfitName, setOutfitName] = useState('');
-  const [occasion, setOccasion] = useState('Casual / Work');
   const [isSaving, setIsSaving] = useState(false);
   const [outfitToDelete, setOutfitToDelete] = useState<string | null>(null);
 
-  const { modalRef: saveModalRef, closeOnBackdrop: saveCloseOnBackdrop } = useAccessibleModal({
-    isOpen: isSaving,
-    onClose: () => setIsSaving(false),
-    initialFocusRef: { current: null },
-  });
+  const garmentIndex = useMemo(() => {
+    const map = new Map<string, GarmentItem>();
+    for (const g of garments) map.set(g.id, g);
+    return map;
+  }, [garments]);
 
-  const drawerGarments = garments.filter(g => {
-    if (activeDrawerTab === 'tops') return g.category === 'tops' || g.category === 'dresses';
-    if (activeDrawerTab === 'bottoms') return g.category === 'bottoms';
-    if (activeDrawerTab === 'shoes') return g.category === 'shoes';
-    if (activeDrawerTab === 'outerwear') return g.category === 'outerwear' || g.category === 'accessories' || g.category === 'formal';
-    return true;
-  });
+  const drawerGarments = useMemo(() => {
+    return garments.filter(g => {
+      if (activeDrawerTab === 'tops') return g.category === 'tops' || g.category === 'dresses';
+      if (activeDrawerTab === 'bottoms') return g.category === 'bottoms';
+      if (activeDrawerTab === 'shoes') return g.category === 'shoes';
+      if (activeDrawerTab === 'outerwear') return g.category === 'outerwear' || g.category === 'accessories' || g.category === 'formal';
+      return true;
+    });
+  }, [garments, activeDrawerTab]);
 
   const handleSelectForSlot = (item: GarmentItem) => {
     if (activeDrawerTab === 'tops') setSelectedTop(item);
@@ -67,31 +71,24 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
   const totalWears = assembledItems.reduce((acc, g) => acc + (g.wornCount || 0), 0);
   const versatilityScore = assembledItems.length > 0 ? Math.min(100, 60 + assembledItems.length * 10 + Math.floor(totalWears / Math.max(1, assembledItems.length))) : 0;
 
-  const calculateHarmony = () => {
+  const harmonyScore = useMemo(() => {
     if (assembledItems.length < 2) return 85;
     const seasons = assembledItems.map(g => g.season);
-    const allSameSeason = seasons.every(s => s === seasons[0] || s === 'all-year');
-    return allSameSeason ? 96 : 89;
-  };
-  const harmonyScore = calculateHarmony();
+    return seasons.every(s => s === seasons[0] || s === 'all-year') ? 96 : 89;
+  }, [assembledItems]);
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (assembledItems.length === 0 || !outfitName.trim()) return;
-
+  const handleSave = (name: string, occasion: string) => {
+    if (assembledItems.length === 0) return;
     onSaveOutfit({
-      name: outfitName.trim(),
-      nameEs: outfitName.trim(),
+      name,
+      nameEs: name,
       garmentIds: assembledItems.map(i => i.id),
-      occasion: occasion.trim() || 'Mindful Everyday',
-      occasionEs: occasion.trim() || 'Diario Consciente',
+      occasion,
+      occasionEs: occasion,
       wornCount: 1,
       lastWorn: new Date().toISOString().split('T')[0],
       harmonyScore
     });
-
-    setOutfitName('');
-    setIsSaving(false);
   };
 
   const handleRandomize = () => {
@@ -106,44 +103,21 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
     if (outers.length) setSelectedOuterwear(outers[Math.floor(Math.random() * outers.length)]);
   };
 
-  const t = {
-    title: language === 'es' ? 'Constructor de Conjuntos' : 'Outfit Builder',
-    subtitle: language === 'es' ? 'Combiná piezas de tu armario y medí la armonía del conjunto.' : 'Combine pieces from your wardrobe and measure outfit harmony.',
-    canvasTitle: language === 'es' ? 'Conjunto Actual' : 'Current Outfit',
-    drawerTitle: language === 'es' ? 'Tu Armario' : 'Your Wardrobe',
-    randomize: language === 'es' ? 'Inspiración Aleatoria' : 'Random Inspire',
-    saveOutfit: language === 'es' ? 'Guardar Conjunto' : 'Save Outfit',
-    harmony: language === 'es' ? 'Armonía' : 'Harmony',
-    versatility: language === 'es' ? 'Versatilidad' : 'Versatility',
-    totalPieces: language === 'es' ? 'Piezas Totales' : 'Total Pieces',
-    savedTitle: language === 'es' ? 'Conjuntos Guardados (' : 'Saved Outfits (',
-    logWearAll: language === 'es' ? 'Registrar Uso para Todas las Piezas (+1)' : 'Log Wear for All Items (+1)',
-    outfitNamePlaceholder: language === 'es' ? 'ej. Brunch Dominical o Reunión Elegante' : 'e.g. Sunday Brunch or Smart Client Meeting',
-    occasionPlaceholder: language === 'es' ? 'ej. Trabajo, Casual, Fin de semana' : 'e.g. Work, Casual, Weekend'
-  };
-
   return (
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t.title}</h2>
-          <p className="font-sans text-sm text-[#A89B8C] mt-1">{t.subtitle}</p>
+          <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t('builder.title')}</h2>
+          <p className="font-sans text-sm text-[#A89B8C] mt-1">{t('builder.subtitle')}</p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={handleRandomize}
-            className="px-4 py-2 bg-[#1B1814] hover:bg-[#161210] text-[#A89B8C] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
-          >
+          <button onClick={handleRandomize} className="px-4 py-2 bg-[#1B1814] hover:bg-[#161210] text-[#A89B8C] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm">
             <RefreshCw className="w-3.5 h-3.5" />
-            <span>{t.randomize}</span>
+            <span>{t('builder.randomize')}</span>
           </button>
-          <button
-            onClick={() => setIsSaving(true)}
-            disabled={assembledItems.length === 0}
-            className="px-5 py-2 bg-[#C76B3F] hover:bg-[#A85A32] disabled:opacity-50 text-white rounded-lg font-sans text-sm font-semibold shadow-md flex items-center gap-1.5 transition-all"
-          >
+          <button onClick={() => setIsSaving(true)} disabled={assembledItems.length === 0} className="px-5 py-2 bg-[#C76B3F] hover:bg-[#A85A32] disabled:opacity-50 text-white rounded-lg font-sans text-sm font-semibold shadow-md flex items-center gap-1.5 transition-all">
             <Sparkles className="w-4 h-4" />
-            <span>{t.saveOutfit}</span>
+            <span>{t('builder.saveOutfit')}</span>
           </button>
         </div>
       </header>
@@ -154,87 +128,64 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
             <div className="flex justify-between items-center pb-4 border-b border-[#2A2622] mb-6">
               <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase tracking-wider flex items-center gap-1.5">
                 <Layers className="w-4 h-4" />
-                {t.canvasTitle}
+                {t('builder.canvasTitle')}
               </span>
               <span className="font-mono text-xs font-bold bg-[#C76B3F] text-white px-2.5 py-0.5 rounded-full shadow-sm">
-                {harmonyScore}% {t.harmony}
+                {harmonyScore}% {t('builder.harmony')}
               </span>
             </div>
 
             <div className="space-y-4">
-              <button onClick={() => setActiveDrawerTab('tops')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'tops' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar top' : 'Select top'}>
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
-                    {selectedTop ? <img src={selectedTop.imageUrl} alt={selectedTop.name} className="w-full h-full object-cover" /> : <Shirt className="w-6 h-6 text-[#6B6358]" />}
-                  </div>
-                  <div>
-                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[TOP / SHIRT]</span>
-                    <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
-                      {selectedTop ? (language === 'es' && selectedTop.nameEs ? selectedTop.nameEs : selectedTop.name) : (language === 'es' ? 'Seleccionar Top...' : 'Select Top...')}
-                    </h4>
-                    {selectedTop && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedTop.wornCount}v` : `Worn ${selectedTop.wornCount}x`}</span>}
-                  </div>
-                </div>
-                {selectedTop && <button onClick={(e) => { e.stopPropagation(); setSelectedTop(undefined); }} aria-label={language === 'es' ? 'Quitar top' : 'Remove top'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </button>
-
-              <button onClick={() => setActiveDrawerTab('bottoms')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'bottoms' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar pantalón' : 'Select bottom'}>
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
-                    {selectedBottom ? <img src={selectedBottom.imageUrl} alt={selectedBottom.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👖</span>}
-                  </div>
-                  <div>
-                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[BOTTOM / TROUSERS]</span>
-                    <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
-                      {selectedBottom ? (language === 'es' && selectedBottom.nameEs ? selectedBottom.nameEs : selectedBottom.name) : (language === 'es' ? 'Seleccionar Pantalón...' : 'Select Bottom...')}
-                    </h4>
-                    {selectedBottom && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedBottom.wornCount}v` : `Worn ${selectedBottom.wornCount}x`}</span>}
-                  </div>
-                </div>
-                {selectedBottom && <button onClick={(e) => { e.stopPropagation(); setSelectedBottom(undefined); }} aria-label={language === 'es' ? 'Quitar pantalón' : 'Remove bottom'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </button>
-
-              <button onClick={() => setActiveDrawerTab('shoes')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'shoes' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar calzado' : 'Select shoes'}>
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
-                    {selectedShoes ? <img src={selectedShoes.imageUrl} alt={selectedShoes.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👟</span>}
-                  </div>
-                  <div>
-                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[SHOES / FOOTWEAR]</span>
-                    <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
-                      {selectedShoes ? (language === 'es' && selectedShoes.nameEs ? selectedShoes.nameEs : selectedShoes.name) : (language === 'es' ? 'Seleccionar Calzado...' : 'Select Shoes...')}
-                    </h4>
-                    {selectedShoes && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedShoes.wornCount}v` : `Worn ${selectedShoes.wornCount}x`}</span>}
-                  </div>
-                </div>
-                {selectedShoes && <button onClick={(e) => { e.stopPropagation(); setSelectedShoes(undefined); }} aria-label={language === 'es' ? 'Quitar calzado' : 'Remove shoes'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </button>
-
-              <button onClick={() => setActiveDrawerTab('outerwear')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'outerwear' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar abrigo o accesorio' : 'Select outerwear or accessory'}>
-                <div className="flex items-center gap-3.5">
-                  <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
-                    {selectedOuterwear ? <img src={selectedOuterwear.imageUrl} alt={selectedOuterwear.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">🧥</span>}
-                  </div>
-                  <div>
-                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[OUTERWEAR / LAYER]</span>
-                    <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
-                      {selectedOuterwear ? (language === 'es' && selectedOuterwear.nameEs ? selectedOuterwear.nameEs : selectedOuterwear.name) : (language === 'es' ? 'Opcional: Abrigo o Accesorio...' : 'Optional: Outerwear/Layer...')}
-                    </h4>
-                    {selectedOuterwear && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedOuterwear.wornCount}v` : `Worn ${selectedOuterwear.wornCount}x`}</span>}
-                  </div>
-                </div>
-                {selectedOuterwear && <button onClick={(e) => { e.stopPropagation(); setSelectedOuterwear(undefined); }} aria-label={language === 'es' ? 'Quitar abrigo' : 'Remove outerwear'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </button>
+              <OutfitSlot
+                label={t('builder.topLabel')}
+                tagLabel="[TOP / SHIRT]"
+                placeholder={t('builder.topPlaceholder')}
+                item={selectedTop}
+                isActive={activeDrawerTab === 'tops'}
+                language={language}
+                onSelect={() => setActiveDrawerTab('tops')}
+                onRemove={() => setSelectedTop(undefined)}
+              />
+              <OutfitSlot
+                label={t('builder.bottomLabel')}
+                tagLabel="[BOTTOM / TROUSERS]"
+                placeholder={t('builder.bottomPlaceholder')}
+                item={selectedBottom}
+                isActive={activeDrawerTab === 'bottoms'}
+                language={language}
+                onSelect={() => setActiveDrawerTab('bottoms')}
+                onRemove={() => setSelectedBottom(undefined)}
+              />
+              <OutfitSlot
+                label={t('builder.shoesLabel')}
+                tagLabel="[SHOES / FOOTWEAR]"
+                placeholder={t('builder.shoesPlaceholder')}
+                item={selectedShoes}
+                isActive={activeDrawerTab === 'shoes'}
+                language={language}
+                onSelect={() => setActiveDrawerTab('shoes')}
+                onRemove={() => setSelectedShoes(undefined)}
+              />
+              <OutfitSlot
+                label={t('builder.outerwearLabel')}
+                tagLabel="[OUTERWEAR / LAYER]"
+                placeholder={t('builder.outerwearPlaceholder')}
+                item={selectedOuterwear}
+                isActive={activeDrawerTab === 'outerwear'}
+                language={language}
+                onSelect={() => setActiveDrawerTab('outerwear')}
+                onRemove={() => setSelectedOuterwear(undefined)}
+              />
             </div>
           </div>
 
           <div className="mt-8 pt-4 border-t border-[#2A2622] grid grid-cols-2 gap-4">
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t.totalPieces}</span>
+               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t('builder.totalPieces')}</span>
               <span className="font-display text-lg font-bold text-[#F7F3EC]">{assembledItems.length}</span>
             </div>
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t.versatility}</span>
+               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t('builder.versatility')}</span>
               <span className="font-display text-lg font-bold text-[#C76B3F]">{versatilityScore}%</span>
             </div>
           </div>
@@ -242,146 +193,75 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
 
         <section className="lg:col-span-7 flex flex-col">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-display text-xl font-bold text-[#F7F3EC]">{t.drawerTitle}</h3>
-            <span className="font-mono text-xs text-[#A89B8C]">
-              {language === 'es' ? 'Hagá clic para seleccionar en la ranura activa' : 'Click to equip in active slot'}
-            </span>
+            <h3 className="font-display text-xl font-bold text-[#F7F3EC]">{t('builder.drawerTitle')}</h3>
+            <span className="font-mono text-xs text-[#A89B8C]">{t('builder.clickEquipHint')}</span>
           </div>
 
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-1 border-b border-[#2A2622]">
+          <div role="tablist" className="flex gap-2 mb-6 overflow-x-auto pb-1 border-b border-[#2A2622]">
             {(['tops', 'bottoms', 'shoes', 'outerwear'] as const).map(tab => (
-              <button key={tab} onClick={() => setActiveDrawerTab(tab)} className={`px-4 py-2 font-mono text-xs uppercase font-semibold border-b-2 transition-all whitespace-nowrap ${activeDrawerTab === tab ? 'border-[#C76B3F] text-[#C76B3F] bg-[#1B1814] rounded-t-lg' : 'border-transparent text-[#A89B8C] hover:text-[#F7F3EC]'}`}>
-                {tab === 'tops' && (language === 'es' ? 'Tops / Camisas' : 'Tops / Shirts')}
-                {tab === 'bottoms' && (language === 'es' ? 'Pantalones' : 'Bottoms')}
-                {tab === 'shoes' && (language === 'es' ? 'Calzado' : 'Shoes')}
-                {tab === 'outerwear' && (language === 'es' ? 'Abrigos & Acc.' : 'Outerwear & Acc')}
+              <button key={tab} role="tab" aria-selected={activeDrawerTab === tab} onClick={() => setActiveDrawerTab(tab)} className={`px-4 py-2 font-mono text-xs uppercase font-semibold border-b-2 transition-all whitespace-nowrap ${activeDrawerTab === tab ? 'border-[#C76B3F] text-[#C76B3F] bg-[#1B1814] rounded-t-lg' : 'border-transparent text-[#A89B8C] hover:text-[#F7F3EC]'}`}>
+                {tab === 'tops' && t('builder.tabTops')}
+                {tab === 'bottoms' && t('builder.tabBottoms')}
+                {tab === 'shoes' && t('builder.tabShoes')}
+                {tab === 'outerwear' && t('builder.tabOuterwear')}
               </button>
             ))}
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto max-h-[520px] pr-1">
-            {drawerGarments.map(item => {
-              const isSelected = assembledItems.some(i => i.id === item.id);
-              return (
-                <div key={item.id} className="h-[280px]">
-                  <GarmentCard garment={item} language={language} onCardClick={() => {}} onLogWear={() => {}} onToggleFavorite={() => {}} isSelectableForBuilder={true} isSelectedForBuilder={isSelected} onSelectForBuilder={handleSelectForSlot} />
-                </div>
-              );
-            })}
+            {drawerGarments.map(item => (
+              <div key={item.id} className="h-[280px]">
+                <GarmentCard
+                  garment={item}
+                  language={language}
+                  onCardClick={() => {}}
+                  onLogWear={() => {}}
+                  onToggleFavorite={() => {}}
+                  isSelectableForBuilder
+                  isSelectedForBuilder={assembledItems.some(i => i.id === item.id)}
+                  onSelectForBuilder={handleSelectForSlot}
+                />
+              </div>
+            ))}
           </div>
         </section>
       </div>
 
-      {isSaving && (
-        <div
-          className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
-          onClick={(e) => {
-            if (saveCloseOnBackdrop && e.target === e.currentTarget) {
-              setIsSaving(false);
-            }
-          }}
-        >
-          <div
-            ref={saveModalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="save-outfit-title"
-            className="fabric-grain bg-[#1B1814] w-full max-w-md rounded-xl border border-[#2A2622] shadow-2xl p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 id="save-outfit-title" className="font-display text-xl font-bold text-[#F7F3EC] mb-2">{t.saveOutfit}</h3>
-            <form onSubmit={handleSave} className="space-y-4 mt-4">
-              <div>
-                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{language === 'es' ? 'Nombre del Atuendo *' : 'Outfit Name *'}</label>
-                <input type="text" required value={outfitName} onChange={e => setOutfitName(e.target.value)} placeholder={t.outfitNamePlaceholder} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none" />
-              </div>
-              <div>
-                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{language === 'es' ? 'Ocasión / Etiqueta' : 'Occasion / Tag'}</label>
-                <input type="text" value={occasion} onChange={e => setOccasion(e.target.value)} placeholder={t.occasionPlaceholder} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none" />
-              </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-[#2A2622]">
-                <button type="button" onClick={() => setIsSaving(false)} className="px-4 py-2 border border-[#2A2622] rounded-lg font-mono text-xs font-semibold text-[#A89B8C] hover:bg-[#161210] transition-colors">
-                  {language === 'es' ? 'Cancelar' : 'Cancel'}
-                </button>
-                <button type="submit" className="px-5 py-2 bg-[#C76B3F] text-white rounded-lg font-sans text-sm font-semibold shadow hover:bg-[#A85A32]">
-                  {language === 'es' ? 'Guardar Atuendo' : 'Save Outfit'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <SaveOutfitModal
+        isOpen={isSaving}
+        onClose={() => setIsSaving(false)}
+        onSave={handleSave}
+        pieceCount={assembledItems.length}
+      />
 
       <section className="pt-8 border-t border-[#2A2622]">
         <h3 className="font-display text-2xl font-bold text-[#F7F3EC] mb-6">
-          {t.savedTitle}{savedOutfits.length})
+          {t('builder.savedTitle')}{savedOutfits.length})
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {savedOutfits.map(outfit => {
-            const name = language === 'es' && outfit.nameEs ? outfit.nameEs : outfit.name;
-            const occ = language === 'es' && outfit.occasionEs ? outfit.occasionEs : outfit.occasion;
-            return (
-              <div key={outfit.id} className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-5 shadow-2xl hover:shadow-[#C76B3F]/10 transition-all flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                       <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">{occ}</span>
-                      <h4 className="font-display text-lg font-bold text-[#F7F3EC] mt-0.5">{name}</h4>
-                    </div>
-                    <span className="font-mono text-xs font-bold bg-[#1B1814] text-[#C76B3F] px-2 py-0.5 rounded border border-[#2A2622]">
-                      {outfit.harmonyScore || 95}% Harm.
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-4 gap-2 my-4 bg-[#161210] p-2 rounded-lg border border-[#2A2622]">
-                    {outfit.garmentIds.map((id, idx) => {
-                      const item = garments.find(g => g.id === id);
-                      if (!item) return null;
-                      return (
-                        <div key={idx} className="aspect-square bg-[#0E0C0A] rounded overflow-hidden border border-[#2A2622]" title={item.name}>
-                          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-[#2A2622] flex justify-between items-center mt-auto">
-                  <span className="font-mono text-xs text-[#A89B8C]">
-                    {language === 'es' ? `Usado ${outfit.wornCount} veces` : `Worn ${outfit.wornCount} times`}
-                  </span>
-
-                  <div className="flex gap-2">
-                    <button onClick={() => onLogOutfitWear(outfit)} className="bg-[#C76B3F] hover:bg-[#A85A32] text-white px-3 py-1.5 rounded text-xs font-mono font-semibold flex items-center gap-1 shadow-sm transition-transform active:scale-95">
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>{language === 'es' ? 'Usado Hoy (+1)' : 'Worn Today (+1)'}</span>
-                    </button>
-
-                    <button onClick={() => setOutfitToDelete(outfit.id)} aria-label={language === 'es' ? 'Eliminar atuendo' : 'Delete outfit'} className="p-1.5 text-[#6B6358] hover:text-[#C76B3F] transition-colors rounded hover:bg-[#1B1814]">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                    <ConfirmDialog
-                      isOpen={!!outfitToDelete}
-                      title={language === 'es' ? 'Eliminar atuendo' : 'Delete outfit'}
-                      message={language === 'es' ? '¿Eliminar este atuendo permanentemente?' : 'Delete this outfit permanently?'}
-                      confirmLabel={language === 'es' ? 'Eliminar' : 'Delete'}
-                      onConfirm={() => {
-                        if (outfitToDelete) {
-                          onDeleteOutfit(outfitToDelete);
-                          setOutfitToDelete(null);
-                        }
-                      }}
-                      onCancel={() => setOutfitToDelete(null)}
-                      variant="danger"
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {savedOutfits.map(outfit => (
+            <SavedOutfitCard
+              key={outfit.id}
+              outfit={outfit}
+              language={language}
+              garmentIndex={garmentIndex}
+              onLogWear={onLogOutfitWear}
+              onDelete={setOutfitToDelete}
+            />
+          ))}
         </div>
       </section>
+
+      <ConfirmDialog
+        isOpen={!!outfitToDelete}
+        title={t('builder.deleteTitle')}
+        message={t('builder.deleteMessage')}
+        confirmLabel={t('builder.deleteConfirm')}
+        onConfirm={() => { if (outfitToDelete) { onDeleteOutfit(outfitToDelete); setOutfitToDelete(null); } }}
+        onCancel={() => setOutfitToDelete(null)}
+        variant="danger"
+      />
     </div>
   );
 };

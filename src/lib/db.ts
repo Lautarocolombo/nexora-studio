@@ -44,26 +44,25 @@ function promisifyRequest<T>(request: IDBRequest<T>): Promise<T> {
 }
 
 export const db = {
-  async getAll(storeName: StoreName): Promise<any[]> {
+  async getAll(storeName: StoreName): Promise<unknown[]> {
     const store = await tx(storeName);
     return promisifyRequest(store.getAll());
   },
 
-  async get(storeName: StoreName, key: string): Promise<any | undefined> {
+  async get(storeName: StoreName, key: string): Promise<unknown | undefined> {
     const store = await tx(storeName);
     return promisifyRequest(store.get(key));
   },
 
-  async put(storeName: StoreName, value: any): Promise<void> {
+  async put(storeName: StoreName, value: unknown): Promise<void> {
     const store = await tx(storeName, 'readwrite');
     await promisifyRequest(store.put(value));
   },
 
-
-  async putAll(storeName: StoreName, values: any[]): Promise<void> {
+  async putAll(storeName: StoreName, values: unknown[]): Promise<void> {
     const store = await tx(storeName, 'readwrite');
     return new Promise((resolve, reject) => {
-      const transaction = store.transaction!;
+      const transaction = store.transaction;
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
       for (const value of values) {

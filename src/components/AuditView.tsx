@@ -5,7 +5,6 @@ import {
   Palette,
   Users,
   Globe,
-  Accessibility,
   Zap,
   BookOpen,
   Search,
@@ -13,14 +12,14 @@ import {
   TrendingUp,
   AlertTriangle
 } from 'lucide-react';
-import { TabType } from '../types';
+import { useTranslation } from 'react-i18next';
 
 type AuditStatus = 'excellent' | 'improvable' | 'critical';
 
-function statusToDot(status: AuditStatus) {
-  if (status === 'excellent') return { bg: '#1EBD76', text: '#052010', label: '🟢 Excelente' };
-  if (status === 'improvable') return { bg: '#F5B301', text: '#201503', label: '🟡 Mejorable' };
-  return { bg: '#FF3B30', text: '#2B0000', label: '🔴 Crítico' };
+function statusToDot(status: AuditStatus, t: (key: string) => string) {
+  if (status === 'excellent') return { bg: '#1EBD76', text: '#052010', label: t('audit.excellent') };
+  if (status === 'improvable') return { bg: '#F5B301', text: '#201503', label: t('audit.improvable') };
+  return { bg: '#FF3B30', text: '#2B0000', label: t('audit.critical') };
 }
 
 function MetricBar({ label, value, tone }: { label: string; value: number; tone: 'primary' | 'warn' | 'danger' }) {
@@ -47,13 +46,15 @@ function StatusCard({
   status,
   description,
   icon,
+  t,
 }: {
   title: string;
   status: AuditStatus;
   description: string;
   icon: React.ReactNode;
+  t: (key: string) => string;
 }) {
-  const dot = statusToDot(status);
+  const dot = statusToDot(status, t);
   return (
     <div className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-5 shadow-2xl">
       <div className="flex items-start justify-between gap-4">
@@ -73,9 +74,9 @@ function StatusCard({
 }
 
 const now = new Date();
-const weekLabel = `Semana ${Math.ceil((now.getDate() + 1) / 7)}`;
 
 export function AuditView() {
+  const { t, i18n } = useTranslation();
   const scores = useMemo(
     () => ({
       general: 78,
@@ -102,15 +103,15 @@ export function AuditView() {
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="font-display text-3xl md:text-4xl font-bold text-[#F7F3EC] tracking-tight">
-            Panel de Auditoría
+            {t('audit.title')}
           </h2>
           <p className="font-sans text-sm text-[#A89B8C] mt-1">
-            Estado del producto enterprise: calidad, UX/UI, SEO, accesibilidad, performance, seguridad y escalabilidad.
+            {t('audit.subtitle')}
           </p>
         </div>
         <div className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-4 shadow-2xl w-full md:w-[360px]">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs uppercase tracking-wider text-[#A89B8C]">Progreso General</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-[#A89B8C]">{t('audit.generalProgress')}</span>
             <span className="font-display text-xl font-bold text-[#C76B3F]">{completion}%</span>
           </div>
           <div className="h-3 mt-3 rounded-full bg-[#161210] border border-[#2A2622] overflow-hidden">
@@ -120,146 +121,158 @@ export function AuditView() {
             />
           </div>
           <p className="mt-3 font-mono text-xs text-[#A89B8C]">
-            Última actualización: {now.toLocaleDateString('es-ES')}
+            {t('audit.lastUpdate')} {now.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
           </p>
         </div>
       </header>
 
       {/* KPIs */}
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <MetricBar label="Frontend" value={scores.frontend} tone="primary" />
-        <MetricBar label="Backend" value={scores.backend} tone="warn" />
-        <MetricBar label="UI" value={scores.ui} tone="primary" />
-        <MetricBar label="UX" value={scores.ux} tone="primary" />
-        <MetricBar label="SEO" value={scores.seo} tone="warn" />
-        <MetricBar label="Performance" value={scores.performance} tone="primary" />
-        <MetricBar label="Accesibilidad" value={scores.accessibility} tone="danger" />
-        <MetricBar label="Documentación" value={scores.documentation} tone="warn" />
-        <MetricBar label="Testing" value={scores.testing} tone="danger" />
+        <MetricBar label={t('audit.frontend')} value={scores.frontend} tone="primary" />
+        <MetricBar label={t('audit.backend')} value={scores.backend} tone="warn" />
+        <MetricBar label={t('audit.ui')} value={scores.ui} tone="primary" />
+        <MetricBar label={t('audit.ux')} value={scores.ux} tone="primary" />
+        <MetricBar label={t('audit.seo')} value={scores.seo} tone="warn" />
+        <MetricBar label={t('audit.performance')} value={scores.performance} tone="primary" />
+        <MetricBar label={t('audit.accessibility')} value={scores.accessibility} tone="danger" />
+        <MetricBar label={t('audit.documentation')} value={scores.documentation} tone="warn" />
+        <MetricBar label={t('audit.testing')} value={scores.testing} tone="danger" />
       </section>
 
       {/* Estado por dominios */}
       <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
         <StatusCard
-          title="Backend"
+          title={t('audit.statusBackend')}
           status="improvable"
-          description="Persistencia local via IndexedDB funciona, pero falta capa de validación, normalización, versionado de esquema y contratos de datos para producción."
+          description={t('audit.descBackend')}
           icon={<ShieldCheck className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Frontend"
+          title={t('audit.statusFrontend')}
           status="excellent"
-          description="Buen uso de code-splitting (lazy/Suspense) y componentes reutilizables. Principal gap: accesibilidad modal/semántica y manejo de errores."
+          description={t('audit.descFrontend')}
           icon={<Gauge className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Base de datos"
+          title={t('audit.statusDatabase')}
           status="improvable"
-          description="IndexedDB correcto, pero faltan estrategias de migración por versión, índices, y un patrón unificado de lecturas/escrituras."
+          description={t('audit.descDatabase')}
           icon={<BookOpen className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Responsive"
+          title={t('audit.statusResponsive')}
           status="excellent"
-          description="Navbar superior/bottom y grids adaptativos. Para WCAG/UX falta consistencia en estados de foco y targets táctiles mínimos."
+          description={t('audit.descResponsive')}
           icon={<Palette className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Seguridad"
+          title={t('audit.statusSecurity')}
           status="critical"
-          description="Auth es demo (hash local) y admin es controlado por UI. En producción se requiere backend real, roles/permisos y mitigación de XSS/CSRF."
+          description={t('audit.descSecurity')}
           icon={<AlertTriangle className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Arquitectura"
+          title={t('audit.statusArchitecture')}
           status="improvable"
-          description="Lógica y estado centralizados en App.tsx sin capa de servicios/validación. Falta modularización de UI-state (modals/toasts/errors)."
+          description={t('audit.descArchitecture')}
           icon={<Brain className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Escalabilidad"
+          title={t('audit.statusScalability')}
           status="improvable"
-          description="Sin caching, sin estrategia de paginación para listas grandes y sin modelo de datos formal. Para enterprise se necesita capa de repository y selectores memoizados."
+          description={t('audit.descScalability')}
           icon={<Users className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Documentación"
+          title={t('audit.statusDocumentation')}
           status="improvable"
-          description="Existe README pero falta documentación técnica: decisiones de diseño, guía de accesibilidad, contratos de datos y checklist de releases."
+          description={t('audit.descDocumentation')}
           icon={<BookOpen className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Optimización"
+          title={t('audit.statusOptimization')}
           status="excellent"
-          description="Lazy-loading de vistas y animaciones controladas. Se requiere una auditoría extra: imágenes (sizes/srcset), charts memoization y manejo de Reduce Motion."
+          description={t('audit.descOptimization')}
           icon={<Zap className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Conversión"
+          title={t('audit.statusConversion')}
           status="improvable"
-          description="La UX está orientada a valor (guardarropa/armado). Para CRO se necesitan microcopy, CTAs medibles, onboarding y medición de eventos."
+          description={t('audit.descConversion')}
           icon={<TrendingUp className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="Experiencia de usuario"
+          title={t('audit.statusUX')}
           status="excellent"
-          description="Flujo claro por secciones, jerarquía visual consistente. Para enterprise: accesibilidad completa (teclado/ARIA) y mejoras en feedback de formularios."
+          description={t('audit.descUX')}
           icon={<Users className="w-5 h-5" />}
+          t={t}
         />
         <StatusCard
-          title="SEO"
+          title={t('audit.statusSEO')}
           status="critical"
-          description="SPA sin SSR: indexabilidad y metadata por ruta insuficiente para un plan enterprise. Se requiere pre-render/SSR y estructura semántica por vista."
+          description={t('audit.descSEO')}
           icon={<Globe className="w-5 h-5" />}
+          t={t}
         />
       </section>
 
       {/* Roadmap, dashboards y plan de tareas se agregan en iteraciones siguientes */}
 
       <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl">
-        <h3 className="font-display text-xl font-bold text-[#F7F3EC]">Módulos — Próximos pasos inmediatos</h3>
+        <h3 className="font-display text-xl font-bold text-[#F7F3EC]">{t('audit.modules')}</h3>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 rounded-lg bg-[#161210] border border-[#2A2622]">
             <div className="flex items-center gap-2">
               <Search className="w-4 h-4 text-[#C76B3F]" />
-              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">Accesibilidad</span>
+              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">{t('audit.moduleAccessibility')}</span>
             </div>
             <p className="mt-2 font-sans text-sm text-[#A89B8C]">
-              Corregir modales y semántica de controles, añadir trap de foco, aria-modal y soporte de teclado.
+              {t('audit.moduleAccessibilityDesc')}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-[#161210] border border-[#2A2622]">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-[#C76B3F]" />
-              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">Seguridad</span>
+              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">{t('audit.moduleSecurity')}</span>
             </div>
             <p className="mt-2 font-sans text-sm text-[#A89B8C]">
-              Sustituir auth demo por backend real, roles/permisos y protección de endpoints. Eliminar confirm() por modales accesibles.
+              {t('audit.moduleSecurityDesc')}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-[#161210] border border-[#2A2622]">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-[#C76B3F]" />
-              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">SEO & Performance</span>
+              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">{t('audit.moduleSEOPerformance')}</span>
             </div>
             <p className="mt-2 font-sans text-sm text-[#A89B8C]">
-              Implementar SSR/pre-render + optimizar imágenes (srcset/sizes) y reducir coste de render en charts.
+              {t('audit.moduleSEOPerformanceDesc')}
             </p>
           </div>
           <div className="p-4 rounded-lg bg-[#161210] border border-[#2A2622]">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-[#C76B3F]" />
-              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">Testing & Release</span>
+              <span className="font-mono text-xs font-bold text-[#A89B8C] uppercase">{t('audit.moduleTesting')}</span>
             </div>
             <p className="mt-2 font-sans text-sm text-[#A89B8C]">
-              Añadir suite de tests (unit + e2e), pipeline CI/CD y checklist de performance para garantizar Lighthouse objetivo.
+              {t('audit.moduleTestingDesc')}
             </p>
           </div>
         </div>
       </section>
 
       <section className="text-[#A89B8C] text-xs font-mono">
-        Nota: este panel está diseñado para actuar como “single source of truth” de auditoría. La siguiente iteración llenará Roadmap + dashboards semanal/mensual + gestión de tareas.
+        {t('audit.note')}
       </section>
 
       <div className="h-2" aria-hidden="true" />

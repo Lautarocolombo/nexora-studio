@@ -22,10 +22,11 @@ export function useAccessibleModal({
     (e: KeyboardEvent) => {
       if (e.key === 'Escape' && closeOnEscape) {
         onClose();
+        return;
       }
       if (e.key === 'Tab' && modalRef.current) {
         const focusable = modalRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
         );
         if (focusable.length === 0) return;
         const first = focusable[0];
@@ -50,12 +51,14 @@ export function useAccessibleModal({
     if (!isOpen) return;
     previousActiveElement.current = document.activeElement as HTMLElement | null;
     document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
     const focusTarget = initialFocusRef?.current ?? modalRef.current;
     requestAnimationFrame(() => {
       focusTarget?.focus();
     });
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
       previousActiveElement.current?.focus();
     };
   }, [isOpen, handleKeyDown, initialFocusRef]);

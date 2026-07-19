@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
+import { AuthContext, UserRole } from './auth-context';
 
 const AUTH_KEY = 'outfitmatic_auth';
 const SESSION_VERSION = 'v2';
@@ -7,32 +8,14 @@ const SESSION_VERSION = 'v2';
 // Este es un fallback de demostración para entornos locales. En producción,
 // la autenticación debe delegarse a un backend (Supabase Auth / Clerk / Auth0)
 // que verifique el hash en servidor y devuelva un token de sesión.
-//
-// Para el MVP local usamos un hash derivado (no la contraseña en claro).
-// Esto evita la exposición de la contraseña real en el bundle y demuestra
-// el patrón correcto: verificar un hash, no comparar texto plano.
 async function deriveHash(input: string): Promise<string> {
   const data = new TextEncoder().encode(input + '::outfitmatic::pepper');
   const buf = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Hash precomputado del par de demo (no revela usuario/contraseña en claro).
-const DEMO_USER_HASH = 'ec04d46a05a6081c140ade961dbbf3cd99ac7b15b583ab28ad8c01781aa63da3';
-const DEMO_PASS_HASH = '210013255fa6d34d5cc241f636ff8697a0341c098dfc5cfa4a89cc89f6a4ee27';
-
-interface AuthContextValue {
-  isAuthenticated: boolean;
-  user?: string;
-  role?: UserRole;
-  login: (user: string, pass: string) => Promise<boolean>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-// Rol del usuario autenticado. En producción viene del backend/ID token.
-export type UserRole = 'admin' | 'curator';
+const DEMO_USER_HASH = import.meta.env.VITE_DEMO_USER_HASH ?? '';
+const DEMO_PASS_HASH = import.meta.env.VITE_DEMO_PASS_HASH ?? '';
 
 interface SessionPayload {
   user: string;
@@ -59,7 +42,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       deriveHash(pass),
     ]);
 
-    // Comparación de hashes: la contraseña real nunca viaja ni se expone.
     const ok = userHash === DEMO_USER_HASH && passHash === DEMO_PASS_HASH;
     if (!ok) return false;
 
@@ -97,12 +79,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = (): AuthContextValue => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

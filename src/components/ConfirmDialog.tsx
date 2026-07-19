@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAccessibleModal } from '../hooks/useAccessibleModal';
 
 interface ConfirmDialogProps {
@@ -17,12 +18,15 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   isOpen,
   title,
   message,
-  confirmLabel = 'Confirmar',
-  cancelLabel = 'Cancelar',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   variant = 'danger',
 }) => {
+  const { t } = useTranslation();
+  const resolvedConfirmLabel = confirmLabel ?? t('common.confirm');
+  const resolvedCancelLabel = cancelLabel ?? t('common.cancel');
   const { modalRef, closeOnBackdrop } = useAccessibleModal({
     isOpen,
     onClose: onCancel,
@@ -44,7 +48,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[70] bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 z-[70] bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-modal-backdrop-in"
       onClick={(e) => {
         if (closeOnBackdrop && e.target === e.currentTarget) {
           onCancel();
@@ -57,7 +61,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         aria-modal="true"
         aria-labelledby="confirm-title"
         aria-describedby="confirm-message"
-        className="fabric-grain bg-[#1B1814] w-full max-w-sm rounded-xl border border-[#2A2622] shadow-2xl p-6"
+        className="animate-modal-content-in fabric-grain bg-[#1B1814] w-full max-w-sm rounded-xl border border-[#2A2622] shadow-2xl p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3 mb-4">
@@ -79,14 +83,14 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             onClick={onCancel}
             className="px-4 py-2 border border-[#2A2622] rounded-lg font-mono text-xs font-semibold text-[#A89B8C] hover:bg-[#161210] transition-colors"
           >
-            {cancelLabel}
+            {resolvedCancelLabel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className={`px-5 py-2 rounded-lg font-sans text-sm font-semibold shadow transition-all active:scale-[0.98] ${confirmVariantClasses[variant]}`}
           >
-            {confirmLabel}
+            {resolvedConfirmLabel}
           </button>
         </div>
       </div>

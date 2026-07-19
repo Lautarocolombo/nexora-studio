@@ -40,7 +40,7 @@ const files = [
 
 const INITIAL_GARMENTS: GarmentItem[] = files.map((id, i) => {
   const spec = SPECS[i % SPECS.length];
-  const name = spec.list[Math.floor(i / SPECS.length)] || `${spec.tag.replace(/[\[\]]/g, '')} ${i + 1}`;
+  const name = spec.list[Math.floor(i / SPECS.length)] || `${spec.tag.replace(/[[\]]/g, '')} ${i + 1}`;
   const season = SEASONS[i % SEASONS.length];
   return {
     id: `g-${i + 1}`,

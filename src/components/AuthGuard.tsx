@@ -1,7 +1,6 @@
 import React from 'react';
-import { useAuth } from '../lib/auth';
+import { useAuth } from '../lib/useAuth';
 import { LoginView } from './LoginView';
-import { useLanguage } from '../hooks/useLanguage';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -9,16 +8,9 @@ interface AuthGuardProps {
 
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const { isAuthenticated, login } = useAuth();
-  const { language } = useLanguage();
 
   if (!isAuthenticated) {
-    return (
-      <LoginView
-        onLogin={(user, pass) => login(user, pass)}
-        language={language}
-      />
-
-    );
+    return <LoginView onLogin={(user, pass) => login(user, pass)} />;
   }
 
   return <>{children}</>;

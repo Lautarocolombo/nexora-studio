@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Plus, Trash2, Edit3, Heart, Calendar, Tag, ShieldAlert, Sparkles, Check } from 'lucide-react';
+import { X, Plus, Trash2, Edit3, Heart, Tag, ShieldAlert, Sparkles, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { GarmentItem, Language } from '../types';
 import { useAccessibleModal } from '../hooks/useAccessibleModal';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -24,11 +25,10 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
   onUpdateNotes,
   onToggleFavorite
 }) => {
-  if (!garment) return null;
-
+  const { t } = useTranslation();
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(
-    language === 'es' && garment.notesEs ? garment.notesEs : garment.notes || ''
+    language === 'es' && garment?.notesEs ? garment.notesEs : garment?.notes || ''
   );
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
@@ -37,6 +37,8 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
     onClose,
     initialFocusRef: { current: null },
   });
+
+  if (!garment) return null;
 
   const name = language === 'es' && garment.nameEs ? garment.nameEs : garment.name;
   const care = language === 'es' && garment.careInstructionsEs ? garment.careInstructionsEs : garment.careInstructions;
@@ -47,24 +49,9 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
     setIsEditingNotes(false);
   };
 
-  const t = {
-    wornTimes: language === 'es' ? 'Veces Usado' : 'Times Worn',
-    season: language === 'es' ? 'Temporada' : 'Season',
-    material: language === 'es' ? 'Composición / Material' : 'Material & Fabric',
-    care: language === 'es' ? 'Instrucciones de Cuidado' : 'Care Instructions',
-    notes: language === 'es' ? 'Notas' : 'Notes',
-    logWear: language === 'es' ? 'Registrar Uso Hoy (+1)' : 'Log Wear Today (+1)',
-    delete: language === 'es' ? 'Eliminar' : 'Remove',
-    edit: language === 'es' ? 'Editar' : 'Edit',
-    save: language === 'es' ? 'Guardar' : 'Save',
-    lastWorn: language === 'es' ? 'Último Uso' : 'Last Worn',
-    seasonLabel: language === 'es' ? 'Temporada ideal' : 'Best season',
-    styleNote: language === 'es' ? 'Nota de estilo' : 'Style note'
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-modal-backdrop-in"
       onClick={(e) => {
         if (closeOnBackdrop && e.target === e.currentTarget) {
           onClose();
@@ -76,10 +63,10 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="garment-detail-title"
-        className="fabric-grain bg-[#1B1814] w-full max-w-3xl rounded-2xl border border-[#2A2622] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+        className="animate-modal-content-in fabric-grain bg-[#1B1814] w-full max-w-3xl rounded-2xl border border-[#2A2622] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="md:w-1/2 relative bg-[#0E0C0A] min-h-[300px] md:min-h-full flex items-center justify-center">
+        <div className="md:w-1/2 relative bg-[#0E0C0A] min-h-[300px] md:min-h-full flex items-center justify-center ken-burns-hover overflow-hidden">
           <OptimizedImage
             src={garment.imageUrl}
             alt={name}
@@ -93,7 +80,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
           </div>
           <button
             onClick={() => onToggleFavorite(garment.id)}
-            aria-label={language === 'es' ? 'Marcar como favorito' : 'Toggle favorite'}
+            aria-label={t('garment.toggleFav')}
             className={`absolute top-4 right-4 p-2 rounded-full backdrop-blur-sm shadow-md transition-all ${
               garment.favorite
                 ? 'bg-[#0E0C0A] text-[#C76B3F]'
@@ -115,7 +102,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
               </div>
               <button
                 onClick={onClose}
-                aria-label={language === 'es' ? 'Cerrar detalles' : 'Close details'}
+                aria-label={t('garment.closeDetails')}
                 className="p-1 text-[#A89B8C] hover:text-[#F7F3EC] rounded-lg hover:bg-[#161210] transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -124,13 +111,13 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
 
             <div className="grid grid-cols-2 gap-3 p-3.5 bg-[#161210] rounded-lg border border-[#2A2622]">
                <div className="flex flex-col">
-                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t.wornTimes}</span>
+                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t('garment.wornTimes')}</span>
                 <span className="font-display text-xl font-bold text-[#F7F3EC]">{garment.wornCount}</span>
               </div>
                <div className="flex flex-col border-l border-[#2A2622] pl-3">
-                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t.seasonLabel}</span>
+                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t('garment.seasonLabel')}</span>
                 <span className="font-display text-xl font-bold text-[#C76B3F]">
-                  {garment.season === 'all-year' ? (language === 'es' ? 'Todo el año' : 'All year') : garment.season === 'spring-summer' ? (language === 'es' ? 'Primavera/Ver' : 'Spring/Summer') : (language === 'es' ? 'Otoño/Inv' : 'Autumn/Winter')}
+                  {garment.season === 'all-year' ? t('garment.seasonAllYear') : garment.season === 'spring-summer' ? t('garment.seasonSpringSummer') : t('garment.seasonAutumnWinter')}
                 </span>
               </div>
             </div>
@@ -139,7 +126,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
               <div className="flex flex-col gap-1">
                 <span className="font-mono text-xs text-[#A89B8C] font-semibold tracking-wider uppercase flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5 text-[#C76B3F]" />
-                  {t.material}
+                  {t('garment.material')}
                 </span>
                 <p className="font-sans text-sm text-[#F7F3EC] pl-5 border-l-2 border-[#C76B3F]/40 py-0.5">
                   {garment.material}
@@ -151,7 +138,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
               <div className="flex flex-col gap-1">
                 <span className="font-mono text-xs text-[#A89B8C] font-semibold tracking-wider uppercase flex items-center gap-1.5">
                   <ShieldAlert className="w-3.5 h-3.5 text-[#C76B3F]" />
-                  {t.care}
+                  {t('garment.care')}
                 </span>
                 <p className="font-sans text-xs text-[#A89B8C] pl-5 border-l-2 border-[#C76B3F]/40 py-0.5 italic">
                   {care}
@@ -163,7 +150,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
               <div className="flex justify-between items-center">
                 <span className="font-mono text-xs text-[#A89B8C] font-semibold tracking-wider uppercase flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#C76B3F]" />
-                  {t.notes}
+                  {t('garment.notes')}
                 </span>
                 {!isEditingNotes ? (
                     <button
@@ -171,7 +158,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
                       className="font-mono text-xs text-[#C76B3F] hover:underline flex items-center gap-1"
                   >
                     <Edit3 className="w-3 h-3" />
-                    <span>{t.edit}</span>
+                    <span>{t('common.edit')}</span>
                   </button>
                 ) : (
                     <button
@@ -179,19 +166,21 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
                       className="font-mono text-xs text-[#C76B3F] font-bold hover:underline flex items-center gap-1"
                   >
                     <Check className="w-3 h-3" />
-                    <span>{t.save}</span>
+                    <span>{t('common.save')}</span>
                   </button>
                 )}
               </div>
 
               {!isEditingNotes ? (
                 <p className="font-sans text-sm text-[#A89B8C] bg-[#161210] p-3 rounded border border-[#2A2622]">
-                  {notes || (language === 'es' ? 'Sin notas.' : 'No notes recorded yet.')}
+                  {notes || t('garment.noNotes')}
                 </p>
               ) : (
                 <textarea
+                  id="garment-notes-edit"
                   value={notesText}
                   onChange={(e) => setNotesText(e.target.value)}
+                  aria-label={t('garment.notes')}
                   className="w-full bg-[#161210] border border-[#C76B3F] rounded p-2.5 font-sans text-sm text-[#F7F3EC] focus:outline-none focus:ring-1 focus:ring-[#C76B3F]"
                   rows={3}
                 />
@@ -205,26 +194,26 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
               className="w-full bg-[#C76B3F] text-[#0B0A08] font-sans text-sm py-3 px-4 rounded-lg font-semibold shadow hover:bg-[#b36138] transition-all flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              <span>{t.logWear}</span>
+              <span>{t('garment.logWear')}</span>
             </button>
 
             <div className="flex justify-between items-center pt-2">
               <span className="font-mono text-xs text-[#A89B8C]">
-                {t.lastWorn}: {garment.lastWorn || 'N/A'}
+                {t('garment.lastWorn')}: {garment.lastWorn || 'N/A'}
               </span>
               <button
                 onClick={() => setShowConfirmDelete(true)}
                 className="font-mono text-xs text-[#E0795A] hover:text-[#C76B3F] flex items-center gap-1 transition-colors"
-                aria-label={language === 'es' ? 'Eliminar prenda' : 'Delete garment'}
+                aria-label={t('garment.deleteAria')}
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>{t.delete}</span>
+                <span>{t('common.delete')}</span>
               </button>
               <ConfirmDialog
                 isOpen={showConfirmDelete}
-                title={language === 'es' ? 'Eliminar prenda' : 'Delete garment'}
-                message={language === 'es' ? '¿Deseas eliminar esta prenda permanentemente?' : 'Remove this garment permanently?'}
-                confirmLabel={language === 'es' ? 'Eliminar' : 'Delete'}
+                title={t('garment.deleteTitle')}
+                message={t('garment.deleteMessage')}
+                confirmLabel={t('garment.deleteConfirm')}
                 onConfirm={() => {
                   onDelete(garment.id);
                   onClose();

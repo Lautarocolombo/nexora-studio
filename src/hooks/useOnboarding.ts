@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface OnboardingStep {
   target: string;
@@ -38,29 +38,38 @@ export function useOnboarding() {
       return true;
     }
   });
-  const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
+  const highlightRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
+
+  const next = useCallback(() => {
+    setStepIndex(i => Math.min(i + 1, STEPS.length - 1));
+  }, []);
+
+  const prev = useCallback(() => {
+    setStepIndex(i => Math.max(i - 1, 0));
+  }, []);
 
   useEffect(() => {
     if (!active || stepIndex >= STEPS.length) return;
-    const selector = STEPS[stepIndex].target;
-    const el = document.querySelector<HTMLElement>(selector);
-    if (!el) return;
+    const el = document.querySelector<HTMLElement>(STEPS[stepIndex].target);
+    const highlight = highlightRef.current;
+    if (!el || !highlight) return;
     const rect = el.getBoundingClientRect();
     const padding = 6;
-    setHighlightStyle({
+    Object.assign(highlight.style, {
       position: 'fixed',
-      top: rect.top - padding,
-      left: rect.left - padding,
-      width: rect.width + padding * 2,
-      height: rect.height + padding * 2,
+      top: `${rect.top - padding}px`,
+      left: `${rect.left - padding}px`,
+      width: `${rect.width + padding * 2}px`,
+      height: `${rect.height + padding * 2}px`,
       borderRadius: '12px',
       border: '2px solid #C76B3F',
       boxShadow: '0 0 0 999px rgba(14, 12, 10, 0.65)',
-      zIndex: 90,
+      zIndex: '90',
       pointerEvents: 'none',
       transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
     });
+    highlight.style.display = 'block';
   }, [active, stepIndex]);
 
   useEffect(() => {
@@ -76,15 +85,7 @@ export function useOnboarding() {
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [active, stepIndex]);
-
-  const next = () => {
-    setStepIndex(i => Math.min(i + 1, STEPS.length - 1));
-  };
-
-  const prev = () => {
-    setStepIndex(i => Math.max(i - 1, 0));
-  };
+  }, [active, stepIndex, next, prev]);
 
   const finish = () => {
     setActive(false);
@@ -108,7 +109,7 @@ export function useOnboarding() {
     stepIndex,
     totalSteps: STEPS.length,
     seen,
-    highlightStyle,
+    highlightRef,
     currentStep: current,
     tooltipRef,
     next,

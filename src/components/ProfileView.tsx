@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { User, Award, ShieldCheck, Download, Upload, Globe, Check, SlidersHorizontal, Sparkles } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { User, Award, ShieldCheck, Download, Globe, Check, SlidersHorizontal, Sparkles, Upload } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { GarmentItem, SavedOutfit, Language } from '../types';
 import { ConfirmDialog } from './ConfirmDialog';
+import { toast } from 'sonner';
 
 interface ProfileViewProps {
   garments: GarmentItem[];
@@ -9,6 +11,7 @@ interface ProfileViewProps {
   language: Language;
   setLanguage: (lang: Language) => void;
   onResetToDemo: () => void;
+  onImportData?: (garments: GarmentItem[], outfits: SavedOutfit[]) => void;
 }
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
@@ -16,15 +19,22 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   savedOutfits,
   language,
   setLanguage,
-  onResetToDemo
+  onResetToDemo,
+  onImportData
 }) => {
-  const [capsuleGoal, setCapsuleGoal] = useState('33');
+  const { t } = useTranslation();
+  const [capsuleGoal, setCapsuleGoal] = useState(() => {
+    return localStorage.getItem('outfitmatic_capsule_goal') || '33';
+  });
   const [isSaved, setIsSaved] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
+    localStorage.setItem('outfitmatic_capsule_goal', capsuleGoal);
     setIsSaved(true);
+    toast.success(t('profile.savedToast'));
     setTimeout(() => setIsSaved(false), 3000);
   };
 
@@ -38,30 +48,37 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+    toast.success(t('profile.exportToast'));
   };
 
-  const t = {
-    title: language === 'es' ? 'Perfil & Metas de Estilo' : 'Profile & Style Goals',
-    subtitle: language === 'es' ? 'Definí tus objetivos de uso, respaldá tus datos y elegí el idioma.' : 'Define your wear goals, back up your data, and choose your language.',
-    profileCard: language === 'es' ? 'Curador del Armario' : 'Wardrobe Curator',
-    role: language === 'es' ? 'Esteta Consciente (Miembro desde 2026)' : 'Mindful Aesthete (Member since 2026)',
-    capsuleTitle: language === 'es' ? 'Meta de Uso Mensual' : 'Monthly Wear Goal',
-    capsuleDesc: language === 'es' ? 'Objetivo de usos registrados por mes para mantener tu armario en rotación.' : 'Target monthly wears to keep your wardrobe in active rotation.',
-    currentProgress: language === 'es' ? 'Progreso Actual:' : 'Current Progress:',
-    itemsOf: language === 'es' ? 'usos de' : 'wears of',
-    languageSection: language === 'es' ? 'Idioma de la Interfaz / Language' : 'Interface Language',
-    backupSection: language === 'es' ? 'Respaldo de Datos & Exportación' : 'Data Backup & Export',
-    exportBtn: language === 'es' ? 'Exportar Armario (JSON)' : 'Export Wardrobe (JSON)',
-    resetBtn: language === 'es' ? 'Restablecer Datos de Demostración' : 'Reset Demo Wardrobe',
-    saveBtn: language === 'es' ? 'Guardar Preferencias' : 'Save Preferences',
-    savedMsg: language === 'es' ? '¡Preferencias actualizadas!' : 'Preferences saved!'
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (data.garments && Array.isArray(data.garments) && data.savedOutfits && Array.isArray(data.savedOutfits)) {
+          if (onImportData) {
+            onImportData(data.garments, data.savedOutfits);
+            toast.success(t('profile.importToast', { count: data.garments.length }));
+          }
+        } else {
+          toast.error(t('profile.invalidFormat'));
+        }
+      } catch {
+        toast.error(t('profile.readFileError'));
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   return (
     <div className="space-y-10 max-w-4xl mx-auto">
       <header>
-        <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t.title}</h2>
-        <p className="font-sans text-sm text-[#A89B8C] mt-1">{t.subtitle}</p>
+        <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t('profile.title')}</h2>
+        <p className="font-sans text-sm text-[#A89B8C] mt-1">{t('profile.subtitle')}</p>
       </header>
 
       <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl flex flex-col md:flex-row items-center gap-6">
@@ -70,20 +87,20 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </div>
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center gap-2">
-            <h3 className="font-display text-2xl font-bold text-[#F7F3EC]">Lautaro C.</h3>
+            <h3 className="font-display text-2xl font-bold text-[#F7F3EC]">{t('profile.userName')}</h3>
             <span className="font-mono text-xs bg-[#161210] text-[#C76B3F] px-2.5 py-0.5 rounded font-semibold border border-[#2A2622]">
-              STYLE CURATOR
+              {t('profile.userBadge')}
             </span>
           </div>
-          <p className="font-mono text-xs text-[#A89B8C] mt-1">{t.role}</p>
+          <p className="font-mono text-xs text-[#A89B8C] mt-1">{t('profile.role')}</p>
           <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
             <span className="font-mono text-xs text-[#C76B3F] font-bold bg-[#161210] px-2.5 py-1 rounded border border-[#2A2622] flex items-center gap-1">
               <Award className="w-3.5 h-3.5" />
-              <span>{garments.length} {language === 'es' ? 'Piezas catalogadas' : 'Garments logged'}</span>
+              <span>{garments.length} {t('profile.garmentsLogged')}</span>
             </span>
             <span className="font-mono text-xs text-[#A89B8C] font-bold bg-[#161210] px-2.5 py-1 rounded border border-[#2A2622] flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{savedOutfits.length} {language === 'es' ? 'Atuendos curados' : 'Curated Outfits'}</span>
+              <span>{savedOutfits.length} {t('profile.curatedOutfits')}</span>
             </span>
           </div>
         </div>
@@ -93,14 +110,14 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl space-y-4">
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-[#C76B3F]" />
-            <span>{t.capsuleTitle}</span>
+            <span>{t('profile.capsuleTitle')}</span>
           </h3>
-          <p className="font-sans text-sm text-[#A89B8C]">{t.capsuleDesc}</p>
+          <p className="font-sans text-sm text-[#A89B8C]">{t('profile.capsuleDesc')}</p>
 
           <div className="pt-2">
             <div className="flex justify-between items-center mb-1">
-              <span className="font-mono text-xs font-semibold text-[#A89B8C]">{t.currentProgress}</span>
-              <span className="font-mono text-xs font-bold text-[#F7F3EC]">{garments.reduce((a, g) => a + g.wornCount, 0)} {t.itemsOf} {capsuleGoal}</span>
+              <span className="font-mono text-xs font-semibold text-[#A89B8C]">{t('profile.currentProgress')}</span>
+              <span className="font-mono text-xs font-bold text-[#F7F3EC]">{garments.reduce((a, g) => a + g.wornCount, 0)} {t('profile.itemsOf')} {capsuleGoal}</span>
             </div>
             <div className="w-full bg-[#161210] rounded-full h-3 overflow-hidden border border-[#2A2622]">
               <div className="h-full transition-all duration-500 bg-[#C76B3F]" style={{ width: `${Math.min(100, (garments.reduce((a, g) => a + g.wornCount, 0) / Math.max(1, parseInt(capsuleGoal))) * 100)}%` }} />
@@ -109,12 +126,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-[#2A2622]">
             <div>
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1">{language === 'es' ? 'Meta de Usos Mensuales' : 'Monthly Wear Target'}</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1">{t('profile.wearTargetLabel')}</label>
               <select value={capsuleGoal} onChange={(e) => setCapsuleGoal(e.target.value)} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none">
-                <option value="20">20 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
-                <option value="33">33 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
-                <option value="50">50 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
-                <option value="80">80 {language === 'es' ? 'usos/mes' : 'wears/mo'}</option>
+                <option value="20">20 {t('profile.wearsPerMonth')}</option>
+                <option value="33">33 {t('profile.wearsPerMonth')}</option>
+                <option value="50">50 {t('profile.wearsPerMonth')}</option>
+                <option value="80">80 {t('profile.wearsPerMonth')}</option>
               </select>
             </div>
           </div>
@@ -123,7 +140,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl space-y-4">
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] flex items-center gap-2">
             <Globe className="w-5 h-5 text-[#C76B3F]" />
-            <span>{t.languageSection}</span>
+            <span>{t('profile.languageSection')}</span>
           </h3>
 
           <div className="grid grid-cols-2 gap-4 max-w-md">
@@ -142,23 +159,29 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <section className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-6 shadow-2xl space-y-4">
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] flex items-center gap-2">
             <SlidersHorizontal className="w-5 h-5 text-[#C76B3F]" />
-            <span>{t.backupSection}</span>
+            <span>{t('profile.backupSection')}</span>
           </h3>
 
           <div className="flex flex-wrap gap-4 pt-2">
             <button type="button" onClick={handleExport} className="px-4 py-2.5 bg-[#161210] hover:bg-[#0E0C0A] text-[#A89B8C] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all shadow-sm">
               <Download className="w-4 h-4" />
-              <span>{t.exportBtn}</span>
+              <span>{t('profile.exportBtn')}</span>
             </button>
 
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2.5 bg-[#161210] hover:bg-[#0E0C0A] text-[#A89B8C] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all shadow-sm">
+              <Upload className="w-4 h-4" />
+              <span>{t('profile.importBtn')}</span>
+            </button>
+            <input ref={fileInputRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
+
             <button type="button" onClick={() => setShowResetConfirm(true)} className="px-4 py-2.5 bg-[#161210] hover:bg-[#C76B3F]/10 text-[#C76B3F] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all">
-              <span>{t.resetBtn}</span>
+              <span>{t('profile.resetBtn')}</span>
             </button>
             <ConfirmDialog
               isOpen={showResetConfirm}
-              title={language === 'es' ? 'Restablecer datos' : 'Reset data'}
-              message={language === 'es' ? '¿Restablecer al guardarropa de demostración?' : 'Reset to initial demo wardrobe?'}
-              confirmLabel={language === 'es' ? 'Restablecer' : 'Reset'}
+              title={t('profile.resetTitle')}
+              message={t('profile.resetMessage')}
+              confirmLabel={t('profile.resetConfirm')}
               onConfirm={() => {
                 onResetToDemo();
                 setShowResetConfirm(false);
@@ -170,9 +193,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         </section>
 
         <div className="flex justify-end items-center gap-4 pt-4">
-          {isSaved && <span className="font-mono text-xs text-[#C76B3F] font-bold flex items-center gap-1 animate-fadeIn"><Check className="w-4 h-4" /><span>{t.savedMsg}</span></span>}
+          {isSaved && <span className="font-mono text-xs text-[#C76B3F] font-bold flex items-center gap-1 animate-fadeIn"><Check className="w-4 h-4" /><span>{t('profile.savedMsg')}</span></span>}
           <button type="submit" className="px-6 py-3 bg-[#C76B3F] hover:bg-[#A85A32] text-white rounded-lg font-sans text-sm font-semibold shadow-md transition-all active:scale-95">
-            {t.saveBtn}
+            {t('profile.saveBtn')}
           </button>
         </div>
       </form>
