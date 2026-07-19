@@ -1,467 +1,135 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
-import {
-  GarmentItem,
-  SavedOutfit,
-  WearLogEntry,
-  TabType,
-  Language
-} from './types';
-import {
-  INITIAL_GARMENTS,
-  INITIAL_OUTFITS,
-  INITIAL_WEAR_LOGS
-} from './data/initialWardrobe';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { HashRouter, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { TabType, GarmentItem } from './types';
 import { Navbar } from './components/Navbar';
+import { AppRoutes } from './components/AppRoutes';
 import { OnboardingTour } from './components/OnboardingTour';
 import { GarmentDetailModal } from './components/GarmentDetailModal';
 import { AddGarmentModal } from './components/AddGarmentModal';
 import { AuthGuard } from './components/AuthGuard';
-import { useAuth } from './lib/auth';
-import { db } from './lib/db';
-import { useWardrobeSync, useOutfitsSync, useWearLogsSync, useLanguageSync } from './hooks/useSync';
+import { useAuth } from './lib/useAuth';
+import { useWardrobeStore } from './hooks/useWardrobeStore';
+import { useAppInit } from './hooks/useAppInit';
 import { useOnboarding } from './hooks/useOnboarding';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useAnalytics } from './hooks/useAnalytics';
+import { useSeoMeta } from './hooks/useSeoMeta';
 import { LanguageContext } from './hooks/LanguageContext';
+import { UpdatePrompt } from './components/UpdatePrompt';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { Toaster } from 'sonner';
+import { pathToTab, tabToPath } from './lib/routes';
 
-// PERFORMANCE: Code-splitting por vista. Cada vista se carga bajo demanda
-// (React.lazy + Suspense), reduciendo el bundle inicial y mejorando TTI/Lighthouse.
-const WardrobeView = lazy(() => import('./components/WardrobeView').then(m => ({ default: m.WardrobeView })));
-const OutfitBuilder = lazy(() => import('./components/OutfitBuilder').then(m => ({ default: m.OutfitBuilder })));
-const CalendarView = lazy(() => import('./components/CalendarView').then(m => ({ default: m.CalendarView })));
-const StatsView = lazy(() => import('./components/StatsView').then(m => ({ default: m.StatsView })));
-const ProfileView = lazy(() => import('./components/ProfileView').then(m => ({ default: m.ProfileView })));
-const HelpView = lazy(() => import('./components/HelpView').then(m => ({ default: m.HelpView })));
-const AdminPanel = lazy(() => import('./components/AdminPanel').then(m => ({ default: m.AdminPanel })));
-const AuditView = lazy(() => import('./components/AuditView').then(m => ({ default: m.AuditView })));
-
-
-function ViewFallback() {
-  return (
-    <div className="flex items-center justify-center min-h-[40vh]" role="status" aria-live="polite">
-      <div className="space-y-4 w-full max-w-md">
-        <div className="h-8 bg-[#1B1814] rounded-lg animate-pulse w-3/4" />
-        <div className="h-4 bg-[#1B1814] rounded animate-pulse w-1/2" />
-        <div className="grid grid-cols-2 gap-4 mt-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="aspect-[3/4] bg-[#1B1814] rounded-xl animate-pulse" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const STORAGE_KEYS = {
-  GARMENTS: 'outfitmatic_garments_v2',
-  OUTFITS: 'outfitmatic_outfits_v2',
-  LOGS: 'outfitmatic_logs_v2',
-  LANG: 'outfitmatic_lang_v2'
-};
-
-export default function App() {
+function AppInner() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useAuth();
   const { seen, start } = useOnboarding();
   const { trackEvent } = useAnalytics();
 
-  const [garments, setGarments] = useState<GarmentItem[]>(INITIAL_GARMENTS);
-  const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>(INITIAL_OUTFITS);
-  const [wearLogs, setWearLogs] = useState<WearLogEntry[]>(INITIAL_WEAR_LOGS);
-  const [language, setLanguage] = useState<Language>('es');
-  const [activeTab, setActiveTab] = useState<TabType>('wardrobe');
+  const store = useWardrobeStore();
+  const activeTab = pathToTab(location.pathname);
+  const [selectedGarmentForDetail, setSelectedGarmentForDetail] = useState<GarmentItem | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const setActiveTab = useCallback((tab: TabType) => navigate(tabToPath(tab)), [navigate]);
+
+  useAppInit({
+    setGarments: store.setGarments,
+    setSavedOutfits: store.setSavedOutfits,
+    setWearLogs: store.setWearLogs,
+    setLanguage: store.setLanguage,
+    setLoaded: store.setLoaded,
+  });
+
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(store.language);
+  }, [store.language, i18n]);
+
+  useSeoMeta(activeTab, store.language);
 
   useEffect(() => {
     trackEvent('tab_change', { tab: activeTab });
   }, [activeTab, trackEvent]);
-  const [selectedGarmentForDetail, setSelectedGarmentForDetail] = useState<GarmentItem | null>(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!seen && loaded) {
-      const timer = setTimeout(() => {
-        start();
-      }, 800);
+    if (!seen && store.loaded) {
+      const timer = setTimeout(() => start(), 800);
       return () => clearTimeout(timer);
     }
-  }, [seen, loaded, start]);
+  }, [seen, store.loaded, start]);
 
-  useKeyboardShortcuts([
-    { key: '/', handler: () => { const search = document.querySelector('input[type="text"]'); search && (search as HTMLInputElement).focus(); }, description: 'Focus search' },
+  const shortcuts = useMemo(() => [
+    { key: '/', handler: () => { const s = document.querySelector('input[type="text"]'); if (s) (s as HTMLInputElement).focus(); }, description: 'Focus search' },
     { key: 'n', handler: () => setIsAddModalOpen(true), description: 'New garment' },
     { key: 'b', handler: () => setActiveTab('builder'), description: 'Go to builder' },
     { key: 'w', handler: () => setActiveTab('wardrobe'), description: 'Go to wardrobe' },
     { key: 'c', handler: () => setActiveTab('calendar'), description: 'Go to calendar' },
     { key: 's', handler: () => setActiveTab('stats'), description: 'Go to stats' },
-  ]);
-
-  // Migrate old localStorage v1 -> v2 on mount
-  useEffect(() => {
-    ['outfitmatic_garments_v1','outfitmatic_outfits_v1','outfitmatic_logs_v1','outfitmatic_lang_v1'].forEach(key => localStorage.removeItem(key));
-  }, []);
-
-  // Load from IndexedDB on mount
-  useEffect(() => {
-    let cancelled = false;
-    async function loadData() {
-      try {
-        const [savedGarments, savedOutfits, savedLogs, savedLang] = await Promise.all([
-          db.getAll('garments'),
-          db.getAll('outfits'),
-          db.getAll('logs'),
-          db.get('lang', 'language')
-        ]);
-
-        if (cancelled) return;
-
-        if (savedGarments.length > 0) {
-          setGarments(savedGarments as GarmentItem[]);
-        } else {
-          await db.putAll('garments', INITIAL_GARMENTS);
-          setGarments(INITIAL_GARMENTS);
-        }
-
-        if (savedOutfits.length > 0) {
-          const normalized = (savedOutfits as any[]).map((o: any) => {
-            if (Array.isArray(o.items) && !Array.isArray(o.garmentIds)) {
-              return { ...o, garmentIds: o.items.map((i: any) => i.id) };
-            }
-            return o;
-          });
-          setSavedOutfits(normalized as SavedOutfit[]);
-        } else {
-          await db.putAll('outfits', INITIAL_OUTFITS);
-          setSavedOutfits(INITIAL_OUTFITS);
-        }
-
-        if (savedLogs.length > 0) {
-          setWearLogs(savedLogs as WearLogEntry[]);
-        } else {
-          await db.putAll('logs', INITIAL_WEAR_LOGS);
-          setWearLogs(INITIAL_WEAR_LOGS);
-        }
-
-        if (savedLang) {
-          setLanguage(savedLang.value === 'en' ? 'en' : 'es');
-        } else {
-          await db.put('lang', { key: 'language', value: 'es' });
-          setLanguage('es');
-        }
-      } catch (e) {
-        console.error('Failed to load data from IndexedDB', e);
-      } finally {
-        if (!cancelled) setLoaded(true);
-      }
-    }
-
-    loadData();
-    return () => { cancelled = true; };
-  }, []);
-
-  useWardrobeSync(garments, setGarments, loaded);
-  useOutfitsSync(savedOutfits, setSavedOutfits, loaded);
-  useWearLogsSync(wearLogs, setWearLogs, loaded);
-  useLanguageSync(language, setLanguage, loaded);
-
-  // Handlers
-  const handleLogWear = (e: React.MouseEvent | undefined, garment: GarmentItem) => {
-    if (e) e.stopPropagation();
-    trackEvent('log_wear', { garmentId: garment.id, category: garment.category });
-    const today = new Date().toISOString().split('T')[0];
-
-    // Update garment worn count
-    setGarments(prev => prev.map(g => {
-      if (g.id === garment.id) {
-        return {
-          ...g,
-          wornCount: g.wornCount + 1,
-          lastWorn: today
-        };
-      }
-      return g;
-    }));
-
-    // Update modal item if open
-    if (selectedGarmentForDetail && selectedGarmentForDetail.id === garment.id) {
-      setSelectedGarmentForDetail(prev => prev ? ({
-        ...prev,
-        wornCount: prev.wornCount + 1,
-        lastWorn: today
-      }) : null);
-    }
-
-    // Add log entry
-    const newLog: WearLogEntry = {
-      id: `l-${Date.now()}`,
-      date: today,
-      garmentIds: [garment.id],
-      notes: language === 'es' ? `Uso individual registrado: ${garment.nameEs || garment.name}` : `Single wear logged: ${garment.name}`
-    };
-    setWearLogs(prev => [newLog, ...prev]);
-  };
-
-  const handleToggleFavorite = (e: React.MouseEvent | undefined, garmentId: string) => {
-    if (e) e.stopPropagation();
-    setGarments(prev => prev.map(g => {
-      if (g.id === garmentId) {
-        const nextFav = !g.favorite;
-        if (selectedGarmentForDetail && selectedGarmentForDetail.id === garmentId) {
-          setSelectedGarmentForDetail({ ...g, favorite: nextFav });
-        }
-        return { ...g, favorite: nextFav };
-      }
-      return g;
-    }));
-  };
-
-  const handleDeleteGarment = (garmentId: string) => {
-    setGarments(prev => prev.filter(g => g.id !== garmentId));
-    setSavedOutfits(prev => prev.map(o => ({
-      ...o,
-      garmentIds: o.garmentIds.filter(id => id !== garmentId)
-    })));
-  };
-
-  const handleUpdateNotes = (garmentId: string, newNotes: string) => {
-    setGarments(prev => prev.map(g => {
-      if (g.id === garmentId) {
-        const updated = language === 'es' ? { ...g, notesEs: newNotes, notes: newNotes } : { ...g, notes: newNotes };
-        if (selectedGarmentForDetail && selectedGarmentForDetail.id === garmentId) {
-          setSelectedGarmentForDetail(updated);
-        }
-        return updated;
-      }
-      return g;
-    }));
-  };
-
-  const handleAddGarment = (newGarmentData: Omit<GarmentItem, 'id'>) => {
-    const newGarment: GarmentItem = {
-      ...newGarmentData,
-      id: `g-${Date.now()}`
-    };
-    setGarments(prev => [newGarment, ...prev]);
-  };
-
-  const resolveOutfitItems = (outfit: SavedOutfit) => {
-    return outfit.garmentIds
-      .map(id => garments.find(g => g.id === id))
-      .filter((g): g is GarmentItem => !!g);
-  };
-
-  const handleSaveOutfit = (outfitData: Omit<SavedOutfit, 'id' | 'createdAt'>) => {
-    trackEvent('save_outfit', { pieceCount: outfitData.garmentIds.length });
-    const newOutfit: SavedOutfit = {
-      ...outfitData,
-      id: `o-${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    setSavedOutfits(prev => [newOutfit, ...prev]);
-  };
-
-  const handleLogOutfitWear = (outfit: SavedOutfit) => {
-    trackEvent('log_outfit_wear', { outfitId: outfit.id, pieceCount: outfit.garmentIds.length });
-    const today = new Date().toISOString().split('T')[0];
-    const outfitItems = resolveOutfitItems(outfit);
-    const outfitItemIds = outfitItems.map(i => i.id);
-
-    if (outfitItemIds.length === 0) return;
-
-    setSavedOutfits(prev => prev.map(o => o.id === outfit.id ? { ...o, wornCount: o.wornCount + 1, lastWorn: today } : o));
-
-    setGarments(prev => prev.map(g => {
-      if (outfitItemIds.includes(g.id)) {
-        return { ...g, wornCount: g.wornCount + 1, lastWorn: today };
-      }
-      return g;
-    }));
-
-    const newLog: WearLogEntry = {
-      id: `l-${Date.now()}`,
-      date: today,
-      garmentIds: outfitItemIds,
-      outfitId: outfit.id,
-      outfitName: language === 'es' && outfit.nameEs ? outfit.nameEs : outfit.name,
-      notes: language === 'es' ? `Conjunto usado: ${outfit.nameEs || outfit.name}` : `Outfit worn: ${outfit.name}`
-    };
-    setWearLogs(prev => [newLog, ...prev]);
-  };
-
-  const handleDeleteOutfit = (outfitId: string) => {
-    setSavedOutfits(prev => prev.filter(o => o.id !== outfitId));
-  };
-
-  const handleLogCustomDate = (date: string, outfit?: SavedOutfit, garmentIds?: string[], notes?: string) => {
-    let targetIds: string[] = [];
-    if (outfit) {
-      targetIds = resolveOutfitItems(outfit).map(i => i.id);
-    } else if (garmentIds) {
-      targetIds = garmentIds;
-    }
-    if (targetIds.length === 0 && !notes) return;
-
-    if (targetIds.length > 0) {
-      setGarments(prev => prev.map(g => {
-        if (targetIds.includes(g.id)) {
-          return { ...g, wornCount: g.wornCount + 1, lastWorn: date > (g.lastWorn || '') ? date : g.lastWorn };
-        }
-        return g;
-      }));
-    }
-
-    if (outfit) {
-      setSavedOutfits(prev => prev.map(o => o.id === outfit.id ? { ...o, wornCount: o.wornCount + 1, lastWorn: date } : o));
-    }
-
-    const newLog: WearLogEntry = {
-      id: `l-${Date.now()}`,
-      date,
-      garmentIds: targetIds,
-      outfitId: outfit?.id,
-      outfitName: outfit ? (language === 'es' && outfit.nameEs ? outfit.nameEs : outfit.name) : undefined,
-      notes
-    };
-    setWearLogs(prev => [newLog, ...prev]);
-  };
-
-  const handleResetToDemo = async () => {
-    setGarments(INITIAL_GARMENTS);
-    setSavedOutfits(INITIAL_OUTFITS);
-    setWearLogs(INITIAL_WEAR_LOGS);
-    await Promise.all([
-      db.clear('garments'),
-      db.clear('outfits'),
-      db.clear('logs'),
-      db.clear('lang')
-    ]);
-    await db.putAll('garments', INITIAL_GARMENTS);
-    await db.putAll('outfits', INITIAL_OUTFITS);
-    await db.putAll('logs', INITIAL_WEAR_LOGS);
-    await db.put('lang', { key: 'language', value: 'es' });
-    setLanguage('es');
-    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
-  };
-
-  const handleUpdateGarment = (id: string, data: Partial<GarmentItem>) => {
-    setGarments(prev => prev.map(g => g.id === id ? { ...g, ...data } : g));
-  };
+  ], [setActiveTab]);
+  useKeyboardShortcuts(shortcuts);
 
   return (
-      <LanguageContext.Provider value={{ language, setLanguage }}>
-        <AuthGuard>
-          <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
-            <OnboardingTour />
-            {/* Navigation Bars */}
-            <Navbar
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onNewOutfitClick={() => {
-            // Open new garment or builder depending on preference
-            setIsAddModalOpen(true);
+    <LanguageContext.Provider value={{ language: store.language, setLanguage: store.setLanguage }}>
+      <AuthGuard>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: { background: '#1B1814', border: '1px solid #2A2622', color: '#F7F3EC', fontFamily: 'var(--font-mono)', fontSize: '12px' },
+            className: 'font-mono',
           }}
-          language={language}
-          setLanguage={setLanguage}
-          onLogout={logout}
+          theme="dark"
         />
+        <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
+          <OnboardingTour />
+          <Navbar
+            onLogout={logout}
+          />
 
-      {/* Main Content Area */}
-      <main className="flex-1 ml-0 md:ml-64 pt-16 pb-20 md:pt-0 md:pb-0 min-h-screen transition-all">
-        <div className="max-w-7xl mx-auto px-4 md:px-10 py-8 md:py-12 animate-fadeIn">
-          {activeTab === 'wardrobe' && (
-            <WardrobeView
-              garments={garments}
-              language={language}
-              onCardClick={(g) => setSelectedGarmentForDetail(g)}
-              onLogWear={handleLogWear}
-              onToggleFavorite={handleToggleFavorite}
-              onOpenAddModal={() => setIsAddModalOpen(true)}
-            />
-          )}
+          <main id="main-content" className="flex-1 ml-0 md:ml-64 pt-16 pb-20 md:pt-0 md:pb-0 min-h-screen transition-all">
+            <div className="max-w-7xl mx-auto px-4 md:px-10 py-8 md:py-12 animate-fadeIn">
+              <ErrorBoundary>
+                <AppRoutes
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                setIsAddModalOpen={setIsAddModalOpen}
+                setSelectedGarmentForDetail={setSelectedGarmentForDetail}
+                store={store}
+              />
+              </ErrorBoundary>
+            </div>
+          </main>
 
-          {activeTab === 'builder' && (
-            <OutfitBuilder
-              garments={garments}
-              savedOutfits={savedOutfits}
-              onSaveOutfit={handleSaveOutfit}
-              onLogOutfitWear={handleLogOutfitWear}
-              onDeleteOutfit={handleDeleteOutfit}
-              language={language}
-            />
-          )}
+          <GarmentDetailModal
+            garment={selectedGarmentForDetail}
+            language={store.language}
+            onClose={() => setSelectedGarmentForDetail(null)}
+            onLogWear={(g) => store.handleLogWear(undefined, g)}
+            onDelete={store.handleDeleteGarment}
+            onUpdateNotes={store.handleUpdateNotes}
+            onToggleFavorite={(id) => store.handleToggleFavorite(undefined, id)}
+          />
 
-          {activeTab === 'calendar' && (
-            <CalendarView
-              wearLogs={wearLogs}
-              garments={garments}
-              savedOutfits={savedOutfits}
-              onLogCustomDate={handleLogCustomDate}
-              language={language}
-            />
-          )}
+          <AddGarmentModal
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onAddGarment={store.handleAddGarment}
+          />
 
-          {activeTab === 'stats' && (
-            <StatsView
-              garments={garments}
-              language={language}
-              onSelectForBuilder={(g) => {
-                setActiveTab('builder');
-              }}
-              onNavigateToBuilder={() => setActiveTab('builder')}
-            />
-          )}
-
-          {activeTab === 'profile' && (
-            <ProfileView
-              garments={garments}
-              savedOutfits={savedOutfits}
-              language={language}
-              setLanguage={setLanguage}
-              onResetToDemo={handleResetToDemo}
-            />
-          )}
-
-          {activeTab === 'help' && (
-            <HelpView language={language} />
-          )}
-
-          {activeTab === 'admin' && (
-            <AdminPanel
-              garments={garments}
-              onUpdateGarment={handleUpdateGarment}
-              onDeleteGarment={handleDeleteGarment}
-              onAddGarment={handleAddGarment}
-              language={language}
-            />
-          )}
-
-          {activeTab === 'audit' && (
-            <Suspense fallback={<ViewFallback />}>
-              <AuditView />
-            </Suspense>
-          )}
+          <UpdatePrompt />
         </div>
-      </main>
+      </AuthGuard>
+    </LanguageContext.Provider>
+  );
+}
 
-
-      {/* Modals */}
-      <GarmentDetailModal
-        garment={selectedGarmentForDetail}
-        language={language}
-        onClose={() => setSelectedGarmentForDetail(null)}
-        onLogWear={(g) => handleLogWear(undefined, g)}
-        onDelete={handleDeleteGarment}
-        onUpdateNotes={handleUpdateNotes}
-        onToggleFavorite={(id) => handleToggleFavorite(undefined, id)}
-      />
-
-      <AddGarmentModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddGarment={handleAddGarment}
-        language={language}
-      />
-      </div>
-    </AuthGuard>
-      </LanguageContext.Provider>
+export default function App() {
+  return (
+    <HashRouter>
+      <AppInner />
+    </HashRouter>
   );
 }

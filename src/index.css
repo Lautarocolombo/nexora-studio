@@ -22,6 +22,30 @@
   color-scheme: dark;
 }
 
+*:focus-visible {
+  outline: 2px solid #C76B3F;
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #C76B3F;
+  color: #0B0A08;
+  padding: 8px 16px;
+  z-index: 200;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 body {
   background-color: var(--color-ink);
   color: var(--color-bone);
@@ -136,5 +160,131 @@ body {
 
 @keyframes toastSlideIn {
   from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === CARD ANIMATIONS === */
+.animate-card-enter {
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Staggered card entrance via CSS custom property --i */
+.stagger-child { animation-delay: calc(var(--i, 0) * 0.07s); }
+
+/* === PAGE TRANSITIONS === */
+.animate-page-enter {
+  animation: pageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-page-exit {
+  animation: pageExit 0.25s cubic-bezier(0.4, 0, 1, 1) both;
+}
+@keyframes pageExit {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-8px); }
+}
+
+/* === MODAL ANIMATIONS === */
+.animate-modal-backdrop-in {
+  animation: backdropIn 0.3s ease-out both;
+}
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-modal-content-in {
+  animation: modalContentIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes modalContentIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* === IMAGE EFFECTS === */
+.ken-burns-hover {
+  overflow: hidden;
+}
+.ken-burns-hover img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ken-burns-hover:hover img {
+  transform: scale(1.06);
+}
+
+/* Parallax subtle float */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* === MICRO-INTERACTIONS === */
+.animate-press {
+  transition: transform 0.15s ease;
+}
+.animate-press:active {
+  transform: scale(0.97);
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2s ease-in-out infinite;
+}
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Skeleton shimmer */
+.animate-shimmer {
+  background: linear-gradient(90deg, #1B1814 25%, #2A2622 50%, #1B1814 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Glow ring on focus */
+.animate-glow-focus:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #0E0C0A, 0 0 0 4px #C76B3F, 0 0 20px rgba(199, 107, 63, 0.25);
+}
+
+/* Badge bounce */
+.animate-badge-pop {
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes badgePop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* Rotate in */
+.animate-rotate-in {
+  animation: rotateIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate(-10deg) scale(0.9); }
+  to { opacity: 1; transform: rotate(0) scale(1); }
+}
+
+/* Slide down (dropdowns, accordions) */
+.animate-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }

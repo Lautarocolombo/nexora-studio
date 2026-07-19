@@ -4,12 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0E0C0A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Armario" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>Armario — Armado de conjuntos</title>
     <meta name="description" content="Outfitmatic: guardarropa consciente. Organizá tu armario, medí tus usos y armá conjuntos con estilo editorial." />
     <meta property="og:title" content="Armario — Armado de conjuntos" />
     <meta property="og:description" content="Outfitmatic: guardarropa consciente. Organizá tu armario, medí tus usos y armá conjuntos con estilo editorial." />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:locale:alternate" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Armario — Armado de conjuntos" />
+    <meta name="twitter:description" content="Outfitmatic: guardarropa consciente. Organizá tu armario, medí tus usos y armá conjuntos con estilo editorial." />
+    <link rel="canonical" href="https://outfit-sepia.vercel.app/" />
+    <link rel="alternate" hreflang="es" href="https://outfit-sepia.vercel.app/?lang=es" />
+    <link rel="alternate" hreflang="en" href="https://outfit-sepia.vercel.app/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://outfit-sepia.vercel.app/" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,14 +34,28 @@
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "Armario",
+        "name": "Armario — Outfitmatic",
         "description": "Guardarropa consciente: organizá tu armario, medí usos y armá conjuntos con estilo editorial.",
         "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web"
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Wardrobe management",
+          "Outfit builder",
+          "Wear tracking",
+          "Calendar logging",
+          "Style statistics"
+        ],
+        "inLanguage": ["es", "en"]
       }
     </script>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
