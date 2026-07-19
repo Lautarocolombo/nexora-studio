@@ -117,7 +117,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     const outfit = savedOutfits.find(o => o.id === log.outfitId);
                     const label = log.outfitName || (outfit ? outfit.name : `${log.garmentIds.length} items logged`);
                     return (
-                      <div key={log.id} className="bg-[#1B1814] border border-[#2A2622] text-[#A89B8C] px-2 py-1 rounded text-[11px] font-mono font-medium truncate shadow-sm flex items-center gap-1" title={label}>
+                      <div key={log.id} className="bg-[#1B1814] border border-[#2A2622] text-[#A89B8C] px-2 py-1 rounded text-xs font-mono font-medium truncate shadow-sm flex items-center gap-1" title={label}>
                         <Shirt className="w-3 h-3 flex-shrink-0 text-[#C76B3F]" />
                         <span className="truncate">{label}</span>
                       </div>
@@ -187,7 +187,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             return (
               <div key={log.id} className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-4 shadow-2xl flex items-start gap-4">
                 <div className="bg-[#161210] p-3 rounded-lg border border-[#2A2622] text-center min-w-[70px]">
-                  <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{new Date(log.date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { month: 'short' })}</span>
+                  <span className="font-mono text-xs text-[#A89B8C] uppercase block">{new Date(log.date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { month: 'short' })}</span>
                   <span className="font-display text-xl font-bold text-[#C76B3F]">{log.date.split('-')[2]}</span>
                 </div>
 
@@ -199,7 +199,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                   <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#2A2622]">
                     {loggedGarments.map((g, idx) => <div key={idx} className="w-7 h-7 rounded overflow-hidden border border-[#2A2622]" title={g.name}><img src={g.imageUrl} alt={g.name} className="w-full h-full object-cover" /></div>)}
-                    <span className="font-mono text-[11px] text-[#A89B8C] ml-1">({loggedGarments.length} {language === 'es' ? 'piezas' : 'items'})</span>
+                    <span className="font-mono text-xs text-[#A89B8C] ml-1">({loggedGarments.length} {language === 'es' ? 'piezas' : 'items'})</span>
                   </div>
                 </div>
               </div>

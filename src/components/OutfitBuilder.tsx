@@ -168,11 +168,11 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedTop ? <img src={selectedTop.imageUrl} alt={selectedTop.name} className="w-full h-full object-cover" /> : <Shirt className="w-6 h-6 text-[#6B6358]" />}
                   </div>
                   <div>
-                    <span className="font-mono text-[10px] text-[#C76B3F] font-bold">[TOP / SHIRT]</span>
+                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[TOP / SHIRT]</span>
                     <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
                       {selectedTop ? (language === 'es' && selectedTop.nameEs ? selectedTop.nameEs : selectedTop.name) : (language === 'es' ? 'Seleccionar Top...' : 'Select Top...')}
                     </h4>
-                    {selectedTop && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedTop.wornCount}v` : `Worn ${selectedTop.wornCount}x`}</span>}
+                    {selectedTop && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedTop.wornCount}v` : `Worn ${selectedTop.wornCount}x`}</span>}
                   </div>
                 </div>
                 {selectedTop && <button onClick={(e) => { e.stopPropagation(); setSelectedTop(undefined); }} aria-label={language === 'es' ? 'Quitar top' : 'Remove top'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
@@ -184,11 +184,11 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedBottom ? <img src={selectedBottom.imageUrl} alt={selectedBottom.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👖</span>}
                   </div>
                   <div>
-                    <span className="font-mono text-[10px] text-[#C76B3F] font-bold">[BOTTOM / TROUSERS]</span>
+                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[BOTTOM / TROUSERS]</span>
                     <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
                       {selectedBottom ? (language === 'es' && selectedBottom.nameEs ? selectedBottom.nameEs : selectedBottom.name) : (language === 'es' ? 'Seleccionar Pantalón...' : 'Select Bottom...')}
                     </h4>
-                    {selectedBottom && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedBottom.wornCount}v` : `Worn ${selectedBottom.wornCount}x`}</span>}
+                    {selectedBottom && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedBottom.wornCount}v` : `Worn ${selectedBottom.wornCount}x`}</span>}
                   </div>
                 </div>
                 {selectedBottom && <button onClick={(e) => { e.stopPropagation(); setSelectedBottom(undefined); }} aria-label={language === 'es' ? 'Quitar pantalón' : 'Remove bottom'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
@@ -200,11 +200,11 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedShoes ? <img src={selectedShoes.imageUrl} alt={selectedShoes.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👟</span>}
                   </div>
                   <div>
-                    <span className="font-mono text-[10px] text-[#C76B3F] font-bold">[SHOES / FOOTWEAR]</span>
+                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[SHOES / FOOTWEAR]</span>
                     <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
                       {selectedShoes ? (language === 'es' && selectedShoes.nameEs ? selectedShoes.nameEs : selectedShoes.name) : (language === 'es' ? 'Seleccionar Calzado...' : 'Select Shoes...')}
                     </h4>
-                    {selectedShoes && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedShoes.wornCount}v` : `Worn ${selectedShoes.wornCount}x`}</span>}
+                    {selectedShoes && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedShoes.wornCount}v` : `Worn ${selectedShoes.wornCount}x`}</span>}
                   </div>
                 </div>
                 {selectedShoes && <button onClick={(e) => { e.stopPropagation(); setSelectedShoes(undefined); }} aria-label={language === 'es' ? 'Quitar calzado' : 'Remove shoes'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
@@ -216,11 +216,11 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedOuterwear ? <img src={selectedOuterwear.imageUrl} alt={selectedOuterwear.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">🧥</span>}
                   </div>
                   <div>
-                    <span className="font-mono text-[10px] text-[#C76B3F] font-bold">[OUTERWEAR / LAYER]</span>
+                    <span className="font-mono text-xs text-[#C76B3F] font-bold">[OUTERWEAR / LAYER]</span>
                     <h4 className="font-sans text-sm font-semibold text-[#F7F3EC] truncate max-w-[180px]">
                       {selectedOuterwear ? (language === 'es' && selectedOuterwear.nameEs ? selectedOuterwear.nameEs : selectedOuterwear.name) : (language === 'es' ? 'Opcional: Abrigo o Accesorio...' : 'Optional: Outerwear/Layer...')}
                     </h4>
-                    {selectedOuterwear && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedOuterwear.wornCount}v` : `Worn ${selectedOuterwear.wornCount}x`}</span>}
+                    {selectedOuterwear && <span className="font-mono text-xs text-[#A89B8C]">{language === 'es' ? `Usado ${selectedOuterwear.wornCount}v` : `Worn ${selectedOuterwear.wornCount}x`}</span>}
                   </div>
                 </div>
                 {selectedOuterwear && <button onClick={(e) => { e.stopPropagation(); setSelectedOuterwear(undefined); }} aria-label={language === 'es' ? 'Quitar abrigo' : 'Remove outerwear'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
@@ -230,11 +230,11 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
 
           <div className="mt-8 pt-4 border-t border-[#2A2622] grid grid-cols-2 gap-4">
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.totalPieces}</span>
+               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t.totalPieces}</span>
               <span className="font-display text-lg font-bold text-[#F7F3EC]">{assembledItems.length}</span>
             </div>
             <div className="bg-[#161210] p-3 rounded border border-[#2A2622]">
-              <span className="font-mono text-[10px] text-[#A89B8C] uppercase block">{t.versatility}</span>
+               <span className="font-mono text-xs text-[#A89B8C] uppercase block">{t.versatility}</span>
               <span className="font-display text-lg font-bold text-[#C76B3F]">{versatilityScore}%</span>
             </div>
           </div>
@@ -326,7 +326,7 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                 <div>
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <span className="font-mono text-[11px] text-[#C76B3F] font-semibold tracking-wider uppercase">{occ}</span>
+                       <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">{occ}</span>
                       <h4 className="font-display text-lg font-bold text-[#F7F3EC] mt-0.5">{name}</h4>
                     </div>
                     <span className="font-mono text-xs font-bold bg-[#1B1814] text-[#C76B3F] px-2 py-0.5 rounded border border-[#2A2622]">

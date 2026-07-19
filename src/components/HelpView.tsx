@@ -75,7 +75,7 @@ export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
           {t.fabrics.map((f, idx) => (
             <div key={idx} className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-5 shadow-2xl flex flex-col justify-between">
               <div>
-                <span className="font-mono text-[11px] text-[#C76B3F] font-bold uppercase tracking-wider block mb-1">[FABRIC SPEC #{idx + 1}]</span>
+                <span className="font-mono text-xs text-[#C76B3F] font-bold uppercase tracking-wider block mb-1">[FABRIC SPEC #{idx + 1}]</span>
                 <h4 className="font-display text-lg font-bold text-[#F7F3EC] mb-2">{f.name}</h4>
                 <p className="font-sans text-xs text-[#A89B8C] leading-relaxed pl-3 border-l-2 border-[#C76B3F]/40 py-0.5">{f.care}</p>
               </div>

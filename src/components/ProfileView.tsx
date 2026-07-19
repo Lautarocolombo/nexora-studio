@@ -71,7 +71,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="flex-1 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center gap-2">
             <h3 className="font-display text-2xl font-bold text-[#F7F3EC]">Lautaro C.</h3>
-            <span className="font-mono text-[11px] bg-[#161210] text-[#C76B3F] px-2.5 py-0.5 rounded font-semibold border border-[#2A2622]">
+            <span className="font-mono text-xs bg-[#161210] text-[#C76B3F] px-2.5 py-0.5 rounded font-semibold border border-[#2A2622]">
               STYLE CURATOR
             </span>
           </div>

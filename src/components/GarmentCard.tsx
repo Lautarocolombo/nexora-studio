@@ -54,7 +54,7 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
         />
 
         <div className="absolute top-3 right-3 bg-[#0E0C0A]/85 backdrop-blur-sm px-2 py-1 border border-[#2A2622] rounded">
-          <span className="font-mono text-[11px] font-semibold tracking-wider text-[#C76B3F]">
+          <span className="font-mono text-xs font-semibold tracking-wider text-[#C76B3F]">
             {garment.categoryTag}
           </span>
         </div>
@@ -74,7 +74,7 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
 
         {isSelectedForBuilder && (
           <div className="absolute inset-0 bg-[#C76B3F]/20 backdrop-blur-[1px] flex items-center justify-center z-10">
-            <div className="bg-[#C76B3F] text-[#0B0A08] px-3 py-1.5 rounded-full font-mono text-xs font-bold shadow-md flex items-center gap-1.5 animate-pulse">
+            <div className="bg-[#C76B3F] text-[#0B0A08] px-3 py-1.5 rounded-full font-mono text-xs font-bold shadow-md flex items-center gap-1.5 transition-opacity">
               <span>{language === 'es' ? '✓ SELECCIONADO' : '✓ SELECTED'}</span>
             </div>
           </div>
@@ -88,7 +88,7 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
                   onLogWear(e, garment);
                 }}
                 aria-label={language === 'es' ? 'Registrar uso hoy' : 'Log wear today'}
-                className="bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] px-2.5 py-1 rounded shadow-md font-mono text-[11px] font-semibold flex items-center gap-1 transition-transform active:scale-95"
+                className="bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] px-2.5 py-1 rounded shadow-md font-mono text-xs font-semibold flex items-center gap-1 transition-transform active:scale-95"
                 title={language === 'es' ? 'Registrar uso hoy (+1)' : 'Log wear today (+1)'}
               >
               <Plus className="w-3.5 h-3.5" />
@@ -116,7 +116,7 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
             <p className="font-mono text-xs text-[#A89B8C] font-medium">
               {wornText}
             </p>
-            <span className="font-mono text-[11px] text-[#A89B8C]">
+            <span className="font-mono text-xs text-[#A89B8C]">
               {garment.season === 'all-year' ? (language === 'es' ? 'Todo el año' : 'All year') : garment.season === 'spring-summer' ? (language === 'es' ? 'Primavera/Ver' : 'Spring/Summer') : (language === 'es' ? 'Otoño/Inv' : 'Autumn/Winter')}
             </span>
           </div>

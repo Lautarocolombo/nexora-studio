@@ -330,7 +330,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       ) : (
                         <div>
                           <p className="font-sans text-sm font-medium text-[#F7F3EC] truncate max-w-[200px]">{displayName}</p>
-                          <p className="font-mono text-[10px] text-[#A89B8C]">{g.categoryTag}</p>
+                           <p className="font-mono text-xs text-[#A89B8C]">{g.categoryTag}</p>
                         </div>
                       )}
                     </td>

@@ -60,8 +60,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* TopNavBar Mobile Only */}
       <nav className="md:hidden flex justify-between items-center w-full px-4 py-3.5 bg-[#161210] border-b border-[#2A2622] fixed top-0 left-0 z-50">
         <div className="flex items-center gap-2">
-          <span className="font-display text-xl font-bold text-[#C76B3F] tracking-tight">Armario</span>
-          <span className="font-mono text-[10px] bg-[#1B1814] text-[#C76B3F] px-1.5 py-0.5 rounded">
+          <span className="font-display text-xl font-bold text-[#C76B3F] tracking-tight">Armario<span className="text-[#C76B3F]">.</span></span>
+          <span className="font-mono text-xs bg-[#1B1814] text-[#C76B3F] px-1.5 py-0.5 rounded">
             {language.toUpperCase()}
           </span>
         </div>
@@ -103,14 +103,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
               aria-label={language === 'es' ? 'Cambiar idioma' : 'Switch language'}
-              className="flex items-center gap-1 text-[11px] font-mono text-[#C76B3F] bg-[#1B1814] hover:bg-[#161210] px-2 py-1 rounded border border-[#2A2622] transition-colors"
+              className="flex items-center gap-1 text-xs font-mono text-[#C76B3F] bg-[#1B1814] hover:bg-[#161210] px-2 py-1 rounded border border-[#2A2622] transition-colors"
               title="Cambiar idioma / Switch language"
             >
               <Globe className="w-3 h-3" />
               <span>{language === 'es' ? 'ES' : 'EN'}</span>
             </button>
           </div>
-          <p className="font-mono text-[11px] text-[#A89B8C] mt-1 tracking-wider uppercase">{t.tagline}</p>
+          <p className="font-mono text-xs text-[#A89B8C] mt-1 tracking-wider uppercase">{t.tagline}</p>
         </div>
 
         <nav className="flex-1 flex flex-col gap-2">
@@ -197,7 +197,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               {item.icon}
-              <span className="font-mono text-[10px] tracking-tight uppercase truncate max-w-[65px]">
+              <span className="font-mono text-xs tracking-tight uppercase truncate max-w-[65px]">
                 {item.label}
               </span>
             </button>
@@ -210,7 +210,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="bg-[#C76B3F] text-[#0B0A08] p-1 rounded-full shadow">
             <Plus className="w-4 h-4" />
           </div>
-          <span className="font-mono text-[10px] tracking-tight uppercase">
+          <span className="font-mono text-xs tracking-tight uppercase">
             {language === 'es' ? 'Crear' : 'Add'}
           </span>
         </button>

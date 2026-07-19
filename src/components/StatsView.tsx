@@ -79,7 +79,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {t.totalItems}
           </span>
           <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">{totalItems}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'piezas en tu armario' : 'pieces in wardrobe'}</span>
+          <span className="font-mono text-xs text-[#A89B8C] mt-1 block">{language === 'es' ? 'piezas en tu armario' : 'pieces in wardrobe'}</span>
         </div>
 
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
@@ -88,7 +88,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {t.totalWears}
           </span>
           <span className="font-display text-2xl md:text-3xl font-bold text-[#C76B3F] mt-2 block">{totalWears}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'registros de uso' : 'wear logs'}</span>
+          <span className="font-mono text-xs text-[#A89B8C] mt-1 block">{language === 'es' ? 'registros de uso' : 'wear logs'}</span>
         </div>
 
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
@@ -97,7 +97,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {t.avgWears}
           </span>
           <span className="font-display text-2xl md:text-3xl font-bold text-[#F7F3EC] mt-2 block">{avgWearsPerItem}</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{language === 'es' ? 'por pieza' : 'per piece'}</span>
+          <span className="font-mono text-xs text-[#A89B8C] mt-1 block">{language === 'es' ? 'por pieza' : 'per piece'}</span>
         </div>
 
         <div className="fabric-grain bg-[#1B1814] p-5 rounded-xl border border-[#2A2622] shadow-2xl">
@@ -106,7 +106,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {t.utilization}
           </span>
           <span className="font-display text-2xl md:text-3xl font-bold text-[#C76B3F] mt-2 block">{utilizationRate}%</span>
-          <span className="font-mono text-[11px] text-[#A89B8C] mt-1 block">{activeItems} / {totalItems} {language === 'es' ? 'en rotación activa' : 'active pieces'}</span>
+          <span className="font-mono text-xs text-[#A89B8C] mt-1 block">{activeItems} / {totalItems} {language === 'es' ? 'en rotación activa' : 'active pieces'}</span>
         </div>
       </section>
 

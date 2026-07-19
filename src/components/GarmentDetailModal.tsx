@@ -121,12 +121,12 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
             </div>
 
             <div className="grid grid-cols-2 gap-3 p-3.5 bg-[#161210] rounded-lg border border-[#2A2622]">
-              <div className="flex flex-col">
-                <span className="font-mono text-[11px] text-[#A89B8C] uppercase">{t.wornTimes}</span>
+               <div className="flex flex-col">
+                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t.wornTimes}</span>
                 <span className="font-display text-xl font-bold text-[#F7F3EC]">{garment.wornCount}</span>
               </div>
-              <div className="flex flex-col border-l border-[#2A2622] pl-3">
-                <span className="font-mono text-[11px] text-[#A89B8C] uppercase">{t.seasonLabel}</span>
+               <div className="flex flex-col border-l border-[#2A2622] pl-3">
+                 <span className="font-mono text-xs text-[#A89B8C] uppercase">{t.seasonLabel}</span>
                 <span className="font-display text-xl font-bold text-[#C76B3F]">
                   {garment.season === 'all-year' ? (language === 'es' ? 'Todo el año' : 'All year') : garment.season === 'spring-summer' ? (language === 'es' ? 'Primavera/Ver' : 'Spring/Summer') : (language === 'es' ? 'Otoño/Inv' : 'Autumn/Winter')}
                 </span>
@@ -164,17 +164,17 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
                   {t.notes}
                 </span>
                 {!isEditingNotes ? (
-                  <button
-                    onClick={() => setIsEditingNotes(true)}
-                    className="font-mono text-[11px] text-[#C76B3F] hover:underline flex items-center gap-1"
+                    <button
+                      onClick={() => setIsEditingNotes(true)}
+                      className="font-mono text-xs text-[#C76B3F] hover:underline flex items-center gap-1"
                   >
                     <Edit3 className="w-3 h-3" />
                     <span>{t.edit}</span>
                   </button>
                 ) : (
-                  <button
-                    onClick={handleSaveNotes}
-                    className="font-mono text-[11px] text-[#C76B3F] font-bold hover:underline flex items-center gap-1"
+                    <button
+                      onClick={handleSaveNotes}
+                      className="font-mono text-xs text-[#C76B3F] font-bold hover:underline flex items-center gap-1"
                   >
                     <Check className="w-3 h-3" />
                     <span>{t.save}</span>
@@ -207,7 +207,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
             </button>
 
             <div className="flex justify-between items-center pt-2">
-              <span className="font-mono text-[11px] text-[#A89B8C]">
+              <span className="font-mono text-xs text-[#A89B8C]">
                 {t.lastWorn}: {garment.lastWorn || 'N/A'}
               </span>
               <button

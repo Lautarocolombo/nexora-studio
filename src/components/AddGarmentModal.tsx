@@ -199,7 +199,7 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
             
             {/* Quick Sample Swatches */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              <span className="font-mono text-[10px] text-[#6B6358] whitespace-nowrap">Presets:</span>
+                <span className="font-mono text-xs text-[#6B6358] whitespace-nowrap">Presets:</span>
               {SAMPLE_IMAGES.map((sample, idx) => (
                 <button
                   key={idx}

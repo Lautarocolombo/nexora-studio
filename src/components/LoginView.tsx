@@ -87,7 +87,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
           </button>
         </form>
 
-        <p className="text-center mt-6 font-mono text-[10px] text-[#A89B8C]/60 tracking-wider">
+        <p className="text-center mt-6 font-mono text-xs text-[#A89B8C]/60 tracking-wider">
           Entorno local
         </p>
       </div>

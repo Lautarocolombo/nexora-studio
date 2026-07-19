@@ -119,7 +119,7 @@ export function AuditView() {
               style={{ width: `${completion}%`, backgroundColor: '#C76B3F' }}
             />
           </div>
-          <p className="mt-3 font-mono text-[11px] text-[#A89B8C]">
+          <p className="mt-3 font-mono text-xs text-[#A89B8C]">
             Última actualización: {now.toLocaleDateString('es-ES')}
           </p>
         </div>

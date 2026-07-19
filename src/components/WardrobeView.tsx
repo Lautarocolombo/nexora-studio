@@ -201,7 +201,10 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             <Search className="w-6 h-6" />
           </div>
           <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-1">{t.emptyTitle}</h3>
-          <p className="font-sans text-sm text-[#A89B8C] mb-6">{t.emptyDesc}</p>
+          <p className="font-sans text-sm text-[#A89B8C] mb-1">{t.emptyDesc}</p>
+          <p className="font-mono text-xs text-[#A89B8C] mb-6">
+            {language === 'es' ? 'Cada prenda que agregás suma usos, historial y nuevas combinaciones posibles.' : 'Every garment you add increases wears, history, and possible combinations.'}
+          </p>
           <button
             onClick={onOpenAddModal}
             className="px-5 py-2.5 bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] rounded-lg font-sans text-sm font-semibold shadow-md inline-flex items-center gap-2 transition-all"
