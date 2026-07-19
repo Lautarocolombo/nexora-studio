@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Heart, Eye } from 'lucide-react';
 import { GarmentItem, Language } from '../types';
+import { OptimizedImage } from './OptimizedImage';
 
 interface GarmentCardProps {
   garment: GarmentItem;
@@ -45,13 +46,14 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
           : 'border-[#2A2622] hover:border-[#C76B3F]/60'
       }`}
     >
-      <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#0E0C0A]">
-        <img
-          src={garment.imageUrl}
-          alt={name}
-          className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
+        <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#0E0C0A]">
+          <OptimizedImage
+            src={garment.imageUrl}
+            alt={name}
+            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+          />
 
         <div className="absolute top-3 right-3 bg-[#0E0C0A]/85 backdrop-blur-sm px-2 py-1 border border-[#2A2622] rounded">
           <span className="font-mono text-xs font-semibold tracking-wider text-[#C76B3F]">

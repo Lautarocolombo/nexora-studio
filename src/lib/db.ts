@@ -3,7 +3,10 @@ const DB_VERSION = 1;
 
 type StoreName = 'garments' | 'outfits' | 'logs' | 'lang';
 
+let dbInstance: IDBDatabase | null = null;
+
 function openDB(): Promise<IDBDatabase> {
+  if (dbInstance) return Promise.resolve(dbInstance);
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
@@ -21,7 +24,10 @@ function openDB(): Promise<IDBDatabase> {
         db.createObjectStore('lang', { keyPath: 'key' });
       }
     };
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      dbInstance = request.result;
+      resolve(dbInstance);
+    };
     request.onerror = () => reject(request.error);
   });
 }

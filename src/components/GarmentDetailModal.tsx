@@ -3,6 +3,7 @@ import { X, Plus, Trash2, Edit3, Heart, Calendar, Tag, ShieldAlert, Sparkles, Ch
 import { GarmentItem, Language } from '../types';
 import { useAccessibleModal } from '../hooks/useAccessibleModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { OptimizedImage } from './OptimizedImage';
 
 interface GarmentDetailModalProps {
   garment: GarmentItem | null;
@@ -79,10 +80,11 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="md:w-1/2 relative bg-[#0E0C0A] min-h-[300px] md:min-h-full flex items-center justify-center">
-          <img
+          <OptimizedImage
             src={garment.imageUrl}
             alt={name}
             className="w-full h-full object-cover"
+            priority
           />
           <div className="absolute top-4 left-4 flex gap-2">
             <span className="font-mono text-xs font-bold bg-[#0E0C0A] text-[#C76B3F] px-2.5 py-1 rounded border border-[#2A2622] shadow-sm">
