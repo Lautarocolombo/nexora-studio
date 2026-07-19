@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Shirt, Check, Sparkles, Clock } from 'lucide-react';
 import { WearLogEntry, GarmentItem, SavedOutfit, Language } from '../types';
+import { useAccessibleModal } from '../hooks/useAccessibleModal';
 
 interface CalendarViewProps {
   wearLogs: WearLogEntry[];
@@ -24,6 +25,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
+
+  const todayStr = new Date().toISOString().split('T')[0];
 
   const monthNamesEs = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -49,6 +52,12 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     setSelectedOutfitId('');
     setDayNotes('');
   };
+
+  const { modalRef, closeOnBackdrop } = useAccessibleModal({
+    isOpen: !!selectedDay,
+    onClose: () => setSelectedDay(null),
+    initialFocusRef: { current: null },
+  });
 
   const t = {
     title: language === 'es' ? 'Calendario & Registro Consciente' : 'Mindful Wear Log & Calendar',
@@ -95,7 +104,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             const dayNum = i + 1;
             const dateStr = formatDateString(dayNum);
             const logsForDay = wearLogs.filter(l => l.date === dateStr);
-            const isToday = dateStr === new Date().toISOString().split('T')[0] || (dayNum === 3 && month === 6 && year === 2026);
+            const isToday = dateStr === todayStr;
 
             return (
               <div key={`day-${dayNum}`} onClick={() => setSelectedDay(dateStr)} className={`min-h-[110px] p-2.5 transition-all cursor-pointer flex flex-col justify-between relative group ${isToday ? 'bg-[#C76B3F]/10 font-bold' : 'hover:bg-[#1B1814]'}`}>
@@ -122,9 +131,23 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       </section>
 
       {selectedDay && (
-        <div className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="fabric-grain bg-[#1B1814] w-full max-w-md rounded-xl border border-[#2A2622] shadow-2xl p-6">
-            <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-2 flex items-center gap-2">
+        <div
+          className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+          onClick={(e) => {
+            if (closeOnBackdrop && e.target === e.currentTarget) {
+              setSelectedDay(null);
+            }
+          }}
+        >
+          <div
+            ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="calendar-log-title"
+            className="fabric-grain bg-[#1B1814] w-full max-w-md rounded-xl border border-[#2A2622] shadow-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="calendar-log-title" className="font-display text-xl font-bold text-[#F7F3EC] mb-2 flex items-center gap-2">
               <CalendarIcon className="w-5 h-5 text-[#C76B3F]" />
               <span>{t.logTitle} {selectedDay}</span>
             </h3>

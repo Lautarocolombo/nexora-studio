@@ -123,6 +123,7 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
+                aria-label={language === 'es' ? 'Limpiar búsqueda' : 'Clear search'}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-[#A89B8C] hover:text-[#F7F3EC]"
               >
                 ✕

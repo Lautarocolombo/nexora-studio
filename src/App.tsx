@@ -1,25 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  GarmentItem, 
-  SavedOutfit, 
-  WearLogEntry, 
-  TabType, 
-  Language 
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import {
+  GarmentItem,
+  SavedOutfit,
+  WearLogEntry,
+  TabType,
+  Language
 } from './types';
-import { 
-  INITIAL_GARMENTS, 
-  INITIAL_OUTFITS, 
-  INITIAL_WEAR_LOGS 
+import {
+  INITIAL_GARMENTS,
+  INITIAL_OUTFITS,
+  INITIAL_WEAR_LOGS
 } from './data/initialWardrobe';
 import { Navbar } from './components/Navbar';
-import { WardrobeView } from './components/WardrobeView';
-import { OutfitBuilder } from './components/OutfitBuilder';
-import { CalendarView } from './components/CalendarView';
-import { StatsView } from './components/StatsView';
-import { ProfileView } from './components/ProfileView';
-import { HelpView } from './components/HelpView';
 import { GarmentDetailModal } from './components/GarmentDetailModal';
 import { AddGarmentModal } from './components/AddGarmentModal';
+import { AuthGuard } from './components/AuthGuard';
+import { useAuth } from './lib/auth';
+import { db } from './lib/db';
+import { useWardrobeSync, useOutfitsSync, useWearLogsSync, useLanguageSync } from './hooks/useSync';
+
+// PERFORMANCE: Code-splitting por vista. Cada vista se carga bajo demanda
+// (React.lazy + Suspense), reduciendo el bundle inicial y mejorando TTI/Lighthouse.
+const WardrobeView = lazy(() => import('./components/WardrobeView').then(m => ({ default: m.WardrobeView })));
+const OutfitBuilder = lazy(() => import('./components/OutfitBuilder').then(m => ({ default: m.OutfitBuilder })));
+const CalendarView = lazy(() => import('./components/CalendarView').then(m => ({ default: m.CalendarView })));
+const StatsView = lazy(() => import('./components/StatsView').then(m => ({ default: m.StatsView })));
+const ProfileView = lazy(() => import('./components/ProfileView').then(m => ({ default: m.ProfileView })));
+const HelpView = lazy(() => import('./components/HelpView').then(m => ({ default: m.HelpView })));
+const AdminPanel = lazy(() => import('./components/AdminPanel').then(m => ({ default: m.AdminPanel })));
+const AuditView = lazy(() => import('./components/AuditView').then(m => ({ default: m.AuditView })));
+
+
+function ViewFallback() {
+  return (
+    <div className="flex items-center justify-center min-h-[40vh]" role="status" aria-live="polite">
+      <span className="w-6 h-6 border-2 border-[#C76B3F]/30 border-t-[#C76B3F] rounded-full animate-spin" />
+      <span className="sr-only">Cargando…</span>
+    </div>
+  );
+}
 
 const STORAGE_KEYS = {
   GARMENTS: 'outfitmatic_garments_v2',
@@ -29,95 +48,84 @@ const STORAGE_KEYS = {
 };
 
 export default function App() {
+  const { logout } = useAuth();
+
+  const [garments, setGarments] = useState<GarmentItem[]>(INITIAL_GARMENTS);
+  const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>(INITIAL_OUTFITS);
+  const [wearLogs, setWearLogs] = useState<WearLogEntry[]>(INITIAL_WEAR_LOGS);
+  const [language, setLanguage] = useState<Language>('es');
+  const [activeTab, setActiveTab] = useState<TabType>('wardrobe');
+  const [selectedGarmentForDetail, setSelectedGarmentForDetail] = useState<GarmentItem | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
   // Migrate old localStorage v1 -> v2 on mount
   useEffect(() => {
     ['outfitmatic_garments_v1','outfitmatic_outfits_v1','outfitmatic_logs_v1','outfitmatic_lang_v1'].forEach(key => localStorage.removeItem(key));
   }, []);
 
-  // Load initial state from LocalStorage or fallback to INITIAL_GARMENTS
-  const [garments, setGarments] = useState<GarmentItem[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.GARMENTS);
-      return saved ? JSON.parse(saved) : INITIAL_GARMENTS;
-    } catch {
-      return INITIAL_GARMENTS;
-    }
-  });
+  // Load from IndexedDB on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function loadData() {
+      try {
+        const [savedGarments, savedOutfits, savedLogs, savedLang] = await Promise.all([
+          db.getAll('garments'),
+          db.getAll('outfits'),
+          db.getAll('logs'),
+          db.get('lang', 'language')
+        ]);
 
-  const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.OUTFITS);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          return parsed.map((o: any) => {
+        if (cancelled) return;
+
+        if (savedGarments.length > 0) {
+          setGarments(savedGarments as GarmentItem[]);
+        } else {
+          await db.putAll('garments', INITIAL_GARMENTS);
+          setGarments(INITIAL_GARMENTS);
+        }
+
+        if (savedOutfits.length > 0) {
+          const normalized = (savedOutfits as any[]).map((o: any) => {
             if (Array.isArray(o.items) && !Array.isArray(o.garmentIds)) {
               return { ...o, garmentIds: o.items.map((i: any) => i.id) };
             }
             return o;
           });
+          setSavedOutfits(normalized as SavedOutfit[]);
+        } else {
+          await db.putAll('outfits', INITIAL_OUTFITS);
+          setSavedOutfits(INITIAL_OUTFITS);
         }
+
+        if (savedLogs.length > 0) {
+          setWearLogs(savedLogs as WearLogEntry[]);
+        } else {
+          await db.putAll('logs', INITIAL_WEAR_LOGS);
+          setWearLogs(INITIAL_WEAR_LOGS);
+        }
+
+        if (savedLang) {
+          setLanguage(savedLang.value === 'en' ? 'en' : 'es');
+        } else {
+          await db.put('lang', { key: 'language', value: 'es' });
+          setLanguage('es');
+        }
+      } catch (e) {
+        console.error('Failed to load data from IndexedDB', e);
+      } finally {
+        if (!cancelled) setLoaded(true);
       }
-      return INITIAL_OUTFITS;
-    } catch {
-      return INITIAL_OUTFITS;
     }
-  });
 
-  const [wearLogs, setWearLogs] = useState<WearLogEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.LOGS);
-      return saved ? JSON.parse(saved) : INITIAL_WEAR_LOGS;
-    } catch {
-      return INITIAL_WEAR_LOGS;
-    }
-  });
+    loadData();
+    return () => { cancelled = true; };
+  }, []);
 
-  const [language, setLanguage] = useState<Language>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.LANG) as Language;
-      return saved === 'en' ? 'en' : 'es'; // Default to Spanish as requested ("Tu Guardarropa")
-    } catch {
-      return 'es';
-    }
-  });
-
-  const [activeTab, setActiveTab] = useState<TabType>('wardrobe');
-  const [selectedGarmentForDetail, setSelectedGarmentForDetail] = useState<GarmentItem | null>(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  // Sync state to LocalStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.GARMENTS, JSON.stringify(garments));
-    } catch (e) {
-      console.error('Failed to save garments', e);
-    }
-  }, [garments]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.OUTFITS, JSON.stringify(savedOutfits));
-    } catch (e) {
-      console.error('Failed to save outfits', e);
-    }
-  }, [savedOutfits]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.LOGS, JSON.stringify(wearLogs));
-    } catch (e) {
-      console.error('Failed to save wearLogs', e);
-    }
-  }, [wearLogs]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.LANG, language);
-    } catch (e) {
-      console.error('Failed to save lang', e);
-    }
-  }, [language]);
+  useWardrobeSync(garments, setGarments, loaded);
+  useOutfitsSync(savedOutfits, setSavedOutfits, loaded);
+  useWearLogsSync(wearLogs, setWearLogs, loaded);
+  useLanguageSync(language, setLanguage, loaded);
 
   // Handlers
   const handleLogWear = (e: React.MouseEvent | undefined, garment: GarmentItem) => {
@@ -277,26 +285,43 @@ export default function App() {
     setWearLogs(prev => [newLog, ...prev]);
   };
 
-  const handleResetToDemo = () => {
+  const handleResetToDemo = async () => {
     setGarments(INITIAL_GARMENTS);
     setSavedOutfits(INITIAL_OUTFITS);
     setWearLogs(INITIAL_WEAR_LOGS);
+    await Promise.all([
+      db.clear('garments'),
+      db.clear('outfits'),
+      db.clear('logs'),
+      db.clear('lang')
+    ]);
+    await db.putAll('garments', INITIAL_GARMENTS);
+    await db.putAll('outfits', INITIAL_OUTFITS);
+    await db.putAll('logs', INITIAL_WEAR_LOGS);
+    await db.put('lang', { key: 'language', value: 'es' });
+    setLanguage('es');
     Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
   };
 
+  const handleUpdateGarment = (id: string, data: Partial<GarmentItem>) => {
+    setGarments(prev => prev.map(g => g.id === id ? { ...g, ...data } : g));
+  };
+
   return (
-    <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
-      {/* Navigation Bars */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onNewOutfitClick={() => {
-          // Open new garment or builder depending on preference
-          setIsAddModalOpen(true);
-        }}
-        language={language}
-        setLanguage={setLanguage}
-      />
+    <AuthGuard>
+      <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
+        {/* Navigation Bars */}
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onNewOutfitClick={() => {
+            // Open new garment or builder depending on preference
+            setIsAddModalOpen(true);
+          }}
+          language={language}
+          setLanguage={setLanguage}
+          onLogout={logout}
+        />
 
       {/* Main Content Area */}
       <main className="flex-1 ml-0 md:ml-64 pt-16 pb-20 md:pt-0 md:pb-0 min-h-screen transition-all">
@@ -357,8 +382,25 @@ export default function App() {
           {activeTab === 'help' && (
             <HelpView language={language} />
           )}
+
+          {activeTab === 'admin' && (
+            <AdminPanel
+              garments={garments}
+              onUpdateGarment={handleUpdateGarment}
+              onDeleteGarment={handleDeleteGarment}
+              onAddGarment={handleAddGarment}
+              language={language}
+            />
+          )}
+
+          {activeTab === 'audit' && (
+            <Suspense fallback={<ViewFallback />}>
+              <AuditView />
+            </Suspense>
+          )}
         </div>
       </main>
+
 
       {/* Modals */}
       <GarmentDetailModal
@@ -377,6 +419,7 @@ export default function App() {
         onAddGarment={handleAddGarment}
         language={language}
       />
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

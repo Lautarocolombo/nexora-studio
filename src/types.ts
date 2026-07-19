@@ -52,6 +52,6 @@ export interface WearLogEntry {
   notes?: string;
 }
 
-export type TabType = 'wardrobe' | 'builder' | 'calendar' | 'stats' | 'profile' | 'help';
+export type TabType = 'wardrobe' | 'builder' | 'calendar' | 'stats' | 'profile' | 'help' | 'admin' | 'audit';
 
 export type Language = 'es' | 'en';

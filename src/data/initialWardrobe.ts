@@ -55,8 +55,8 @@ const INITIAL_GARMENTS: GarmentItem[] = files.map((id, i) => {
     careInstructions: 'Seguir etiqueta del fabricante. Lavar en frío.',
     careInstructionsEs: 'Seguir etiqueta del fabricante. Lavar en frío.',
     season,
-    notes: 'Pieza de la colección editorial Nexora.',
-    notesEs: 'Pieza de la colección editorial Nexora.',
+    notes: 'Pieza de la colección editorial Armario.',
+    notesEs: 'Pieza de la colección editorial Armario.',
     colorSwatch: SWATCHES[i % SWATCHES.length],
     favorite: i % 4 === 0,
   };

@@ -12,8 +12,8 @@ export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
     subtitle: language === 'es' ? 'Aprendé a armar conjuntos, calcular uso y cuidar tus prendas.' : 'Learn to build outfits, calculate wear, and care for your garments.',
     philosophyTitle: language === 'es' ? '¿Qué es el Guardarropa Consciente?' : 'What is The Mindful Wardrobe?',
     philosophyP1: language === 'es'
-      ? 'Nexora Studio se aleja de la moda rápida y vertiginosa hacia una experiencia organizada y funcional. El objetivo es combinar las prendas que ya tenés, registrando sus usos para descubrir tu estilo personal y reducir el descarte.'
-      : 'Nexora Studio moves away from fast, disposable fashion toward an organized, functional experience. The goal is to combine pieces you already own, tracking wears to discover your personal style and reduce waste.',
+      ? 'Armario Studio se aleja de la moda rápida y vertiginosa hacia una experiencia organizada y funcional. El objetivo es combinar las prendas que ya tenés, registrando sus usos para descubrir tu estilo personal y reducir el descarte.'
+      : 'Armario Studio moves away from fast, disposable fashion toward an organized, functional experience. The goal is to combine pieces you already own, tracking wears to discover your personal style and reduce waste.',
     cpwTitle: language === 'es' ? 'El Índice de Uso por Prenda' : 'Wear Index Per Garment',
     cpwDesc: language === 'es'
       ? 'Cada vez que te ponés una prenda, sumás un uso. Las piezas más usadas son las verdaderas estrellas de tu armario. Las poco usadas te invitan a probar combinaciones nuevas.'

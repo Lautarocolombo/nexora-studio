@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Award, ShieldCheck, Download, Upload, Globe, Check, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { GarmentItem, SavedOutfit, Language } from '../types';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface ProfileViewProps {
   garments: GarmentItem[];
@@ -19,6 +20,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 }) => {
   const [capsuleGoal, setCapsuleGoal] = useState('33');
   const [isSaved, setIsSaved] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,9 +151,21 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               <span>{t.exportBtn}</span>
             </button>
 
-            <button type="button" onClick={() => { if (confirm(language === 'es' ? '¿Restablecer al guardarropa de demostración?' : 'Reset to initial demo wardrobe?')) { onResetToDemo(); } }} className="px-4 py-2.5 bg-[#161210] hover:bg-[#C76B3F]/10 text-[#C76B3F] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all">
+            <button type="button" onClick={() => setShowResetConfirm(true)} className="px-4 py-2.5 bg-[#161210] hover:bg-[#C76B3F]/10 text-[#C76B3F] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all">
               <span>{t.resetBtn}</span>
             </button>
+            <ConfirmDialog
+              isOpen={showResetConfirm}
+              title={language === 'es' ? 'Restablecer datos' : 'Reset data'}
+              message={language === 'es' ? '¿Restablecer al guardarropa de demostración?' : 'Reset to initial demo wardrobe?'}
+              confirmLabel={language === 'es' ? 'Restablecer' : 'Reset'}
+              onConfirm={() => {
+                onResetToDemo();
+                setShowResetConfirm(false);
+              }}
+              onCancel={() => setShowResetConfirm(false)}
+              variant="danger"
+            />
           </div>
         </section>
 

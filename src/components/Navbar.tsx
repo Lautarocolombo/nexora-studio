@@ -8,7 +8,9 @@ import {
   User,
   HelpCircle,
   Globe,
-  Settings
+  Settings,
+  LogOut,
+  ShieldCheck
 } from 'lucide-react';
 import { TabType, Language } from '../types';
 
@@ -16,8 +18,10 @@ interface NavbarProps {
   activeTab: TabType;
   setActiveTab: (tab: TabType) => void;
   onNewOutfitClick: () => void;
+  onChangeTab?: (tab: TabType) => void;
   language: Language;
   setLanguage: (lang: Language) => void;
+  onLogout?: () => void;
   unreadCount?: number;
 }
 
@@ -25,8 +29,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   onNewOutfitClick,
+  onChangeTab,
   language,
-  setLanguage
+  setLanguage,
+  onLogout
 }) => {
   const t = {
     wardrobe: language === 'es' ? 'Guardarropa' : 'Wardrobe',
@@ -44,14 +50,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'builder', label: t.builder, icon: <Scissors className="w-5 h-5" /> },
     { id: 'calendar', label: t.calendar, icon: <CalendarIcon className="w-5 h-5" /> },
     { id: 'stats', label: t.stats, icon: <BarChart3 className="w-5 h-5" /> },
+    { id: 'admin', label: language === 'es' ? 'Admin' : 'Admin', icon: <Settings className="w-5 h-5" /> },
+    { id: 'audit', label: language === 'es' ? 'Auditoría' : 'Audit', icon: <ShieldCheck className="w-5 h-5" /> },
   ];
+
 
   return (
     <>
       {/* TopNavBar Mobile Only */}
       <nav className="md:hidden flex justify-between items-center w-full px-4 py-3.5 bg-[#161210] border-b border-[#2A2622] fixed top-0 left-0 z-50">
         <div className="flex items-center gap-2">
-          <span className="font-display text-xl font-bold text-[#C76B3F] tracking-tight">Nexora</span>
+          <span className="font-display text-xl font-bold text-[#C76B3F] tracking-tight">Armario</span>
           <span className="font-mono text-[10px] bg-[#1B1814] text-[#C76B3F] px-1.5 py-0.5 rounded">
             {language.toUpperCase()}
           </span>
@@ -59,14 +68,26 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+            aria-label={language === 'es' ? 'Cambiar idioma' : 'Switch language'}
             className="flex items-center gap-1 text-xs font-mono text-[#C76B3F] bg-[#1B1814] px-2 py-1 rounded border border-[#2A2622]"
             title="Cambiar idioma / Switch language"
           >
             <Globe className="w-3.5 h-3.5" />
             <span>{language === 'es' ? 'ES' : 'EN'}</span>
           </button>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              aria-label={language === 'es' ? 'Cerrar sesión' : 'Logout'}
+              className="p-1 text-[#A89B8C] hover:text-[#E0795A]"
+              title="Cerrar sesión"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('profile')}
+            aria-label={language === 'es' ? 'Perfil' : 'Profile'}
             className="p-1 text-[#A89B8C] hover:text-[#C76B3F]"
           >
             <Settings className="w-5 h-5" />
@@ -78,9 +99,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-[#0E0C0A] border-r border-[#2A2622] z-40 p-6">
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">Nexora<span className="text-[#C76B3F]">.</span></h1>
+            <h1 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">Armario<span className="text-[#C76B3F]">.</span></h1>
             <button
               onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+              aria-label={language === 'es' ? 'Cambiar idioma' : 'Switch language'}
               className="flex items-center gap-1 text-[11px] font-mono text-[#C76B3F] bg-[#1B1814] hover:bg-[#161210] px-2 py-1 rounded border border-[#2A2622] transition-colors"
               title="Cambiar idioma / Switch language"
             >
@@ -124,6 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex flex-col gap-1 mt-auto pt-4 border-t border-[#2A2622]">
           <button
             onClick={() => setActiveTab('profile')}
+            aria-label={language === 'es' ? 'Perfil' : 'Profile'}
             className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all text-left ${
               activeTab === 'profile'
                 ? 'bg-[#1B1814] text-[#F7F3EC] font-medium border border-[#2A2622]'
@@ -135,6 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('help')}
+            aria-label={language === 'es' ? 'Ayuda' : 'Help'}
             className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all text-left ${
               activeTab === 'help'
                 ? 'bg-[#1B1814] text-[#F7F3EC] font-medium border border-[#2A2622]'
@@ -144,6 +168,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             <HelpCircle className="w-4 h-4" />
             <span className="font-mono text-xs tracking-wider uppercase">{t.help}</span>
           </button>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              aria-label={language === 'es' ? 'Cerrar sesión' : 'Logout'}
+              className="flex items-center gap-3 px-4 py-2 rounded-xl transition-all text-left text-[#A89B8C] hover:bg-[#161210] hover:text-[#E0795A]"
+              title="Cerrar sesión"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="font-mono text-xs tracking-wider uppercase">
+                {language === 'es' ? 'Salir' : 'Logout'}
+              </span>
+            </button>
+          )}
         </div>
       </aside>
 

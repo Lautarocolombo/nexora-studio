@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Plus, Trash2, Edit3, Heart, Calendar, Tag, ShieldAlert, Sparkles, Check } from 'lucide-react';
 import { GarmentItem, Language } from '../types';
+import { useAccessibleModal } from '../hooks/useAccessibleModal';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface GarmentDetailModalProps {
   garment: GarmentItem | null;
@@ -27,6 +29,13 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
   const [notesText, setNotesText] = useState(
     language === 'es' && garment.notesEs ? garment.notesEs : garment.notes || ''
   );
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+
+  const { modalRef, closeOnBackdrop } = useAccessibleModal({
+    isOpen: !!garment,
+    onClose,
+    initialFocusRef: { current: null },
+  });
 
   const name = language === 'es' && garment.nameEs ? garment.nameEs : garment.name;
   const care = language === 'es' && garment.careInstructionsEs ? garment.careInstructionsEs : garment.careInstructions;
@@ -53,8 +62,19 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
+    <div
+      className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={(e) => {
+        if (closeOnBackdrop && e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="garment-detail-title"
         className="fabric-grain bg-[#1B1814] w-full max-w-3xl rounded-2xl border border-[#2A2622] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -71,6 +91,7 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
           </div>
           <button
             onClick={() => onToggleFavorite(garment.id)}
+            aria-label={language === 'es' ? 'Marcar como favorito' : 'Toggle favorite'}
             className={`absolute top-4 right-4 p-2 rounded-full backdrop-blur-sm shadow-md transition-all ${
               garment.favorite
                 ? 'bg-[#0E0C0A] text-[#C76B3F]'
@@ -84,14 +105,15 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
         <div className="md:w-1/2 p-6 flex flex-col justify-between overflow-y-auto max-h-[90vh] md:max-h-none">
           <div className="flex flex-col gap-5">
             <div className="flex justify-between items-start">
-            <div>
-              <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">
-                {garment.categoryTag}
-              </span>
-              <h2 className="font-display text-2xl font-bold text-[#F7F3EC] mt-0.5">{name}</h2>
-            </div>
+              <div>
+                <span className="font-mono text-xs text-[#C76B3F] font-semibold tracking-wider uppercase">
+                  {garment.categoryTag}
+                </span>
+                <h2 id="garment-detail-title" className="font-display text-2xl font-bold text-[#F7F3EC] mt-0.5">{name}</h2>
+              </div>
               <button
                 onClick={onClose}
+                aria-label={language === 'es' ? 'Cerrar detalles' : 'Close details'}
                 className="p-1 text-[#A89B8C] hover:text-[#F7F3EC] rounded-lg hover:bg-[#161210] transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -189,17 +211,26 @@ export const GarmentDetailModal: React.FC<GarmentDetailModalProps> = ({
                 {t.lastWorn}: {garment.lastWorn || 'N/A'}
               </span>
               <button
-                onClick={() => {
-                  if (confirm(language === 'es' ? '¿Deseas eliminar esta prenda?' : 'Remove this garment?')) {
-                    onDelete(garment.id);
-                    onClose();
-                  }
-                }}
+                onClick={() => setShowConfirmDelete(true)}
                 className="font-mono text-xs text-[#E0795A] hover:text-[#C76B3F] flex items-center gap-1 transition-colors"
+                aria-label={language === 'es' ? 'Eliminar prenda' : 'Delete garment'}
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>{t.delete}</span>
               </button>
+              <ConfirmDialog
+                isOpen={showConfirmDelete}
+                title={language === 'es' ? 'Eliminar prenda' : 'Delete garment'}
+                message={language === 'es' ? '¿Deseas eliminar esta prenda permanentemente?' : 'Remove this garment permanently?'}
+                confirmLabel={language === 'es' ? 'Eliminar' : 'Delete'}
+                onConfirm={() => {
+                  onDelete(garment.id);
+                  onClose();
+                  setShowConfirmDelete(false);
+                }}
+                onCancel={() => setShowConfirmDelete(false)}
+                variant="danger"
+              />
             </div>
           </div>
         </div>

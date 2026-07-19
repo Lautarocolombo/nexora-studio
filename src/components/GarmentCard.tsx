@@ -61,6 +61,7 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
 
         <button
           onClick={(e) => onToggleFavorite(e, garment.id)}
+          aria-label={language === 'es' ? 'Marcar como favorito' : 'Toggle favorite'}
           className={`absolute top-3 left-3 p-1.5 rounded-full backdrop-blur-sm transition-all z-10 ${
             garment.favorite
               ? 'bg-[#0E0C0A]/80 text-[#C76B3F] shadow-sm'
@@ -81,14 +82,15 @@ export const GarmentCard: React.FC<GarmentCardProps> = ({
 
         {!isSelectableForBuilder && (
           <div className="absolute bottom-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onLogWear(e, garment);
-              }}
-              className="bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] px-2.5 py-1 rounded shadow-md font-mono text-[11px] font-semibold flex items-center gap-1 transition-transform active:scale-95"
-              title={language === 'es' ? 'Registrar uso hoy (+1)' : 'Log wear today (+1)'}
-            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLogWear(e, garment);
+                }}
+                aria-label={language === 'es' ? 'Registrar uso hoy' : 'Log wear today'}
+                className="bg-[#C76B3F] hover:bg-[#b36138] text-[#0B0A08] px-2.5 py-1 rounded shadow-md font-mono text-[11px] font-semibold flex items-center gap-1 transition-transform active:scale-95"
+                title={language === 'es' ? 'Registrar uso hoy (+1)' : 'Log wear today (+1)'}
+              >
               <Plus className="w-3.5 h-3.5" />
               <span>+1</span>
             </button>

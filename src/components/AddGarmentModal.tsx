@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Image as ImageIcon } from 'lucide-react';
 import { GarmentItem, GarmentCategory, SeasonTag, Language } from '../types';
+import { useAccessibleModal } from '../hooks/useAccessibleModal';
 
 interface AddGarmentModalProps {
   isOpen: boolean;
@@ -84,22 +85,40 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
     save: language === 'es' ? 'Guardar en Armario' : 'Save to Wardrobe'
   };
 
+  const { modalRef, closeOnBackdrop } = useAccessibleModal({
+    isOpen: isOpen,
+    onClose,
+    initialFocusRef: { current: null },
+  });
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-      <div 
+    <div
+      className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+      onClick={(e) => {
+        if (closeOnBackdrop && e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-garment-title"
         className="fabric-grain bg-[#1B1814] w-full max-w-2xl rounded-2xl border border-[#2A2622] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-6 bg-[#161210] border-b border-[#2A2622] flex justify-between items-center">
           <div>
-            <h2 className="font-display text-2xl font-bold text-[#F7F3EC]">{t.title}</h2>
+            <h2 id="add-garment-title" className="font-display text-2xl font-bold text-[#F7F3EC]">{t.title}</h2>
             <p className="font-sans text-xs text-[#A89B8C] mt-0.5">{t.subtitle}</p>
           </div>
           <button 
             onClick={onClose}
+            aria-label={language === 'es' ? 'Cerrar formulario' : 'Close form'}
             className="p-1.5 text-[#A89B8C] hover:text-[#F7F3EC] rounded-lg hover:bg-[#1B1814] transition-colors"
           >
             <X className="w-5 h-5" />
@@ -199,8 +218,8 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
             </div>
           </div>
 
-          {/* Wears & Material */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* Wears, Material & Color Swatch */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
               <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.wears}</label>
               <input
@@ -211,24 +230,10 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
                 className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
               />
             </div>
-            <div>
+            <div className="md:col-span-2">
               <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.material}</label>
               <input
                 type="text"
-                value={material}
-                onChange={(e) => setMaterial(e.target.value)}
-                placeholder="100% Lino / Algodón"
-                className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-[#F7F3EC] focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Material & Color Swatch */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div className="md:col-span-3">
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.material}</label>
-              <input 
-                type="text" 
                 value={material}
                 onChange={(e) => setMaterial(e.target.value)}
                 placeholder="100% Organic Linen / 14.5oz Japanese Selvedge"
@@ -236,15 +241,16 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
               />
             </div>
             <div>
-              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">Color Swatch</label>
+              <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">Color</label>
               <div className="flex items-center gap-2">
-                <input 
-                  type="color" 
+                <input
+                  type="color"
                   value={colorSwatch}
                   onChange={(e) => setColorSwatch(e.target.value)}
-                  className="w-10 h-9 rounded border border-[#2A2622] cursor-pointer bg-transparent"
+                  className="w-full h-9 rounded border border-[#2A2622] cursor-pointer bg-transparent p-0.5"
+                  aria-label="Color swatch"
                 />
-                <span className="font-mono text-xs text-[#A89B8C]">{colorSwatch}</span>
+                <span className="font-mono text-xs text-[#A89B8C] hidden md:inline">{colorSwatch}</span>
               </div>
             </div>
           </div>
@@ -272,7 +278,7 @@ export const AddGarmentModal: React.FC<AddGarmentModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[#455565] text-white rounded-lg font-sans text-sm font-semibold shadow hover:bg-[#394858] transition-all flex items-center gap-1.5"
+              className="px-5 py-2 bg-[#C76B3F] text-[#0B0A08] rounded-lg font-sans text-sm font-semibold shadow hover:bg-[#b36138] transition-all flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>{t.save}</span>

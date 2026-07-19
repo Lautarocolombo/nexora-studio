@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Sparkles, Plus, Check, RefreshCw, Trash2, Heart, Shirt, Tag, DollarSign, Calendar, Layers } from 'lucide-react';
 import { GarmentItem, SavedOutfit, Language } from '../types';
 import { GarmentCard } from './GarmentCard';
+import { useAccessibleModal } from '../hooks/useAccessibleModal';
+import { ConfirmDialog } from './ConfirmDialog';
 
 interface OutfitBuilderProps {
   garments: GarmentItem[];
@@ -37,6 +39,13 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
   const [outfitName, setOutfitName] = useState('');
   const [occasion, setOccasion] = useState('Casual / Work');
   const [isSaving, setIsSaving] = useState(false);
+  const [outfitToDelete, setOutfitToDelete] = useState<string | null>(null);
+
+  const { modalRef: saveModalRef, closeOnBackdrop: saveCloseOnBackdrop } = useAccessibleModal({
+    isOpen: isSaving,
+    onClose: () => setIsSaving(false),
+    initialFocusRef: { current: null },
+  });
 
   const drawerGarments = garments.filter(g => {
     if (activeDrawerTab === 'tops') return g.category === 'tops' || g.category === 'dresses';
@@ -153,7 +162,7 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
             </div>
 
             <div className="space-y-4">
-              <div onClick={() => setActiveDrawerTab('tops')} className={`p-3 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-between ${activeDrawerTab === 'tops' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`}>
+              <button onClick={() => setActiveDrawerTab('tops')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'tops' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar top' : 'Select top'}>
                 <div className="flex items-center gap-3.5">
                   <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
                     {selectedTop ? <img src={selectedTop.imageUrl} alt={selectedTop.name} className="w-full h-full object-cover" /> : <Shirt className="w-6 h-6 text-[#6B6358]" />}
@@ -166,10 +175,10 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedTop && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedTop.wornCount}v` : `Worn ${selectedTop.wornCount}x`}</span>}
                   </div>
                 </div>
-                {selectedTop && <button onClick={(e) => { e.stopPropagation(); setSelectedTop(undefined); }} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </div>
+                {selectedTop && <button onClick={(e) => { e.stopPropagation(); setSelectedTop(undefined); }} aria-label={language === 'es' ? 'Quitar top' : 'Remove top'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
+              </button>
 
-              <div onClick={() => setActiveDrawerTab('bottoms')} className={`p-3 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-between ${activeDrawerTab === 'bottoms' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`}>
+              <button onClick={() => setActiveDrawerTab('bottoms')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'bottoms' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar pantalón' : 'Select bottom'}>
                 <div className="flex items-center gap-3.5">
                   <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
                     {selectedBottom ? <img src={selectedBottom.imageUrl} alt={selectedBottom.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👖</span>}
@@ -182,10 +191,10 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedBottom && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedBottom.wornCount}v` : `Worn ${selectedBottom.wornCount}x`}</span>}
                   </div>
                 </div>
-                {selectedBottom && <button onClick={(e) => { e.stopPropagation(); setSelectedBottom(undefined); }} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </div>
+                {selectedBottom && <button onClick={(e) => { e.stopPropagation(); setSelectedBottom(undefined); }} aria-label={language === 'es' ? 'Quitar pantalón' : 'Remove bottom'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
+              </button>
 
-              <div onClick={() => setActiveDrawerTab('shoes')} className={`p-3 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-between ${activeDrawerTab === 'shoes' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`}>
+              <button onClick={() => setActiveDrawerTab('shoes')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'shoes' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar calzado' : 'Select shoes'}>
                 <div className="flex items-center gap-3.5">
                   <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
                     {selectedShoes ? <img src={selectedShoes.imageUrl} alt={selectedShoes.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">👟</span>}
@@ -198,10 +207,10 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedShoes && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedShoes.wornCount}v` : `Worn ${selectedShoes.wornCount}x`}</span>}
                   </div>
                 </div>
-                {selectedShoes && <button onClick={(e) => { e.stopPropagation(); setSelectedShoes(undefined); }} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </div>
+                {selectedShoes && <button onClick={(e) => { e.stopPropagation(); setSelectedShoes(undefined); }} aria-label={language === 'es' ? 'Quitar calzado' : 'Remove shoes'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
+              </button>
 
-              <div onClick={() => setActiveDrawerTab('outerwear')} className={`p-3 rounded-lg border-2 transition-all cursor-pointer flex items-center justify-between ${activeDrawerTab === 'outerwear' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`}>
+              <button onClick={() => setActiveDrawerTab('outerwear')} className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-center justify-between ${activeDrawerTab === 'outerwear' ? 'border-[#C76B3F] bg-[#161210] shadow-sm' : 'border-dashed border-[#2A2622] hover:border-[#C76B3F]/60'}`} aria-label={language === 'es' ? 'Seleccionar abrigo o accesorio' : 'Select outerwear or accessory'}>
                 <div className="flex items-center gap-3.5">
                   <div className="w-14 h-16 bg-[#161210] rounded overflow-hidden flex-shrink-0 border border-[#2A2622] flex items-center justify-center">
                     {selectedOuterwear ? <img src={selectedOuterwear.imageUrl} alt={selectedOuterwear.name} className="w-full h-full object-cover" /> : <span className="font-mono text-xs text-[#6B6358]">🧥</span>}
@@ -214,8 +223,8 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                     {selectedOuterwear && <span className="font-mono text-[11px] text-[#A89B8C]">{language === 'es' ? `Usado ${selectedOuterwear.wornCount}v` : `Worn ${selectedOuterwear.wornCount}x`}</span>}
                   </div>
                 </div>
-                {selectedOuterwear && <button onClick={(e) => { e.stopPropagation(); setSelectedOuterwear(undefined); }} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
-              </div>
+                {selectedOuterwear && <button onClick={(e) => { e.stopPropagation(); setSelectedOuterwear(undefined); }} aria-label={language === 'es' ? 'Quitar abrigo' : 'Remove outerwear'} className="text-[#6B6358] hover:text-[#C76B3F] p-1 text-xs font-mono">✕</button>}
+              </button>
             </div>
           </div>
 
@@ -264,9 +273,23 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
       </div>
 
       {isSaving && (
-        <div className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="fabric-grain bg-[#1B1814] w-full max-w-md rounded-xl border border-[#2A2622] shadow-2xl p-6">
-            <h3 className="font-display text-xl font-bold text-[#F7F3EC] mb-2">{t.saveOutfit}</h3>
+        <div
+          className="fixed inset-0 z-50 bg-[#0E0C0A]/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn"
+          onClick={(e) => {
+            if (saveCloseOnBackdrop && e.target === e.currentTarget) {
+              setIsSaving(false);
+            }
+          }}
+        >
+          <div
+            ref={saveModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="save-outfit-title"
+            className="fabric-grain bg-[#1B1814] w-full max-w-md rounded-xl border border-[#2A2622] shadow-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="save-outfit-title" className="font-display text-xl font-bold text-[#F7F3EC] mb-2">{t.saveOutfit}</h3>
             <form onSubmit={handleSave} className="space-y-4 mt-4">
               <div>
                 <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{language === 'es' ? 'Nombre del Atuendo *' : 'Outfit Name *'}</label>
@@ -335,9 +358,23 @@ export const OutfitBuilder: React.FC<OutfitBuilderProps> = ({
                       <span>{language === 'es' ? 'Usado Hoy (+1)' : 'Worn Today (+1)'}</span>
                     </button>
 
-                    <button onClick={() => { if (confirm(language === 'es' ? '¿Eliminar este atuendo?' : 'Delete outfit?')) { onDeleteOutfit(outfit.id); } }} className="p-1.5 text-[#6B6358] hover:text-[#C76B3F] transition-colors rounded hover:bg-[#1B1814]">
+                    <button onClick={() => setOutfitToDelete(outfit.id)} aria-label={language === 'es' ? 'Eliminar atuendo' : 'Delete outfit'} className="p-1.5 text-[#6B6358] hover:text-[#C76B3F] transition-colors rounded hover:bg-[#1B1814]">
                       <Trash2 className="w-4 h-4" />
                     </button>
+                    <ConfirmDialog
+                      isOpen={!!outfitToDelete}
+                      title={language === 'es' ? 'Eliminar atuendo' : 'Delete outfit'}
+                      message={language === 'es' ? '¿Eliminar este atuendo permanentemente?' : 'Delete this outfit permanently?'}
+                      confirmLabel={language === 'es' ? 'Eliminar' : 'Delete'}
+                      onConfirm={() => {
+                        if (outfitToDelete) {
+                          onDeleteOutfit(outfitToDelete);
+                          setOutfitToDelete(null);
+                        }
+                      }}
+                      onCancel={() => setOutfitToDelete(null)}
+                      variant="danger"
+                    />
                   </div>
                 </div>
               </div>
