@@ -120,6 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
+                data-onboarding={item.id === 'wardrobe' ? 'nav-wardrobe' : item.id === 'builder' ? 'nav-builder' : undefined}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all text-left ${
                   isActive
                     ? 'bg-[#1B1814] text-[#F7F3EC] shadow-sm translate-x-1 font-semibold border border-[#2A2622]'
@@ -137,6 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         <button
           onClick={onNewOutfitClick}
+          data-onboarding="add-garment"
           className="w-full bg-[#C76B3F] text-[#0B0A08] font-sans text-sm py-3.5 px-4 rounded-lg font-semibold shadow-md hover:bg-[#b36138] transition-all flex items-center justify-center gap-2 mb-6 group active:scale-[0.98]"
         >
           <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />

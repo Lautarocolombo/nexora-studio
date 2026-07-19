@@ -1,12 +1,14 @@
 import React from 'react';
 import { HelpCircle, BookOpen, ShieldAlert, Sparkles, Heart, Check, Shirt, Layers } from 'lucide-react';
 import { Language } from '../types';
+import { useOnboarding } from '../hooks/useOnboarding';
 
 interface HelpViewProps {
   language: Language;
 }
 
 export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
+  const { start } = useOnboarding();
   const t = {
     title: language === 'es' ? 'Filosofía & Guía de Cuidado Textil' : 'Philosophy & Fabric Care Guide',
     subtitle: language === 'es' ? 'Aprendé a armar conjuntos, calcular uso y cuidar tus prendas.' : 'Learn to build outfits, calculate wear, and care for your garments.',
@@ -82,6 +84,16 @@ export const HelpView: React.FC<HelpViewProps> = ({ language }) => {
             </div>
           ))}
         </div>
+      </section>
+      <section className="pt-4">
+        <button
+          type="button"
+          onClick={start}
+          className="px-4 py-2 bg-[#161210] hover:bg-[#1B1814] text-[#C76B3F] border border-[#2A2622] rounded-lg font-mono text-xs font-semibold flex items-center gap-2 transition-all"
+        >
+          <Sparkles className="w-4 h-4" />
+          {language === 'es' ? 'Reiniciar tour de inicio' : 'Restart onboarding tour'}
+        </button>
       </section>
     </div>
   );

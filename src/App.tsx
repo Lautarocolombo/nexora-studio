@@ -12,12 +12,17 @@ import {
   INITIAL_WEAR_LOGS
 } from './data/initialWardrobe';
 import { Navbar } from './components/Navbar';
+import { OnboardingTour } from './components/OnboardingTour';
 import { GarmentDetailModal } from './components/GarmentDetailModal';
 import { AddGarmentModal } from './components/AddGarmentModal';
 import { AuthGuard } from './components/AuthGuard';
 import { useAuth } from './lib/auth';
 import { db } from './lib/db';
 import { useWardrobeSync, useOutfitsSync, useWearLogsSync, useLanguageSync } from './hooks/useSync';
+import { useOnboarding } from './hooks/useOnboarding';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useAnalytics } from './hooks/useAnalytics';
+import { LanguageContext } from './hooks/LanguageContext';
 
 // PERFORMANCE: Code-splitting por vista. Cada vista se carga bajo demanda
 // (React.lazy + Suspense), reduciendo el bundle inicial y mejorando TTI/Lighthouse.
@@ -34,8 +39,15 @@ const AuditView = lazy(() => import('./components/AuditView').then(m => ({ defau
 function ViewFallback() {
   return (
     <div className="flex items-center justify-center min-h-[40vh]" role="status" aria-live="polite">
-      <span className="w-6 h-6 border-2 border-[#C76B3F]/30 border-t-[#C76B3F] rounded-full animate-spin" />
-      <span className="sr-only">Cargando…</span>
+      <div className="space-y-4 w-full max-w-md">
+        <div className="h-8 bg-[#1B1814] rounded-lg animate-pulse w-3/4" />
+        <div className="h-4 bg-[#1B1814] rounded animate-pulse w-1/2" />
+        <div className="grid grid-cols-2 gap-4 mt-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] bg-[#1B1814] rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -49,15 +61,39 @@ const STORAGE_KEYS = {
 
 export default function App() {
   const { logout } = useAuth();
+  const { seen, start } = useOnboarding();
+  const { trackEvent } = useAnalytics();
 
   const [garments, setGarments] = useState<GarmentItem[]>(INITIAL_GARMENTS);
   const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>(INITIAL_OUTFITS);
   const [wearLogs, setWearLogs] = useState<WearLogEntry[]>(INITIAL_WEAR_LOGS);
   const [language, setLanguage] = useState<Language>('es');
   const [activeTab, setActiveTab] = useState<TabType>('wardrobe');
+
+  useEffect(() => {
+    trackEvent('tab_change', { tab: activeTab });
+  }, [activeTab, trackEvent]);
   const [selectedGarmentForDetail, setSelectedGarmentForDetail] = useState<GarmentItem | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!seen && loaded) {
+      const timer = setTimeout(() => {
+        start();
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [seen, loaded, start]);
+
+  useKeyboardShortcuts([
+    { key: '/', handler: () => { const search = document.querySelector('input[type="text"]'); search && (search as HTMLInputElement).focus(); }, description: 'Focus search' },
+    { key: 'n', handler: () => setIsAddModalOpen(true), description: 'New garment' },
+    { key: 'b', handler: () => setActiveTab('builder'), description: 'Go to builder' },
+    { key: 'w', handler: () => setActiveTab('wardrobe'), description: 'Go to wardrobe' },
+    { key: 'c', handler: () => setActiveTab('calendar'), description: 'Go to calendar' },
+    { key: 's', handler: () => setActiveTab('stats'), description: 'Go to stats' },
+  ]);
 
   // Migrate old localStorage v1 -> v2 on mount
   useEffect(() => {
@@ -130,6 +166,7 @@ export default function App() {
   // Handlers
   const handleLogWear = (e: React.MouseEvent | undefined, garment: GarmentItem) => {
     if (e) e.stopPropagation();
+    trackEvent('log_wear', { garmentId: garment.id, category: garment.category });
     const today = new Date().toISOString().split('T')[0];
 
     // Update garment worn count
@@ -213,6 +250,7 @@ export default function App() {
   };
 
   const handleSaveOutfit = (outfitData: Omit<SavedOutfit, 'id' | 'createdAt'>) => {
+    trackEvent('save_outfit', { pieceCount: outfitData.garmentIds.length });
     const newOutfit: SavedOutfit = {
       ...outfitData,
       id: `o-${Date.now()}`,
@@ -222,6 +260,7 @@ export default function App() {
   };
 
   const handleLogOutfitWear = (outfit: SavedOutfit) => {
+    trackEvent('log_outfit_wear', { outfitId: outfit.id, pieceCount: outfit.garmentIds.length });
     const today = new Date().toISOString().split('T')[0];
     const outfitItems = resolveOutfitItems(outfit);
     const outfitItemIds = outfitItems.map(i => i.id);
@@ -308,10 +347,12 @@ export default function App() {
   };
 
   return (
-    <AuthGuard>
-      <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
-        {/* Navigation Bars */}
-        <Navbar
+      <LanguageContext.Provider value={{ language, setLanguage }}>
+        <AuthGuard>
+          <div className="flex min-h-screen bg-[#0E0C0A] text-[#F7F3EC] font-sans selection:bg-[#C76B3F] selection:text-[#0B0A08]">
+            <OnboardingTour />
+            {/* Navigation Bars */}
+            <Navbar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           onNewOutfitClick={() => {
@@ -421,5 +462,6 @@ export default function App() {
       />
       </div>
     </AuthGuard>
+      </LanguageContext.Provider>
   );
 }

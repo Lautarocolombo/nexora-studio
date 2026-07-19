@@ -1,11 +1,13 @@
 import React, { useState, FormEvent } from 'react';
+import { Language } from '../types';
 
 interface LoginViewProps {
   onLogin: (user: string, pass: string) => Promise<boolean>;
+  language?: Language;
 }
 
 
-export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
+export const LoginView: React.FC<LoginViewProps> = ({ onLogin, language = 'es' }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -88,7 +90,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
         </form>
 
         <p className="text-center mt-6 font-mono text-xs text-[#A89B8C]/60 tracking-wider">
-          Entorno local
+          {language === 'es' ? 'Entorno local' : 'Local environment'}
+        </p>
+        <p className="text-center mt-8 font-mono text-[11px] text-[#A89B8C]/40">
+          {language === 'es'
+            ? 'Herramienta de curaduría personal · Más de 1.200 combinaciones posibles'
+            : 'Personal curation tool · 1,200+ possible combinations'}
         </p>
       </div>
     </main>
