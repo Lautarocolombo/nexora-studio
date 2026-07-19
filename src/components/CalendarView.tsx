@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Shirt, Check, Sparkles, Clock } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Shirt, Clock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { WearLogEntry, GarmentItem, SavedOutfit, Language } from '../types';
 import { useAccessibleModal } from '../hooks/useAccessibleModal';
 
@@ -18,7 +19,8 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
   onLogCustomDate,
   language
 }) => {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1));
+  const { t } = useTranslation();
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedOutfitId, setSelectedOutfitId] = useState<string>('');
   const [dayNotes, setDayNotes] = useState<string>('');
@@ -28,9 +30,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const monthNamesEs = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  const monthNamesEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const monthName = language === 'es' ? monthNamesEs[month] : monthNamesEn[month];
+  const logsByDate = useMemo(() => {
+    const map = new Map<string, WearLogEntry[]>();
+    for (const log of wearLogs) {
+      const existing = map.get(log.date);
+      if (existing) existing.push(log);
+      else map.set(log.date, [log]);
+    }
+    return map;
+  }, [wearLogs]);
+
+  const outfitIndex = useMemo(() => {
+    const map = new Map<string, SavedOutfit>();
+    for (const o of savedOutfits) map.set(o.id, o);
+    return map;
+  }, [savedOutfits]);
+
+  const garmentIndex = useMemo(() => {
+    const map = new Map<string, GarmentItem>();
+    for (const g of garments) map.set(g.id, g);
+    return map;
+  }, [garments]);
+
+  const monthNames = t('calendar.monthNames', { returnObjects: true }) as string[];
+  const monthName = monthNames[month];
 
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -46,7 +69,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const handleSaveDayLog = () => {
     if (!selectedDay) return;
-    const outfit = savedOutfits.find(o => o.id === selectedOutfitId);
+    const outfit = selectedOutfitId ? outfitIndex.get(selectedOutfitId) : undefined;
     onLogCustomDate(selectedDay, outfit, undefined, dayNotes);
     setSelectedDay(null);
     setSelectedOutfitId('');
@@ -59,37 +82,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
     initialFocusRef: { current: null },
   });
 
-  const t = {
-    title: language === 'es' ? 'Calendario & Registro Consciente' : 'Mindful Wear Log & Calendar',
-    subtitle: language === 'es' ? 'Planifica rotaciones y audita tu historial real de uso diario.' : 'Plan capsule rotations and audit your true daily wear history.',
-    sun: language === 'es' ? 'Dom' : 'Sun',
-    mon: language === 'es' ? 'Lun' : 'Mon',
-    tue: language === 'es' ? 'Mar' : 'Tue',
-    wed: language === 'es' ? 'Mié' : 'Wed',
-    thu: language === 'es' ? 'Jue' : 'Thu',
-    fri: language === 'es' ? 'Vie' : 'Fri',
-    sat: language === 'es' ? 'Sáb' : 'Sat',
-    logTitle: language === 'es' ? 'Registrar Uso para el ' : 'Log Wear for ',
-    selectOutfit: language === 'es' ? 'Asignar Atuendo Guardado:' : 'Assign Saved Outfit:',
-    notes: language === 'es' ? 'Notas / Ocasión' : 'Notes / Occasion',
-    cancel: language === 'es' ? 'Cancelar' : 'Cancel',
-    save: language === 'es' ? 'Guardar Registro' : 'Save Log Entry',
-    recentLogs: language === 'es' ? 'Historial de Registro Reciente' : 'Recent Wear History'
-  };
-
-  const dayHeaders = [t.sun, t.mon, t.tue, t.wed, t.thu, t.fri, t.sat];
+  const dayHeaders = [t('calendar.sun'), t('calendar.mon'), t('calendar.tue'), t('calendar.wed'), t('calendar.thu'), t('calendar.fri'), t('calendar.sat')];
 
   return (
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t.title}</h2>
-          <p className="font-sans text-sm text-[#A89B8C] mt-1">{t.subtitle}</p>
+          <h2 className="font-display text-3xl font-bold text-[#F7F3EC] tracking-tight">{t('calendar.title')}</h2>
+          <p className="font-sans text-sm text-[#A89B8C] mt-1">{t('calendar.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3 bg-[#1B1814] px-4 py-2 rounded-xl border border-[#2A2622] shadow-2xl">
-          <button onClick={handlePrevMonth} className="p-1 hover:bg-[#161210] rounded text-[#A89B8C] transition-colors"><ChevronLeft className="w-5 h-5" /></button>
+          <button onClick={handlePrevMonth} aria-label={t('calendar.prevMonth')} className="p-1 hover:bg-[#161210] rounded text-[#A89B8C] transition-colors"><ChevronLeft className="w-5 h-5" /></button>
           <span className="font-display text-lg font-bold text-[#F7F3EC] min-w-[160px] text-center">{monthName} {year}</span>
-          <button onClick={handleNextMonth} className="p-1 hover:bg-[#161210] rounded text-[#A89B8C] transition-colors"><ChevronRight className="w-5 h-5" /></button>
+          <button onClick={handleNextMonth} aria-label={t('calendar.nextMonth')} className="p-1 hover:bg-[#161210] rounded text-[#A89B8C] transition-colors"><ChevronRight className="w-5 h-5" /></button>
         </div>
       </header>
 
@@ -103,19 +108,24 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const dayNum = i + 1;
             const dateStr = formatDateString(dayNum);
-            const logsForDay = wearLogs.filter(l => l.date === dateStr);
+            const logsForDay = logsByDate.get(dateStr) || [];
             const isToday = dateStr === todayStr;
 
             return (
-              <div key={`day-${dayNum}`} onClick={() => setSelectedDay(dateStr)} className={`min-h-[110px] p-2.5 transition-all cursor-pointer flex flex-col justify-between relative group ${isToday ? 'bg-[#C76B3F]/10 font-bold' : 'hover:bg-[#1B1814]'}`}>
+              <button
+                key={`day-${dayNum}`}
+                onClick={() => setSelectedDay(dateStr)}
+                className={`min-h-[110px] w-full p-2.5 transition-all text-left flex flex-col justify-between relative group ${isToday ? 'bg-[#C76B3F]/10 font-bold' : 'hover:bg-[#1B1814]'}`}
+                aria-label={language === 'es' ? `Día ${dayNum}, ${new Date(year, month, dayNum).toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' })}` : `Day ${dayNum}, ${new Date(year, month, dayNum).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`}
+              >
                 <div className="flex justify-between items-center">
                   <span className={`font-mono text-sm inline-flex items-center justify-center w-7 h-7 rounded-full ${isToday ? 'bg-[#C76B3F] text-white shadow-sm font-bold' : 'text-[#F7F3EC]'}`}>{dayNum}</span>
-                  <button className="opacity-0 group-hover:opacity-100 p-1 text-[#A89B8C] hover:bg-[#161210] rounded transition-all"><Plus className="w-3.5 h-3.5" /></button>
+                  <button className="opacity-0 group-hover:opacity-100 p-1 text-[#A89B8C] hover:bg-[#161210] rounded transition-all" aria-label={language === 'es' ? 'Registrar uso' : 'Log wear'}><Plus className="w-3.5 h-3.5" /></button>
                 </div>
                 <div className="mt-2 space-y-1 overflow-y-auto max-h-[65px] scrollbar-hide">
                   {logsForDay.map(log => {
-                    const outfit = savedOutfits.find(o => o.id === log.outfitId);
-                    const label = log.outfitName || (outfit ? outfit.name : `${log.garmentIds.length} items logged`);
+                    const outfit = log.outfitId ? outfitIndex.get(log.outfitId) : undefined;
+                    const label = log.outfitName || (outfit ? outfit.name : t('calendar.itemsLogged', { count: log.garmentIds.length }));
                     return (
                       <div key={log.id} className="bg-[#1B1814] border border-[#2A2622] text-[#A89B8C] px-2 py-1 rounded text-xs font-mono font-medium truncate shadow-sm flex items-center gap-1" title={label}>
                         <Shirt className="w-3 h-3 flex-shrink-0 text-[#C76B3F]" />
@@ -124,7 +134,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
                     );
                   })}
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -149,23 +159,23 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           >
             <h3 id="calendar-log-title" className="font-display text-xl font-bold text-[#F7F3EC] mb-2 flex items-center gap-2">
               <CalendarIcon className="w-5 h-5 text-[#C76B3F]" />
-              <span>{t.logTitle} {selectedDay}</span>
+              <span>{t('calendar.logTitle')} {selectedDay}</span>
             </h3>
             <div className="space-y-4 mt-4">
               <div>
-                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.selectOutfit}</label>
+                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t('calendar.selectOutfit')}</label>
                 <select value={selectedOutfitId} onChange={e => setSelectedOutfitId(e.target.value)} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none">
-                  <option value="">-- {language === 'es' ? 'Selecciona Atuendo Guardado' : 'Select Saved Outfit'} --</option>
+                  <option value="">-- {t('calendar.selectOutfitOption')} --</option>
                   {savedOutfits.map(o => <option key={o.id} value={o.id}>{language === 'es' && o.nameEs ? o.nameEs : o.name} ({o.garmentIds.length} items)</option>)}
                 </select>
               </div>
               <div>
-                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t.notes}</label>
-                <textarea value={dayNotes} onChange={e => setDayNotes(e.target.value)} placeholder={language === 'es' ? 'ej. Reunión en la oficina o paseo dominical' : 'e.g. Office presentation or Sunday walk'} rows={2} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none" />
+                <label className="block font-mono text-xs text-[#A89B8C] uppercase mb-1 font-medium">{t('calendar.notes')}</label>
+                <textarea value={dayNotes} onChange={e => setDayNotes(e.target.value)} placeholder={t('calendar.placeholder')} rows={2} className="w-full bg-[#161210] border border-[#2A2622] focus:border-[#C76B3F] rounded px-3 py-2 text-sm text-[#F7F3EC] focus:outline-none" />
               </div>
               <div className="flex justify-end gap-3 pt-4 border-t border-[#2A2622]">
-                <button onClick={() => setSelectedDay(null)} className="px-4 py-2 border border-[#2A2622] rounded-lg font-mono text-xs font-semibold text-[#A89B8C] hover:bg-[#161210] transition-colors">{t.cancel}</button>
-                <button onClick={handleSaveDayLog} className="px-5 py-2 bg-[#C76B3F] text-white rounded-lg font-sans text-sm font-semibold shadow hover:bg-[#A85A32]">{t.save}</button>
+                <button onClick={() => setSelectedDay(null)} className="px-4 py-2 border border-[#2A2622] rounded-lg font-mono text-xs font-semibold text-[#A89B8C] hover:bg-[#161210] transition-colors">{t('calendar.cancel')}</button>
+                <button onClick={handleSaveDayLog} className="px-5 py-2 bg-[#C76B3F] text-white rounded-lg font-sans text-sm font-semibold shadow hover:bg-[#A85A32]">{t('calendar.save')}</button>
               </div>
             </div>
           </div>
@@ -175,19 +185,19 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
       <section className="pt-8 border-t border-[#2A2622]">
         <h3 className="font-display text-2xl font-bold text-[#F7F3EC] mb-6 flex items-center gap-2">
           <Clock className="w-6 h-6 text-[#C76B3F]" />
-          <span>{t.recentLogs}</span>
+          <span>{t('calendar.recentLogs')}</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {wearLogs.map(log => {
-            const outfit = savedOutfits.find(o => o.id === log.outfitId);
-            const title = log.outfitName || (outfit ? outfit.name : `${log.garmentIds.length} Garments Logged`);
-            const loggedGarments = garments.filter(g => log.garmentIds.includes(g.id));
+            const outfit = log.outfitId ? outfitIndex.get(log.outfitId) : undefined;
+            const title = log.outfitName || (outfit ? outfit.name : t('calendar.itemsLogged', { count: log.garmentIds.length }));
+            const loggedGarments = log.garmentIds.map(id => garmentIndex.get(id)).filter((g): g is GarmentItem => !!g);
 
             return (
               <div key={log.id} className="fabric-grain bg-[#1B1814] border border-[#2A2622] rounded-xl p-4 shadow-2xl flex items-start gap-4">
                 <div className="bg-[#161210] p-3 rounded-lg border border-[#2A2622] text-center min-w-[70px]">
-                  <span className="font-mono text-xs text-[#A89B8C] uppercase block">{new Date(log.date).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { month: 'short' })}</span>
+                  <span className="font-mono text-xs text-[#A89B8C] uppercase block">{new Date(log.date).toLocaleDateString(t('calendar.locale'), { month: 'short' })}</span>
                   <span className="font-display text-xl font-bold text-[#C76B3F]">{log.date.split('-')[2]}</span>
                 </div>
 
@@ -199,7 +209,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                   <div className="flex items-center gap-1.5 mt-3 pt-2 border-t border-[#2A2622]">
                     {loggedGarments.map((g, idx) => <div key={idx} className="w-7 h-7 rounded overflow-hidden border border-[#2A2622]" title={g.name}><img src={g.imageUrl} alt={g.name} className="w-full h-full object-cover" /></div>)}
-                    <span className="font-mono text-xs text-[#A89B8C] ml-1">({loggedGarments.length} {language === 'es' ? 'piezas' : 'items'})</span>
+                    <span className="font-mono text-xs text-[#A89B8C] ml-1">({loggedGarments.length} {t('calendar.itemsCount')})</span>
                   </div>
                 </div>
               </div>
