@@ -2,26 +2,28 @@
   "name": "nexora-studio",
   "version": "1.0.0",
   "description": "Sitio web de Nexora Studio — diseño y desarrollo web a medida.",
-  "main": "index.html",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
-    "build": "npm run build:css && npm run build:js",
-    "build:css": "cleancss -o css/style.min.css src/css/style.css",
-    "build:js": "terser src/js/script.js -o js/script.min.js -c -m && terser src/js/projects.js -o js/projects.min.js -c -m && terser src/js/analytics.js -o js/analytics.min.js -c -m",
-    "dev": "node scripts/watch.mjs & live-server --port=5500 --entry-file=index.html",
-    "start": "live-server --port=5500 --entry-file=index.html",
-    "test": "node scripts/validate.mjs",
+    "dev": "vite",
+    "build": "vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "verify": "npm run build && node scripts/verify.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.52.0",
-    "@sentry/browser": "^10.65.0",
-    "clean-css-cli": "^5.6.3",
-    "live-server": "^1.2.2",
-    "terser": "^5.49.0"
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.3.2"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router-dom": "^7.18.4"
   }
 }

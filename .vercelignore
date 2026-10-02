@@ -2,3 +2,6 @@ node_modules
 docs
 .vscode
 .kilo
+test-results
+playwright-report
+img

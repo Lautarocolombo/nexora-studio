@@ -8,16 +8,17 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:5500',
+    baseURL: 'http://localhost:4173',
     trace: 'on-first-retry',
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // Sirve el build de producción, igual que en Vercel.
   webServer: {
-    command: 'npm start',
-    url: 'http://localhost:5500',
-    reuseExistingServer: !process.env.CI,
+    command: 'npm run build && npm run preview -- --port 4173 --strictPort',
+    url: 'http://localhost:4173',
+    // Nunca reutilizar: si quedara un preview server de una sesión anterior,
+    // Playwright se saltaría el `build` y la suite mediría un dist obsoleto.
+    reuseExistingServer: false,
     timeout: 120 * 1000,
   },
 });

@@ -1,0 +1,236 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────────────────
+   NEXORA STUDIO — Tailwind theme
+   Tokens ported 1:1 from the legacy src/css/style.css
+
+   El tema claro se maneja solo con `data-theme` sobre las variables
+   semánticas de abajo, así que no hace falta una variante `light:`.
+   ───────────────────────────────────────────────────────── */
+
+/* ─── Semantic layer (flips with data-theme) ─────────────── */
+:root {
+  --nx-bg: #0b0f19;
+  --nx-surface: #111827;
+  --nx-elevated: #1f2937;
+  --nx-card: rgb(255 255 255 / 0.03);
+  --nx-card-hover: rgb(255 255 255 / 0.06);
+  --nx-glass: rgb(17 24 39 / 0.7);
+
+  --nx-text: #f1f5f9;
+  --nx-text-2: #cbd5e1;
+  /* El texto secundario se lee sobre cards, surfaces y elevated, así que el
+     mínimo se calcula contra la superficie MÁS clara de cada tema
+     (#1f2937 en oscuro, #ffffff en claro), no contra el fondo:
+       #718096 daba 3.66:1 sobre #1f2937. #8593a8 da 4.71:1 en el peor caso.
+     El #475569 original daba 2.53:1 y volvía ilegibles precios y enlaces. */
+  --nx-text-muted: #8593a8;
+
+  /* El cyan de marca (#06b6d4) da 7.89:1 sobre el fondo oscuro pero solo
+     2.32:1 sobre el claro, así que como texto necesita su propio token. */
+  --nx-brand-text: #06b6d4;
+
+  /* El cyan de marca es demasiado claro para texto blanco encima (2.43:1),
+     así que los botones primarios llevan casi negro: 7.63:1 sobre el cyan y
+     5.00:1 sobre el jade, los dos extremos del degradado. */
+  --nx-brand-ink: #01161a;
+  --nx-gradient-from: #06b6d4;
+  --nx-gradient-to: #0d9488;
+
+  --nx-border: rgb(255 255 255 / 0.08);
+  --nx-border-accent: rgb(6 182 212 / 0.3);
+
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --nx-bg: #f8fafc;
+  --nx-surface: #ffffff;
+  --nx-elevated: #f1f5f9;
+  --nx-card: rgb(15 23 42 / 0.03);
+  --nx-card-hover: rgb(15 23 42 / 0.06);
+  --nx-glass: rgb(255 255 255 / 0.75);
+
+  --nx-text: #0f172a;
+  --nx-text-2: #334155;
+  --nx-text-muted: #5f6c7e;
+
+  /* #0e7490 da 4.89:1 en el peor caso del tema claro; el #06b6d4 del
+     tema oscuro daba solo 2.32:1 sobre #f8fafc. */
+  --nx-brand-text: #0e7490;
+
+  /* Sobre #f8fafc el cyan de marca da 2.32:1, así que los títulos con
+     degradado necesitan tonos oscuros también en tema claro. */
+  --nx-brand-ink: #01161a;
+  --nx-gradient-from: #0e7490;
+  --nx-gradient-to: #0f766e;
+
+  --nx-border: rgb(15 23 42 / 0.1);
+  --nx-border-accent: rgb(6 182 212 / 0.35);
+
+  color-scheme: light;
+}
+
+/* ─── Tailwind mapping ───────────────────────────────────── */
+@theme inline {
+  --color-bg: var(--nx-bg);
+  --color-surface: var(--nx-surface);
+  --color-elevated: var(--nx-elevated);
+  --color-card: var(--nx-card);
+  --color-card-hover: var(--nx-card-hover);
+  --color-glass: var(--nx-glass);
+
+  --color-ink: var(--nx-text);
+  --color-ink-2: var(--nx-text-2);
+  --color-ink-muted: var(--nx-text-muted);
+  --color-brand-text: var(--nx-brand-text);
+  --color-brand-ink: var(--nx-brand-ink);
+
+  --color-line: var(--nx-border);
+  --color-line-accent: var(--nx-border-accent);
+
+  --color-brand: #06b6d4;
+  --color-brand-dark: #0891b2;
+  --color-accent-jade: #0d9488;
+
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --container: 1200px;
+
+  --shadow-soft: 0 18px 40px -18px rgb(0 0 0 / 0.55);
+  --shadow-glow: 0 0 40px rgb(6 182 212 / 0.2);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg font-body text-ink leading-relaxed overflow-x-hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgb(6 182 212 / 0.07) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgb(13 148 136 / 0.04) 0%, transparent 50%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading font-semibold text-ink;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  ul,
+  ol {
+    @apply list-none m-0 p-0;
+  }
+
+  img {
+    @apply block max-w-full;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* El header es fixed h-16: sin scroll-margin-top, cualquier ancla
+     (ej. /servicios#servicios) quedaba con 64px de navbar encima. */
+  :target,
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1200px] px-6;
+  }
+
+  .gradient-text {
+    background: linear-gradient(
+      135deg,
+      var(--nx-gradient-from) 0%,
+      var(--nx-gradient-to) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .section-label {
+    @apply inline-flex items-center gap-2 font-heading text-xs font-semibold tracking-[0.18em] text-brand-text uppercase;
+  }
+
+  .section-title {
+    @apply font-heading text-3xl leading-[1.15] font-bold text-ink sm:text-4xl lg:text-[2.75rem];
+  }
+
+  .section-desc {
+    @apply text-base leading-relaxed text-ink-2;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 font-heading text-sm font-semibold transition-all duration-300;
+  }
+
+  /* Se usan como `btn btn-primary`: en Tailwind v4 no se puede @apply una
+     clase de componente propia, solo utilidades. */
+  .btn-primary {
+    @apply bg-gradient-to-br from-brand to-accent-jade text-brand-ink shadow-glow;
+  }
+
+  .btn-outline {
+    @apply border border-line-accent text-ink hover:bg-card-hover;
+  }
+
+  /* Card surface shared by the portfolio grid and the viewer */
+  .surface-card {
+    @apply rounded-md border border-line bg-card;
+  }
+
+  .anim-fade-slide {
+    animation: nx-fade-slide 0.36s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+}
+
+@keyframes nx-fade-slide {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
