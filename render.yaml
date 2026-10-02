@@ -1,0 +1,53 @@
+services:
+  - type: web
+    runtime: static
+    name: nexora-studio
+    branch: master
+    buildCommand: "npm ci && npm run build"
+    staticPublishPath: ./dist
+
+    # La app usa BrowserRouter (src/main.jsx), asi que las rutas /portfolio,
+    # /contacto, etc. no existen como archivos en dist/. Sin este catch-all
+    # el CDN devuelve 404 al recargar o compartir un link directo.
+    # Las reglas se evalúan de arriba hacia abajo: el catch-all va último.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    headers:
+      # Cabeceras de seguridad (paridad con vercel.json).
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+
+      # Vite agrega un hash de contenido a los archivos de /assets/, por lo que
+      # pueden cachearse para siempre: CSS, JS e imagenes del portfolio.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+      # index.html debe revalidarse siempre para que un deploy nuevo se vea.
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+
+      # Archivos sin hash en la raiz: cache corto para no servir contenido viejo.
+      - path: /*.svg
+        name: Cache-Control
+        value: public, max-age=86400, must-revalidate
+      - path: /*.png
+        name: Cache-Control
+        value: public, max-age=86400, must-revalidate
+      - path: /manifest.webmanifest
+        name: Cache-Control
+        value: public, max-age=3600, must-revalidate
