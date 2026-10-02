@@ -6,13 +6,42 @@ services:
     buildCommand: "npm ci && npm run build"
     staticPublishPath: ./dist
 
-    # La app usa BrowserRouter (src/main.jsx), asi que las rutas /portfolio,
-    # /contacto, etc. no existen como archivos en dist/. Sin este catch-all
-    # el CDN devuelve 404 al recargar o compartir un link directo.
-    # Las reglas se evalúan de arriba hacia abajo: el catch-all va último.
+    # La app usa BrowserRouter (src/main.jsx), asi que /portfolio, /contacto,
+    # etc. no existen como archivos en dist/: sin un rewrite, el CDN devuelve
+    # 404 al hard refresh o al abrir un link directo.
+    #
+    # Se listan las rutas una por una en vez de un catch-all `/*`. Con el
+    # catch-all, una URL inexistente devuelve 200 con la pagina NotFound y
+    # Google la puede tomar como duplicada. Sin el, Render cae en 404.html
+    # (misma build que index.html, se genera en postbuild) y responde con
+    # status 404 real mientras la SPA sigue mostrando NotFound.
+    #
+    # Al agregar una ruta hay que actualizarla aca tambien.
+    # tests/deploy.spec.ts falla si alguna se olvida.
     routes:
       - type: rewrite
-        source: /*
+        source: /
+        destination: /index.html
+      - type: rewrite
+        source: /nosotros
+        destination: /index.html
+      - type: rewrite
+        source: /yo
+        destination: /index.html
+      - type: rewrite
+        source: /servicios
+        destination: /index.html
+      - type: rewrite
+        source: /portfolio
+        destination: /index.html
+      - type: rewrite
+        source: /contacto
+        destination: /index.html
+      - type: rewrite
+        source: /privacidad
+        destination: /index.html
+      - type: rewrite
+        source: /terminos
         destination: /index.html
 
     headers:
@@ -36,10 +65,17 @@ services:
         name: Cache-Control
         value: public, max-age=31536000, immutable
 
-      # index.html debe revalidarse siempre para que un deploy nuevo se vea.
+      # La home y el entrypoint deben revalidarse siempre para que un deploy
+      # nuevo se vea al instante.
+      - path: /
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
       - path: /index.html
         name: Cache-Control
-        value: no-cache
+        value: public, max-age=0, must-revalidate
+      - path: /404.html
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
 
       # Archivos sin hash en la raiz: cache corto para no servir contenido viejo.
       - path: /*.svg
