@@ -2,9 +2,24 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+
+# Variables de entorno / secretos
 .env
+.env.local
+.env.*.local
 .env.*
-package-lock.json
+!.env.example
+
+# Build de Vite
+dist/
 
 .vercel
+test-results/
+playwright-report/
 
+# Estado local de herramientas (worktrees, node_modules propio)
+.kilo/
+
+# .pptx de origen de las capturas del portfolio: pesan ~4 MB y la app
+# usa las imágenes ya exportadas en src/assets/portfolio/.
+img/
